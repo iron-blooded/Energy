@@ -4,15 +4,13 @@ import org.bukkit.Location;
 import org.hg.energy.Mesh;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public abstract class Structure {
     private String name;
     private Set<Location> locations;
     private Mesh mesh;
+    private final UUID uuid;
 
     /**
      * Представляет собой структуру
@@ -23,6 +21,7 @@ public abstract class Structure {
     public Structure(String name, List<Location> locations) {
         this.name = name;
         setLocations(locations);
+        this.uuid = UUID.randomUUID();
     }
 
     /**
