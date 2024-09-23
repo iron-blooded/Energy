@@ -7,8 +7,6 @@ import java.util.List;
 
 public class Generator extends Structure {
     private double amount_energy_produced = 0;
-    private double period_work = 0;
-    private double period_use = 0;
     private double chance_use = 0;
 
     /**
@@ -47,27 +45,9 @@ public class Generator extends Structure {
      */
     @Override
     public void update() {
-        period_use++;
-        if (period_use > period_work) {
-            period_use = 0;
-            if (Math.random() * 100 > chance_use) {
-                //TODO: сделать добавление в меш энергии
-            }
+        if (super.useCooldown() && super.castChance()) {
+            //TODO: сделать добавление в меш энергии
         }
-    }
-
-    /**
-     * @return Возвращает период, за который генератор генерирует энергию
-     */
-    public double getPeriod() {
-        return period_work;
-    }
-
-    /**
-     * @param number Устанавливает период, за который генератор генерирует энергию
-     */
-    public void setPeriod(double number) {
-        period_work = Math.max(number, 0);
     }
 
 
