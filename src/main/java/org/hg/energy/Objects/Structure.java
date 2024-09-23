@@ -14,9 +14,15 @@ public abstract class Structure {
     private Set<Location> locations;
     private Mesh mesh;
 
+    /**
+     * Представляет собой структуру
+     *
+     * @param name      имя структуры
+     * @param locations каким блокам соответствует структура
+     */
     public Structure(String name, List<Location> locations) {
         this.name = name;
-
+        setLocations(locations);
     }
 
     /**
@@ -60,14 +66,6 @@ public abstract class Structure {
         this.locations = new HashSet<>(locations);
     }
 
-    /**
-     * Вызывает работу структуры
-     * <br>
-     * Вам необходимо переопределить логику работы самостоятельно
-     */
-    public void update() {
-
-    }
 
     /**
      * Присоединяет структуру к сети
@@ -85,5 +83,23 @@ public abstract class Structure {
      */
     public Mesh getMesh() {
         return mesh;
+    }
+
+    /**
+     * Вызывает работу структуры
+     * <br>
+     * Тем, кому нужна механика работы структуры, необходимо переопределить логику работы самостоятельно
+     */
+    public void update() {
+
+    }
+
+    /**
+     * Получение объема, который может хранить структура
+     *
+     * @return по умолчанию (сейчас) возвращает ноль. Кому надо - переопределит
+     */
+    public double getVolume() {
+        return 0;
     }
 }
