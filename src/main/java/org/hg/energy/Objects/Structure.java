@@ -1,15 +1,19 @@
 package org.hg.energy.Objects;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.hg.energy.Mesh;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 public abstract class Structure {
     private final UUID uuid;
     private String name;
-    private Set<Location> locations;
+    private HashMap<Location, Material> locations;
     private Mesh mesh;
     private int cooldown_required;
     private int cooldown;
@@ -37,7 +41,7 @@ public abstract class Structure {
      *
      * @return число от 0 до 100%
      */
-    public double getChance() {
+    public double getChanceWork() {
         return chance;
     }
 
@@ -46,16 +50,17 @@ public abstract class Structure {
      *
      * @param chance число от 0 до 100%
      */
-    public void setChance(double chance) {
+    public void setChanceWork(double chance) {
         this.chance = Math.max(Math.min(chance, 100), 0);
     }
 
     /**
      * Позволяет сделать проверку на то, сработала ли структура
+     *
      * @return True - если сработала, False - если нет
      */
-    public boolean castChance() {
-        return Math.random() * 100 > getChance();
+    public boolean castChanceWork() {
+        return Math.random() * 100 > getChanceWork();
     }
 
     /**
@@ -130,7 +135,7 @@ public abstract class Structure {
      * @return Возвращает список локаций, которым соответствует структура данного генератора
      */
     public List<Location> getLocations() {
-        return new ArrayList<>(locations);
+        return new ArrayList<>(locations.keySet());
     }
 
     /**
@@ -141,7 +146,23 @@ public abstract class Structure {
         if (locations.isEmpty()) {
             throw new NullPointerException();
         }
-        this.locations = new HashSet<>(locations);
+        this.locations = new HashMap<>();
+        for (Location location : locations) {
+            this.locations.put(location, location.getBlock().getType());
+        }
+    }
+
+    /**
+     * Вызывается сетью для проверки соответствия блоков структуры заданным
+     */
+    public void checkLocationsMatching() {
+        for (Location location : locations.keySet()) {
+            if (location.getBlock().getType().equals(locations.get(location))) {
+                location.createExplosion(0);
+                this.disconnectToMesh();
+                return;
+            }
+        }
     }
 
 
@@ -152,6 +173,14 @@ public abstract class Structure {
      */
     public void connectToMesh(Mesh mesh) {
         this.mesh = mesh;
+    }
+
+    /**
+     * Отсоединить структуру от сети
+     */
+    public void disconnectToMesh() {
+        this.mesh = null;
+        //TODO: отключение от сети вызовом внутреннего метода сети
     }
 
     /**
@@ -169,7 +198,7 @@ public abstract class Structure {
      * Тем, кому нужна механика работы структуры, необходимо переопределить логику работы самостоятельно
      */
     public void update() {
-        if (useCooldown() && castChance()) {
+        if (useCooldown() && castChanceWork()) {
             // Ваша реализация обновления структуры
         }
     }
