@@ -28,7 +28,7 @@ public class Converter extends Structure {
      */
     @Override
     public void update() {
-        if (super.useCooldown() && super.castChance()) {
+        if (super.useCooldown() && super.castChanceWork()) {
             //TODO: сделать перекачку энергии
         }
     }
