@@ -9,6 +9,7 @@ public class Converter extends Structure {
     private Mesh outputMash;
     private double coefficient;
     private double chance_use;
+    private double amount = 0;
 
     /**
      * Представляет структуру, которая перебрасывает энергию из одной сети в другую
@@ -33,6 +34,19 @@ public class Converter extends Structure {
         }
     }
 
+    /**
+     * Получить количество энергии, которое за раз забирает конвертер из родительской сети
+     */
+    public double getAmount() {
+        return amount;
+    }
+
+    /**
+     * Установить количество энергии, которое за раз забирает конвертер из родительской сети
+     */
+    public void setAmount(double amount) {
+        this.amount = Math.max(0, amount);
+    }
 
     /**
      * Шанс срабатывания конвертации
