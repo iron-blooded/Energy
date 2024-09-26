@@ -1,5 +1,6 @@
 package org.hg.energy;
 
+import org.bukkit.Location;
 import org.hg.energy.Objects.Structure;
 
 import java.util.HashSet;
@@ -40,6 +41,10 @@ public class Mesh {
      */
     public void removeStructure(Structure structure) {
         this.structures.remove(structure);
+        if (getEnergyCount() > getEnergyLimit() && !structure.getLocations().isEmpty()) {
+            Location location = structure.getLocations().get(0);
+            location.getWorld().createExplosion(location, 1);
+        }
     }
 
     /**
