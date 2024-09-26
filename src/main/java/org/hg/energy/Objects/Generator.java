@@ -46,7 +46,7 @@ public class Generator extends Structure {
     @Override
     public void update() {
         if (super.useCooldown() && super.castChanceWork()) {
-            //TODO: сделать добавление в меш энергии
+            super.getMesh().addEnergy(getAmountEnergyProduced());
         }
     }
 
