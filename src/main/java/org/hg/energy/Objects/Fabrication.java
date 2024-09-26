@@ -16,6 +16,7 @@ public class Fabrication extends Structure {
     private final List<ItemStack> materials;
     private int distance_material;
     private boolean isMultiProduct = false;
+    private double price = 0;
 
     /**
      * Представляет собой производство физических предметов
@@ -37,12 +38,12 @@ public class Fabrication extends Structure {
      */
     @Override
     public void update() {
-        // Смотрим кулдаун и прокнулся ли шанс на работу
-        if (useCooldown() && castChanceWork()) {
+        // Смотрим кулдаун, прокнулся ли шанс на работу и хватает ли энергии в сети
+        if (super.getMesh().getEnergyCount() - getPrice() >= 0 && useCooldown() && castChanceWork()) {
             if (consumeResources()) {
-                //TODO: вычитание энергии из сети
+                super.getMesh().removeEnergy(getPrice());
                 ItemStack product = getRandomProduct();
-                for (Inventory inventory: getNearInventories()){
+                for (Inventory inventory : getNearInventories()) {
                     HashMap<Integer, ItemStack> notAdded = inventory.addItem(product);
                     if (notAdded.isEmpty()) {
                         product = null;
@@ -50,8 +51,11 @@ public class Fabrication extends Structure {
                     }
                     product = notAdded.values().iterator().next();
                 }
-                if (product != null){
-                    Location upper_location = Collections.max(super.getLocations(), Comparator.comparingDouble(Location::getY)).add(0, 1, 0);
+                if (product != null) {
+                    Location upper_location = Collections.max(
+                            super.getLocations(),
+                            Comparator.comparingDouble(Location::getY)
+                                                             ).add(0, 1, 0);
                     upper_location.getWorld().dropItem(upper_location, product);
                 }
             } else {
@@ -61,7 +65,24 @@ public class Fabrication extends Structure {
         }
     }
 
-    private List<Inventory> getNearInventories(){
+    /**
+     * Получить цену, за которую работает фабрикатор
+     */
+    public double getPrice() {
+        return price;
+    }
+
+    /**
+     * Задать цену, за которую будет работать фабрикатор
+     */
+    public void setPrice(double price) {
+        this.price = Math.max(0, price);
+    }
+
+    /**
+     * Получить ближайшие инвентари, которые заданы radius
+     */
+    private List<Inventory> getNearInventories() {
         int radius = getDistanceMaterial();
         // Ищем все хранилища в радиусе от структуры
         List<Inventory> inventories = new ArrayList<>();
