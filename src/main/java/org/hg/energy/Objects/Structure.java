@@ -25,7 +25,7 @@ public abstract class Structure {
      * @param name      имя структуры
      * @param locations каким блокам соответствует структура
      */
-    public Structure(String name, List<Location> locations) {
+    public Structure(@NotNull String name, @NotNull List<Location> locations) {
         this.name = name;
         setLocations(locations);
         this.uuid = UUID.randomUUID();
@@ -120,7 +120,7 @@ public abstract class Structure {
      *
      * @param name новое имя
      */
-    public void setName(String name) {
+    public void setName(@NotNull String name) {
         this.name = name;
     }
 
@@ -171,7 +171,7 @@ public abstract class Structure {
      *
      * @param mesh сеть, к которой нужно присоединить структуру
      */
-    public void connectToMesh(Mesh mesh) {
+    public void connectToMesh(@NotNull Mesh mesh) {
         this.mesh = mesh;
     }
 
