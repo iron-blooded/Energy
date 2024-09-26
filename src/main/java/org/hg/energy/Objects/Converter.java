@@ -6,7 +6,7 @@ import org.hg.energy.Mesh;
 import java.util.List;
 
 public class Converter extends Structure {
-    private Mesh outputMash;
+    private Mesh outputMesh;
     private double coefficient;
     private double chance_use;
     private double amount = 0;
@@ -30,7 +30,16 @@ public class Converter extends Structure {
     @Override
     public void update() {
         if (super.useCooldown() && super.castChanceWork()) {
-            //TODO: сделать перекачку энергии
+            if (super.getMesh().getEnergyCount() - getAmount() > 0
+                    && this.getOutputMesh().getEnergyCount() + (getAmount() * getCoefficient())
+                    <= this.getOutputMesh().getEnergyLimit()) {
+                if (super.getMesh().removeEnergy(getAmount()) && this.getOutputMesh().addEnergy(
+                        getAmount() * getCoefficient())) {
+                    throw new RuntimeException("При конвертации добавлении энергии произошла ошибка");
+                }
+            } else {
+                //TODO: тут звук пуф такой типа вхолостую
+            }
         }
     }
 
@@ -89,8 +98,8 @@ public class Converter extends Structure {
      *
      * @return сеть выхода энергии
      */
-    public Mesh getOutputMash() {
-        return outputMash;
+    public Mesh getOutputMesh() {
+        return outputMesh;
     }
 
     /**
@@ -98,9 +107,9 @@ public class Converter extends Structure {
      * <br>
      * Обновление структуры не будет работать по данной сети
      *
-     * @param outputMash структура, в которую нужно отправлять энергию
+     * @param outputMesh структура, в которую нужно отправлять энергию
      */
-    public void setOutputMash(Mesh outputMash) {
-        this.outputMash = outputMash;
+    public void setOutputMesh(Mesh outputMesh) {
+        this.outputMesh = outputMesh;
     }
 }
