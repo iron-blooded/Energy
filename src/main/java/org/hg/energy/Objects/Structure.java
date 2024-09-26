@@ -179,8 +179,8 @@ public abstract class Structure {
      * Отсоединить структуру от сети
      */
     public void disconnectToMesh() {
+        this.mesh.removeStructure(this);
         this.mesh = null;
-        //TODO: отключение от сети вызовом внутреннего метода сети
     }
 
     /**
