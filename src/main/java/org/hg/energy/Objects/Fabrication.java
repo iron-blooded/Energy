@@ -16,6 +16,10 @@ public class Fabrication extends Structure {
     private final List<ItemStack> materials;
     private int distance_material;
     private boolean isMultiProduct = false;
+    //TODO: вариант того, что:
+    // - может быть не выпадет ничего
+    // - с гарантией выпадет что то одно
+    // - гарантировано выпадет 1 или больше хуйни
     private double price = 0;
 
     /**
@@ -252,7 +256,7 @@ public class Fabrication extends Structure {
      * @param itemStack предмет, который нужно убрать
      */
     public void removeMaterial(ItemStack itemStack) {
-        this.products.remove(itemStack);
+        this.materials.remove(itemStack);
     }
 
     /**
