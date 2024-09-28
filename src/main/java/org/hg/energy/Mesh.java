@@ -26,6 +26,12 @@ public class Mesh {
         this.energy_name = energy_name;
     }
 
+    public void updateStructures(){
+        for (Structure structure: this.structures){
+            structure.update();
+        }
+    }
+
     /**
      * Присоединить к сети структуру
      */
