@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+import static org.hg.energy.Objects._InteractInventories.*;
+
 public class Fabrication extends Structure {
     private final Map<ItemStack, Double> products;
     private final Random random;
@@ -44,10 +46,11 @@ public class Fabrication extends Structure {
     public void update() {
         // Смотрим кулдаун, прокнулся ли шанс на работу и хватает ли энергии в сети
         if (super.getMesh().getEnergyCount() - getPrice() >= 0 && useCooldown() && castChanceWork()) {
-            if (consumeResources()) {
+            List<Inventory> inventories = getNearInventories(this.getDistanceMaterial(), super.getLocations());
+            if (consumeResources(inventories, this.getMaterials(), super.getLocations())) {
                 super.getMesh().removeEnergy(getPrice());
                 ItemStack product = getRandomProduct();
-                for (Inventory inventory : getNearInventories()) {
+                for (Inventory inventory : inventories) {
                     HashMap<Integer, ItemStack> notAdded = inventory.addItem(product);
                     if (notAdded.isEmpty()) {
                         product = null;
@@ -83,65 +86,6 @@ public class Fabrication extends Structure {
         this.price = Math.max(0, price);
     }
 
-    /**
-     * Получить ближайшие инвентари, которые заданы radius
-     */
-    private List<Inventory> getNearInventories() {
-        int radius = getDistanceMaterial();
-        // Ищем все хранилища в радиусе от структуры
-        List<Inventory> inventories = new ArrayList<>();
-        for (Location location : super.getLocations()) {
-            for (int x = -radius; x <= radius; x++) {
-                for (int y = -radius; y <= radius; y++) {
-                    for (int z = -radius; z <= radius; z++) {
-                        Block block = location.clone().add(x, y, z).getBlock();
-                        if (block.getState() instanceof InventoryHolder) {
-                            inventories.add(((InventoryHolder) block.getState()).getInventory());
-                        }
-                    }
-                }
-            }
-        }
-        return inventories;
-    }
-
-    /**
-     * Потратить ресурсы для производства
-     *
-     * @return то, хватило ли ресурсов для производства. Если не хватило (false) - ресурсы не потратятся, но и
-     * произвестись ничего не должно
-     */
-    private boolean consumeResources() {
-        // Создаем таблицу для хранения подходящих ItemStack, для их последующего удаления
-        Map<ItemStack, Integer> foundItems = new HashMap<>();
-        // Инициализируем таблицу запрашиваемых материалов
-        Map<ItemStack, Integer> requestsMaterials = new HashMap<>();
-        for (ItemStack material : materials) {
-            requestsMaterials.merge(material, material.getAmount(), Integer::sum);
-        }
-        // Проверяем все хранилища и собираем подходящие ItemStack
-        for (Inventory inventory : getNearInventories()) {
-            for (ItemStack itemStack : inventory.getContents()) {
-                if (itemStack != null) {
-                    for (ItemStack material : requestsMaterials.keySet()) {
-                        if (requestsMaterials.get(material) > 0 && material.isSimilar(itemStack)) {
-                            int minus = Math.min(requestsMaterials.get(material), itemStack.getAmount());
-                            requestsMaterials.put(material, requestsMaterials.get(material) - minus);
-                            foundItems.put(itemStack, minus); //Сколько нужно будет вычесть
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        if (Collections.max(requestsMaterials.values()) > 0) { //Есть ли требуемые материалы в полной мере
-            return false;
-        }
-        for (ItemStack item : foundItems.keySet()) {
-            item.setAmount(item.getAmount() - foundItems.get(item));
-        }
-        return true;
-    }
 
 
     /**
