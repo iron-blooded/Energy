@@ -13,6 +13,7 @@ public class Mesh {
     private String display_name;
     private String energy_name;
     private double energy_count = 0;
+    private boolean enabled = false;
 
     /**
      * Представляет объект сети, к которой подключаются блоки для обмена энергией
@@ -26,9 +27,11 @@ public class Mesh {
         this.energy_name = energy_name;
     }
 
-    public void updateStructures(){
-        for (Structure structure: this.structures){
-            structure.update();
+    public void updateStructures() {
+        if (enabled) {
+            for (Structure structure : this.structures) {
+                structure.update();
+            }
         }
     }
 
