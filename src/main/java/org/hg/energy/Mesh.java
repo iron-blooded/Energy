@@ -23,8 +23,8 @@ public class Mesh {
      */
     public Mesh(String display_name, String energy_name) {
         this.uuid = UUID.randomUUID();
-        this.display_name = display_name;
-        this.energy_name = energy_name;
+        setDisplayName(display_name);
+        setEnergyName(energy_name);
     }
 
     public void updateStructures() {
@@ -112,8 +112,13 @@ public class Mesh {
 
     /**
      * Задать отображаемое имя сети
+     *
+     * @throws RuntimeException если имя сети длиннее 16 символов или содержит пробел
      */
-    public void setDisplay_name(String display_name) {
+    public void setDisplayName(String display_name) {
+        if (energy_name.length() > 16 || energy_name.contains(" ")) {
+            throw new RuntimeException("Имя сети не прошло валидацию!");
+        }
         this.display_name = display_name;
     }
 
@@ -135,8 +140,12 @@ public class Mesh {
      * Задать имя энергии в сети
      *
      * @param energy_name имя
+     * @throws RuntimeException если имя энергии длиннее 16 символов или содержит пробел
      */
     public void setEnergyName(String energy_name) {
+        if (energy_name.length() > 16 || energy_name.contains(" ")) {
+            throw new RuntimeException("Имя энергии не прошло валидацию!");
+        }
         this.energy_name = energy_name;
     }
 
