@@ -2,26 +2,21 @@ package org.hg.energy.Objects;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static org.hg.energy.Objects._InteractInventories.*;
+import static org.hg.energy.Objects._InteractInventories.consumeResources;
+import static org.hg.energy.Objects._InteractInventories.getNearInventories;
 
 public class Fabrication extends Structure {
     private final Map<ItemStack, Double> products;
     private final Random random;
     private final List<ItemStack> materials;
     private int distance_material;
-    private boolean isMultiProduct = false;
-    //TODO: вариант того, что:
-    // - может быть не выпадет ничего
-    // - с гарантией выпадет что то одно
-    // - гарантировано выпадет 1 или больше хуйни
+    private MultiProduct isMultiProduct = MultiProduct.MaybeNothing;
     private double price = 0;
 
     /**
@@ -49,21 +44,29 @@ public class Fabrication extends Structure {
             List<Inventory> inventories = getNearInventories(this.getDistanceMaterial(), super.getLocations());
             if (consumeResources(inventories, this.getMaterials(), super.getLocations())) {
                 super.getMesh().removeEnergy(getPrice());
-                ItemStack product = getRandomProduct();
+                List<ItemStack> products = getRandomProducts();
                 for (Inventory inventory : inventories) {
-                    HashMap<Integer, ItemStack> notAdded = inventory.addItem(product);
-                    if (notAdded.isEmpty()) {
-                        product = null;
-                        break;
+                    for (ItemStack product : products) {
+                        if (product.getAmount() > 0) {
+                            HashMap<Integer, ItemStack> notAdded = inventory.addItem(product);
+                            if (notAdded.isEmpty()) {
+                                product.setAmount(0);
+                            } else {
+                                product.setAmount(notAdded.values().iterator().next().getAmount());
+                            }
+                        }
                     }
-                    product = notAdded.values().iterator().next();
                 }
-                if (product != null) {
+                if (!products.isEmpty()) {
                     Location upper_location = Collections.max(
                             super.getLocations(),
                             Comparator.comparingDouble(Location::getY)
                                                              ).add(0, 1, 0);
-                    upper_location.getWorld().dropItem(upper_location, product);
+                    for (ItemStack product : products) {
+                        if (product.getAmount() > 0) {
+                            upper_location.getWorld().dropItem(upper_location, product);
+                        }
+                    }
                 }
             } else {
                 //TODO: Сделать тут визуальный какой нибудь пух типа не хватило в холостую сработал
@@ -87,47 +90,65 @@ public class Fabrication extends Structure {
     }
 
 
-
     /**
      * Получить случайный предмет из списка продуктов
      *
      * @return случайный предмет из списка продуктов
      */
-    private ItemStack getRandomProduct() {
-        double sum = 0;
-        for (double chance : products.values()) {
-            sum += chance;
-        }
+    private List<ItemStack> getRandomProducts() {
+        List<ItemStack> result = new ArrayList<>();
+        result.add(new ItemStack(Material.AIR));
+        switch (this.getMultiProduct()) {
+            case OneThing -> { //Выпадает гарантировано один
+                double sum = 0;
+                for (double chance : products.values()) {
+                    sum += chance;
+                }
+                double randomValue = random.nextDouble() * sum;
+                double cumulativeSum = 0;
+                for (Map.Entry<ItemStack, Double> entry : products.entrySet()) {
+                    cumulativeSum += entry.getValue();
+                    if (randomValue <= cumulativeSum) {
+                        result.add(entry.getKey());
+                        return result;
+                    }
+                }
+            }
+            case Lot -> {  // Выпадет один или более
+                for (ItemStack product : products.keySet()) {
+                    if (random.nextDouble() * 100 <= products.get(product)) {
+                        result.add(product);
+                    }
+                }
+                return result;
+            }
+            case MaybeNothing -> { //Может не выпасть ничего
+                for (ItemStack product : products.keySet()) {
+                    if (random.nextDouble() * 100 <= products.get(product)) {
+                        result.add(product);
+                        return result;
 
-        double randomValue = random.nextDouble() * sum;
-
-        double cumulativeSum = 0;
-        for (Map.Entry<ItemStack, Double> entry : products.entrySet()) {
-            cumulativeSum += entry.getValue();
-            if (randomValue <= cumulativeSum) {
-                return entry.getKey();
+                    }
+                }
+            }
+            default -> {
             }
         }
-        return new ItemStack(Material.AIR);
-//        throw new RuntimeException("Сумма шансов не равна 1");
+
+        return result;
     }
 
     /**
-     * Узнать, производит ли фабрикатор несколько предметов или только один согласно таблице продуктов.
-     *
-     * @return True - если за раз производит несколько. False - если за раз производит только один
+     * Узнать, по какой логике фабрикатор производит предметы
      */
-    public boolean isMultiProduct() {
+    public MultiProduct getMultiProduct() {
         return isMultiProduct;
     }
 
     /**
-     * Устанавливает, должен ли фабрикатор производить несколько предметов, или гарантировано только один из таблицы
-     * продуктов.
-     *
-     * @param multiProduct нужно ли производить несколько предметов
+     * Устанавливает, по какой логике фабрикатор должен производить предметы
      */
-    public void setMultiProduct(boolean multiProduct) {
+    public void setMultiProduct(MultiProduct multiProduct) {
         isMultiProduct = multiProduct;
     }
 
