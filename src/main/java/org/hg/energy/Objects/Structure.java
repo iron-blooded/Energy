@@ -18,6 +18,7 @@ public abstract class Structure {
     private int cooldown_required;
     private int cooldown;
     private double chance;
+    private double volume = 0;
 
     /**
      * Представляет собой структуру
@@ -60,7 +61,7 @@ public abstract class Structure {
      * @return True - если сработала, False - если нет
      */
     public boolean castChanceWork() {
-        return Math.random() * 100 > getChanceWork();
+        return Math.random() * 100 <= getChanceWork();
     }
 
     /**
@@ -148,7 +149,9 @@ public abstract class Structure {
         }
         this.locations = new HashMap<>();
         for (Location location : locations) {
-            this.locations.put(location, location.getBlock().getType());
+            if (location.getWorld() != null) {
+                this.locations.put(location, location.getBlock().getType());
+            }
         }
     }
 
@@ -206,9 +209,16 @@ public abstract class Structure {
     /**
      * Получение объема, который может хранить структура
      *
-     * @return по умолчанию (сейчас) возвращает ноль. Кому надо - переопределит
      */
     public double getVolume() {
-        return 0;
+        return this.volume;
+    }
+    /**
+     * Установка объема
+     *
+     * @param volume новый объем
+     */
+    public void setVolume(double volume) {
+        this.volume = Math.max(volume, 0);
     }
 }

@@ -67,7 +67,7 @@ public class _InteractInventories {
                 }
             }
         }
-        if (Collections.max(requestsMaterials.values()) > 0) { //Есть ли требуемые материалы в полной мере
+        if (!requestsMaterials.isEmpty() && Collections.max(requestsMaterials.values()) > 0) { //Есть ли требуемые материалы в полной мере
             return false;
         }
         for (ItemStack item : foundItems.keySet()) {

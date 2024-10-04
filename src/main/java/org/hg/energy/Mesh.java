@@ -3,9 +3,7 @@ package org.hg.energy;
 import org.bukkit.Location;
 import org.hg.energy.Objects.Structure;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class Mesh {
     private final UUID uuid;
@@ -36,10 +34,31 @@ public class Mesh {
     }
 
     /**
+     * Включена ли сеть
+     */
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    /**
+     * Задать, включена сеть или нет
+     */
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    /**
+     * Получить список структур в сети
+     */
+    public List<Structure> getStructures() {
+        return new ArrayList<>(this.structures);
+    }
+
+    /**
      * Присоединить к сети структуру
      */
     public void addStructure(Structure structure) {
-        if (!structure.getMesh().equals(this)) {
+        if (structure.getMesh() == null || !structure.getMesh().equals(this)) {
             structure.connectToMesh(this);
         }
         this.structures.add(structure);
@@ -104,10 +123,17 @@ public class Mesh {
      */
     public double getEnergyLimit() {
         if (this.structures.isEmpty()) {
-            return 0D;
+            return 0;
         } else {
             return structures.stream().mapToDouble(Structure::getVolume).sum();
         }
+    }
+
+    /**
+     * Получить имя сети
+     */
+    public String getDisplayName() {
+        return display_name;
     }
 
     /**
@@ -116,17 +142,10 @@ public class Mesh {
      * @throws RuntimeException если имя сети длиннее 16 символов или содержит пробел
      */
     public void setDisplayName(String display_name) {
-        if (energy_name.length() > 16 || energy_name.contains(" ")) {
+        if (display_name.length() > 16 || display_name.contains(" ")) {
             throw new RuntimeException("Имя сети не прошло валидацию!");
         }
         this.display_name = display_name;
-    }
-
-    /**
-     * Получить имя сети
-     */
-    public String getDisplayName() {
-        return display_name;
     }
 
     /**
