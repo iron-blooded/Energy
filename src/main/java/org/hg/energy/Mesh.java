@@ -7,7 +7,7 @@ import java.util.*;
 
 public class Mesh {
     private final UUID uuid;
-    private final Set<Structure> structures = new HashSet<>();
+    private Set<Structure> structures = new TreeSet<>(Comparator.comparingInt(Structure::getPriority));
     private String display_name;
     private String energy_name;
     private double energy_count = 0;

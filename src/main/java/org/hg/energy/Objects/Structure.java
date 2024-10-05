@@ -19,6 +19,7 @@ public abstract class Structure {
     private int cooldown;
     private double chance;
     private double volume = 0;
+    private int priority = 9494;
 
     /**
      * Представляет собой структуру
@@ -33,6 +34,25 @@ public abstract class Structure {
         this.cooldown_required = 0;
         this.cooldown = 0;
         this.chance = 100;
+    }
+
+    /**
+     * Получить приоритет, с которым должна выполнятся структура в сети. 0 - первые, 1 - вторые и т.д.
+     * <br>
+     * Каждая наследующая структура должна установить приоритет, иначе будет ошибка
+     */
+    public int getPriority() {
+        if (priority == 9494) {
+            throw new RuntimeException("Назначь приоритет!");
+        }
+        return this.priority;
+    }
+
+    /**
+     * Задать приоритет, с которым будет выполняться структура в сети
+     */
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 
     /**
@@ -208,11 +228,11 @@ public abstract class Structure {
 
     /**
      * Получение объема, который может хранить структура
-     *
      */
     public double getVolume() {
         return this.volume;
     }
+
     /**
      * Установка объема
      *

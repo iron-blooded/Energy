@@ -22,6 +22,7 @@ public class Converter extends Structure {
         super(name, locations);
         this.coefficient = 0;
         this.chance_use = 0;
+        super.setPriority(2);
     }
 
     /**

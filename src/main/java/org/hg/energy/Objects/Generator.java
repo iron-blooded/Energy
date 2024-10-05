@@ -28,6 +28,7 @@ public class Generator extends Structure {
     public Generator(@NotNull String name, @NotNull List<Location> locations) {
         super(name, locations);
         distance_material = 2;
+        super.setPriority(1);
     }
 
 

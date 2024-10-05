@@ -31,6 +31,7 @@ public class Fabrication extends Structure {
         materials = new ArrayList<>();
         distance_material = 2;
         random = new Random();
+        super.setPriority(3);
     }
 
     /**

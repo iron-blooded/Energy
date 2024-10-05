@@ -13,6 +13,7 @@ public class Container extends Structure {
      */
     public Container(String name, List<Location> locations) {
         super(name, locations);
+        super.setPriority(0);
     }
 
 }
