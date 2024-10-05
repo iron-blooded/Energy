@@ -42,37 +42,46 @@ public class Fabrication extends Structure {
     public void update() {
         // Смотрим кулдаун, прокнулся ли шанс на работу и хватает ли энергии в сети
         if (super.getMesh().getEnergyCount() - getPrice() >= 0 && useCooldown() && castChanceWork()) {
-            List<Inventory> inventories = getNearInventories(this.getDistanceMaterial(), super.getLocations());
-            if (consumeResources(inventories, this.getMaterials(), super.getLocations())) {
-                super.getMesh().removeEnergy(getPrice());
-                List<ItemStack> products = getRandomProducts();
-                for (Inventory inventory : inventories) {
-                    for (ItemStack product : products) {
-                        if (product.getAmount() > 0) {
-                            HashMap<Integer, ItemStack> notAdded = inventory.addItem(product);
-                            if (notAdded.isEmpty()) {
-                                product.setAmount(0);
-                            } else {
-                                product.setAmount(notAdded.values().iterator().next().getAmount());
-                            }
-                        }
-                    }
-                }
-                if (!products.isEmpty()) {
-                    Location upper_location = Collections.max(
-                            super.getLocations(),
-                            Comparator.comparingDouble(Location::getY)
-                                                             ).add(0, 1, 0);
-                    for (ItemStack product : products) {
-                        if (product.getAmount() > 0) {
-                            upper_location.getWorld().dropItem(upper_location, product);
-                        }
-                    }
-                }
-            } else {
-                //TODO: Сделать тут визуальный какой нибудь пух типа не хватило в холостую сработал
-            }
+            work();
+        }
+    }
 
+    /**
+     * Представляет собой метод, который отвечает за работу структуры
+     * <br>
+     * При этом не должны учитываться такие параметры как шанс работы и кулдаун
+     */
+    @Override
+    public void work() {
+        List<Inventory> inventories = getNearInventories(this.getDistanceMaterial(), super.getLocations());
+        if (consumeResources(inventories, this.getMaterials(), super.getLocations())) {
+            super.getMesh().removeEnergy(getPrice());
+            List<ItemStack> products = getRandomProducts();
+            for (Inventory inventory : inventories) {
+                for (ItemStack product : products) {
+                    if (product.getAmount() > 0) {
+                        HashMap<Integer, ItemStack> notAdded = inventory.addItem(product);
+                        if (notAdded.isEmpty()) {
+                            product.setAmount(0);
+                        } else {
+                            product.setAmount(notAdded.values().iterator().next().getAmount());
+                        }
+                    }
+                }
+            }
+            if (!products.isEmpty()) {
+                Location upper_location = Collections.max(
+                        super.getLocations(),
+                        Comparator.comparingDouble(Location::getY)
+                                                         ).add(0, 1, 0);
+                for (ItemStack product : products) {
+                    if (product.getAmount() > 0) {
+                        upper_location.getWorld().dropItem(upper_location, product);
+                    }
+                }
+            }
+        } else {
+            //TODO: Сделать тут визуальный какой нибудь пух типа не хватило в холостую сработал
         }
     }
 

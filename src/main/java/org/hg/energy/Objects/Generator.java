@@ -108,13 +108,22 @@ public class Generator extends Structure {
     @Override
     public void update() {
         if (super.useCooldown() && super.castChanceWork()) {
-            List<Inventory> inventories = getNearInventories(this.getDistanceMaterial(), super.getLocations());
-            if (consumeResources(inventories, this.getMaterials(), super.getLocations())) {
-                super.getMesh().addEnergy(getAmountEnergyProduced());
-            }
+            work();
         }
     }
 
+    /**
+     * Представляет собой метод, который отвечает за работу структуры
+     * <br>
+     * При этом не должны учитываться такие параметры как шанс работы и кулдаун
+     */
+    @Override
+    public void work() {
+        List<Inventory> inventories = getNearInventories(this.getDistanceMaterial(), super.getLocations());
+        if (consumeResources(inventories, this.getMaterials(), super.getLocations())) {
+            super.getMesh().addEnergy(getAmountEnergyProduced());
+        }
+    }
 
     /**
      * @return Возвращает количество генерируемой энергии за период

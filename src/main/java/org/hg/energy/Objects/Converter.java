@@ -31,16 +31,21 @@ public class Converter extends Structure {
     @Override
     public void update() {
         if (super.useCooldown() && super.castChanceWork()) {
-            if (super.getMesh().getEnergyCount() - getAmount() > 0
-                    && this.getOutputMesh().getEnergyCount() + (getAmount() * getCoefficient())
-                    <= this.getOutputMesh().getEnergyLimit()) {
-                if (super.getMesh().removeEnergy(getAmount()) && this.getOutputMesh().addEnergy(
-                        getAmount() * getCoefficient())) {
-                    throw new RuntimeException("При конвертации добавлении энергии произошла ошибка");
-                }
-            } else {
-                //TODO: тут звук пуф такой типа вхолостую
+            work();
+        }
+    }
+
+    @Override
+    public void work(){
+        if (super.getMesh().getEnergyCount() - getAmount() > 0
+                && this.getOutputMesh().getEnergyCount() + (getAmount() * getCoefficient())
+                <= this.getOutputMesh().getEnergyLimit()) {
+            if (super.getMesh().removeEnergy(getAmount()) && this.getOutputMesh().addEnergy(
+                    getAmount() * getCoefficient())) {
+                throw new RuntimeException("При конвертации добавлении энергии произошла ошибка");
             }
+        } else {
+            //TODO: тут звук пуф такой типа вхолостую
         }
     }
 
@@ -58,23 +63,6 @@ public class Converter extends Structure {
         this.amount = Math.max(0, amount);
     }
 
-    /**
-     * Шанс срабатывания конвертации
-     *
-     * @return шанс от 0 до 100%
-     */
-    public double getChanceUse() {
-        return chance_use;
-    }
-
-    /**
-     * Метод, устанавливающий шанс успешной конвертации
-     *
-     * @param chance_use шанс от 0 до 100%
-     */
-    public void setChanceUse(double chance_use) {
-        this.chance_use = Math.max(Math.min(100, chance_use), 0);
-    }
 
     /**
      * Получение коэффициента конвертации энергии
