@@ -160,8 +160,16 @@ public abstract class Structure {
      * @param location Добавляет блок, которому соответствует структура данного генератора
      */
     public void addLocation(@NotNull Location location) {
+        boolean validate = false;
+        for (Location l : locations.keySet()) {
+            if (l.distance(location) < 5) {
+                validate = true;
+            }
+        }
+        if (!validate) {
+            return;
+        }
         location.add(location);
-        //TODO: проверка, как далеко новая локация от старой
     }
 
     /**
@@ -192,7 +200,13 @@ public abstract class Structure {
      */
     public void checkLocationsMatching() {
         for (Location location : locations.keySet()) {
-            if (location.getBlock().getType().equals(locations.get(location))) {
+            boolean validate = false;
+            for (Location l : locations.keySet()) {
+                if (l.distance(location) < 5) {
+                    validate = true;
+                }
+            }
+            if (!validate || location.getBlock().getType().equals(locations.get(location))) {
                 location.createExplosion(0);
                 this.disconnectToMesh();
                 return;
