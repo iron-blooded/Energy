@@ -37,6 +37,17 @@ public abstract class Structure {
     }
 
     /**
+     * Представляет собой метод, который отвечает за работу структуры
+     * <br>
+     * При этом не должны учитываться такие параметры как шанс работы и кулдаун
+     * <br>
+     * Структура должна переопределить данный класс
+     */
+    public void work() {
+
+    }
+
+    /**
      * Получить приоритет, с которым должна выполнятся структура в сети. 0 - первые, 1 - вторые и т.д.
      * <br>
      * Каждая наследующая структура должна установить приоритет, иначе будет ошибка
@@ -150,6 +161,7 @@ public abstract class Structure {
      */
     public void addLocation(@NotNull Location location) {
         location.add(location);
+        //TODO: проверка, как далеко новая локация от старой
     }
 
     /**
@@ -222,7 +234,7 @@ public abstract class Structure {
      */
     public void update() {
         if (useCooldown() && castChanceWork()) {
-            // Ваша реализация обновления структуры
+            work();
         }
     }
 
