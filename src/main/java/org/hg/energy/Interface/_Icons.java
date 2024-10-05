@@ -245,10 +245,36 @@ public enum _Icons {
         this.function = function;
     }
 
+    /**
+     * Калькулятор для вычисления места иконки
+     *
+     * @param line   линия
+     * @param column колонка
+     * @return число для setItem
+     */
+    public static int calculate(int line, int column) {
+        line--;
+        column--;
+        return (9 * line) + column;
+    }
+
+    /**
+     * Использовать заложенную в иконку функцию
+     *
+     * @param mesh_or_structure или сеть, или структура, которая будет передана как параметр в функцию иконки
+     */
     public void use(Object mesh_or_structure) {
         if (mesh_or_structure instanceof Mesh || mesh_or_structure instanceof Structure) {
             function.apply(mesh_or_structure);
         }
+    }
+
+    public ItemStack getItem() {
+        return this.getItem("empty", "empty");
+    }
+
+    public ItemStack getItem(String arg1) {
+        return this.getItem(arg1, "empty");
     }
 
     public ItemStack getItem(String arg1, String arg2) {
