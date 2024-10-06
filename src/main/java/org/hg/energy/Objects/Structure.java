@@ -106,6 +106,10 @@ public abstract class Structure {
         return cooldown_required;
     }
 
+    public int getMaxCooldown(){
+        return this.cooldown;
+    }
+
     /**
      * Установить требуемое время перезарядки структуры
      *

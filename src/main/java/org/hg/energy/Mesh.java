@@ -25,6 +25,10 @@ public class Mesh {
         setEnergyName(energy_name);
     }
 
+    public UUID getUuid() {
+        return uuid;
+    }
+
     public void updateStructures() {
         if (enabled) {
             for (Structure structure : this.structures) {
