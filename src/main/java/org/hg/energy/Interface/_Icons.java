@@ -12,6 +12,7 @@ import java.util.function.Function;
 import static org.bukkit.ChatColor.*;
 
 public enum _Icons {
+    empty(Material.AIR, "", ""),
     ХранилищеЭнергии(
             Material.BARREL,
             BLUE + "Хранилище энергии",
@@ -229,13 +230,13 @@ public enum _Icons {
                     структуры перестанут обновляться (работать)"""
     );
 
-    private ItemStack item;
+    private final ItemStack item;
     private String lore;
-    private String name;
-    private Function<Object, Void> function = o -> {return null;};
+    private final String name;
+    private final Function<Object, Void> function;
 
     _Icons(Material material, String name, String lore) {
-        this(material, name, lore, o -> {return null;});
+        this(material, name, lore, o -> null);
     }
 
     _Icons(Material material, String name, String lore, Function<Object, Void> function) {
@@ -256,6 +257,23 @@ public enum _Icons {
         line--;
         column--;
         return (9 * line) + column;
+    }
+
+    /**
+     * Проверить, является ли предмет выходцем из данного массива
+     */
+    public _Icons isSimilar(ItemStack item) {
+        if (item == null || item.getItemMeta() == null) {
+            return _Icons.empty;
+        }
+        for (_Icons icons : _Icons.values()) {
+            ItemStack icon = icons.getItem();
+            if (icon.getItemMeta().displayName().equals(item.getItemMeta().displayName())
+                    && icon.getType().equals(item.getType())) {
+                return icons;
+            }
+        }
+        return empty;
     }
 
     /**
