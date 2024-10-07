@@ -6,6 +6,9 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.hg.energy.Mesh;
+import org.hg.energy.Objects.Converter;
+import org.hg.energy.Objects.Fabrication;
+import org.hg.energy.Objects.Generator;
 import org.hg.energy.Objects.Structure;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,6 +55,43 @@ public class SettingsStructure implements InventoryHolder, Window {
         inventory.setItem(calculate(2, 2), ИспользоатьШансРаботыСтруктуры.getItem());
         inventory.setItem(calculate(2, 3), ЗадатьКулдаун.getItem());
         inventory.setItem(calculate(2, 9), УдалитьСтруктуру.getItem());
+        if (structure instanceof Converter converter) {
+            Mesh outputMesh = new Mesh("empty", "empty_energy");
+            if (converter.getOutputMesh() != null) {
+                outputMesh = converter.getOutputMesh();
+            }
+            inventory.setItem(calculate(3, 1), ЗадатьРасход.getItem(String.valueOf(converter.getAmount())));
+            inventory.setItem(calculate(3, 2), ВыходнаяСеть.getItem(
+                    outputMesh.getDisplayName(),
+                    outputMesh.getEnergyName()
+                                                                   ));
+            inventory.setItem(
+                    calculate(3, 3),
+                    КоофициентКонвертации.getItem(String.valueOf(converter.getCoefficient()))
+                             );
+        } else if (structure instanceof Generator generator) {
+            inventory.setItem(
+                    calculate(3, 1),
+                    ДистаницяМатериал.getItem(String.valueOf(generator.getDistanceMaterial()))
+                             );
+            inventory.setItem(calculate(3, 2), СписокПотребляемыхРесурсов.getItem());
+            inventory.setItem(
+                    calculate(3, 3),
+                    КоличествоЭнергииНаВыходе.getItem(String.valueOf(generator.getAmountEnergyProduced()))
+                             );
+        } else if (structure instanceof Fabrication fabricator) {
+            inventory.setItem(
+                    calculate(3, 1),
+                    ДистаницяМатериал.getItem(String.valueOf(fabricator.getDistanceMaterial()))
+                             );
+            inventory.setItem(calculate(3, 2), СписокПотребляемыхРесурсов.getItem());
+            inventory.setItem(calculate(3, 3), СписокПроизводимыхПредметов.getItem());
+            inventory.setItem(calculate(3, 4), ЦенаПроизводства.getItem(String.valueOf(fabricator.getPrice())));
+            inventory.setItem(
+                    calculate(3, 5),
+                    ЛогикаПроизводства.getItem(String.valueOf(fabricator.getMultiProduct().getName()))
+                             );
+        }
         return inventory;
     }
 
