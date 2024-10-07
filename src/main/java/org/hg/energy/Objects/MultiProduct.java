@@ -6,9 +6,15 @@ public enum MultiProduct {
     Lot(2, "Гарантировано выпадет 1 или больше");
 
     private final int slot;
+    private final String name;
 
     MultiProduct(int slot, String str) {
         this.slot = slot;
+        this.name = str;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public int getSlot() {
