@@ -54,7 +54,6 @@ public class SettingsStructure implements InventoryHolder, Window {
                                                )
                          );
         inventory.setItem(calculate(2, 1), ВызватьРаботуСтруктуры.getItem(""));
-        inventory.setItem(calculate(2, 2), ИспользоатьШансРаботыСтруктуры.getItem(""));
         inventory.setItem(calculate(2, 3), ЗадатьКулдаун.getItem(""));
         inventory.setItem(calculate(2, 9), УдалитьСтруктуру.getItem(""));
         if (structure instanceof Converter converter) {
