@@ -67,6 +67,6 @@ public class ListMeshes implements Window, InventoryHolder, Pagination {
 
     @Override
     public _ShareData getObject() {
-        return new _ShareData(null, structure, null, data.getPlugin());
+        return data;
     }
 }

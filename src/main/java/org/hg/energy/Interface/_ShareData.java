@@ -12,6 +12,7 @@ public class _ShareData {
     private Location location;
     private Energy plugin;
     private InventoryHolder holder;
+    private boolean bol = false;
 
     public _ShareData(Mesh mesh, Structure structure, Location location, Energy plugin) {
         this.mesh = mesh;
@@ -55,5 +56,13 @@ public class _ShareData {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    public boolean isBoolean() {
+        return bol;
+    }
+
+    public void setBoolean(boolean bol) {
+        this.bol = bol;
     }
 }

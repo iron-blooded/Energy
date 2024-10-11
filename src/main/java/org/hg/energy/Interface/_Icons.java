@@ -13,10 +13,7 @@ import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.hg.energy.Mesh;
-import org.hg.energy.Objects.Container;
-import org.hg.energy.Objects.Converter;
-import org.hg.energy.Objects.Fabrication;
-import org.hg.energy.Objects.Generator;
+import org.hg.energy.Objects.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +27,7 @@ public enum _Icons {
     empty(Material.AIR, "", ""),
     ХранилищеЭнергии(
             Material.BARREL,
-            BLUE + "Хранилище энергии\n",
+            BLUE + "Хранилище энергии",
             WHITE + "Хранит энергию, и больше ничего",
             (shareData) -> {
                 if (shareData.getLocation() != null) {
@@ -109,19 +106,20 @@ public enum _Icons {
             WHITE + "Вызвать работу структуры",
             GRAY + "" + ITALIC + "Не дожидаясь кулдаунов и не проверяя, хватает ли энергии\n"
                     + WHITE + "Техническая функция\n"
-                    + WHITE + "Создана для ивентеров\n"
+                    + WHITE + "Создана для ивентеров\n",
+            shareData -> {
+                if (shareData.getStructure() != null) {
+                    shareData.getStructure().work();
+                    return new SettingsStructure(shareData).getInventory();
+                }
+                return null;
+            }
     ),
     ШансРаботыСтруктуры(
             Material.COMPARATOR,
             WHITE + "Задать шанс, с которым структура выполнит работу",
             GRAY + "" + ITALIC + "(Если работа у структуры вообще есть)\n" +
                     GREEN + "Текущий шанс: {}%"
-    ),
-    ИспользоатьШансРаботыСтруктуры(
-            Material.COMMAND_BLOCK,
-            RED + "Пробросить шанс, что структура сработала",
-            WHITE + "Техническая функция\n"
-                    + WHITE + "Создана для ивентеров"
     ),
     КулдаунРаботыСтруктуры(
             Material.CLOCK,
@@ -189,16 +187,39 @@ public enum _Icons {
             Material.BARRIER,
             RED + "Удалить структуру",
             GOLD + "Внимание! Действие произойдет\n" +
-                    GOLD + "без повторного подтверждения!"
-
+                    GOLD + "без повторного подтверждения!",
+            shareData -> {
+                if (shareData.getStructure() != null) {
+                    Mesh mesh = shareData.getMesh();
+                    if (mesh == null) {
+                        mesh = shareData.getStructure().getMesh();
+                    }
+                    shareData.getStructure().disconnectToMesh();
+                    if (mesh != null) {
+                        return new SettingsMesh(
+                                new _ShareData(mesh, null, null, shareData.getPlugin())
+                        ).getInventory();
+                    }
+                }
+                return null;
+            }
     ),
     УдалитьСеть(
             Material.BARRIER,
             RED + "Удалить сеть",
             GOLD + "Внимание! Действие произойдет\n" +
-                    GOLD + "без повторного подтверждения!\n"+
-                    RED+"Это приведет к удалению всех\n"+
-                    RED+"подключенных элементов!"
+                    GOLD + "без повторного подтверждения!\n" +
+                    RED + "Это приведет к удалению всех\n" +
+                    RED + "подключенных элементов!",
+            shareData -> {
+                if (shareData.getMesh() != null) {
+                    shareData.getPlugin().meshes.remove(shareData.getMesh());
+                    return new ListMeshes(
+                            new _ShareData(null, null, null, shareData.getPlugin())
+                    ).getInventory();
+                }
+                return null;
+            }
 
     ),
     ЗадатьРасход(
@@ -212,7 +233,14 @@ public enum _Icons {
             Material.NETHER_STAR,
             GOLD + "Задать выходную сеть",
             WHITE + "Текущая выходная сеть: {}\n" +
-                    WHITE + "Энергия в выходной сети: {}"
+                    WHITE + "Энергия в выходной сети: {}",
+            shareData -> {
+                if (shareData.getStructure() instanceof Converter converter) {
+                    shareData.setBoolean(true);
+                    return new ListMeshes(shareData).getInventory();
+                }
+                return null;
+            }
     ),
     КоофициентКонвертации(
             Material.DAYLIGHT_DETECTOR,
@@ -256,7 +284,20 @@ public enum _Icons {
             LIGHT_PURPLE + "Задать логику производства",
             GRAY + "" + ITALIC + "Устанавливает, по какой логике\n" +
                     GRAY + ITALIC + "фабрикатор должен производить предметы\n" +
-                    WHITE + "Задано: {}"
+                    WHITE + "Задано: {}",
+            shareData -> {
+                if (shareData.getStructure() instanceof Fabrication fabricator) {
+                    List<MultiProduct> list = List.of(MultiProduct.values());
+                    int pos = list.indexOf(fabricator.getMultiProduct());
+                    pos++;
+                    if (pos > list.size() - 1) {
+                        pos = 0;
+                    }
+                    fabricator.setMultiProduct(list.get(pos));
+                    return new SettingsStructure(shareData).getInventory();
+                }
+                return null;
+            }
     ),
     ИмяСети(
             Material.BIRCH_SIGN,
@@ -286,7 +327,8 @@ public enum _Icons {
             AQUA + "Максимальное кол-во энергии",
             WHITE + "Максимум энергии, которое\n" +
                     WHITE + "может вместить в себя сеть\n"
-                    + WHITE + "составляет: {} {}"
+                    + WHITE + "составляет: {} {}",
+            shareData -> null
     ),
     ДобавитьЭнергию(
             Material.CLAY_BALL,
@@ -298,20 +340,47 @@ public enum _Icons {
             GREEN + "Сеть включена",
             WHITE + "Нажмите, что бы выключить.\n" +
                     GRAY + ITALIC + "При отключенной сети, привязанные\n"
-                    + GRAY + ITALIC + "структуры перестанут обновляться (работать)"
+                    + GRAY + ITALIC + "структуры перестанут обновляться (работать)",
+            shareData -> {
+                if (shareData.getMesh() != null) {
+                    shareData.getMesh().setEnabled(false);
+                    return new SettingsMesh(shareData).getInventory();
+                }
+                return null;
+            }
     ),
     ВключитьСеть(
             Material.RED_CONCRETE,
             GREEN + "Сеть выключена",
             WHITE + "Нажмите, что бы включить.\n" +
                     GRAY + ITALIC + "При отключенной сети, привязанные\n"
-                    + GRAY + ITALIC + "структуры перестанут обновляться (работать)"
+                    + GRAY + ITALIC + "структуры перестанут обновляться (работать)",
+            shareData -> {
+                if (shareData.getMesh() != null) {
+                    shareData.getMesh().setEnabled(true);
+                    return new SettingsMesh(shareData).getInventory();
+                }
+                return null;
+            }
     ),
     ИконкаСети(
             Material.NETHER_STAR,
             LIGHT_PURPLE + "Сеть",
-            GOLD + "Имя:{}\n" +
-                    GRAY + "Энергия:{}"
+            GOLD + "Имя: {}\n" +
+                    GRAY + "Энергия: {}",
+            shareData -> {
+                if (shareData.getStructure() != null && shareData.getMesh() != null) {
+                    if (shareData.isBoolean() && shareData.getStructure() instanceof Converter converter) {
+                        converter.setOutputMesh(shareData.getMesh());
+                    } else {
+                        shareData.getMesh().addStructure(shareData.getStructure());
+                    }
+                    return new SettingsStructure(shareData).getInventory();
+                } else if (shareData.getMesh() != null) {
+                    return new SettingsMesh(shareData).getInventory();
+                }
+                return null;
+            }
     ),
     СоздатьСеть(
             Material.COOKIE,
@@ -321,8 +390,11 @@ public enum _Icons {
             shareData -> {
                 Mesh mesh = new Mesh("new_mesh", "energy");
                 if (shareData.getStructure() != null) {
-                    mesh.addStructure(shareData.getStructure());
-                    shareData.getStructure().connectToMesh(mesh);
+                    if (shareData.isBoolean() && shareData.getStructure() instanceof Converter converter) {
+                        converter.setOutputMesh(mesh);
+                    } else {
+                        mesh.addStructure(shareData.getStructure());
+                    }
                 }
                 shareData.getPlugin().meshes.add(mesh);
                 return new SettingsMesh(new _ShareData(mesh, null, null, shareData.getPlugin())).getInventory();
