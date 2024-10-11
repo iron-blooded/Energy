@@ -322,6 +322,7 @@ public enum _Icons {
                 Mesh mesh = new Mesh("new_mesh", "energy");
                 if (shareData.getStructure() != null) {
                     mesh.addStructure(shareData.getStructure());
+                    shareData.getStructure().connectToMesh(mesh);
                 }
                 shareData.getPlugin().meshes.add(mesh);
                 return new SettingsMesh(new _ShareData(mesh, null, null, shareData.getPlugin())).getInventory();
@@ -462,7 +463,7 @@ public enum _Icons {
     }
 
     public ItemStack getItem(String arg1, String arg2, UUID uuid) {
-        lore = lore.replaceFirst("[{][}]", arg1);
+        String lore = this.lore.replaceFirst("[{][}]", arg1);
         lore = lore.replaceFirst("[{][}]", arg2);
         ItemStack item = this.item.clone();
         ItemMeta itemMeta = item.getItemMeta();
