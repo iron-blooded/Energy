@@ -1,12 +1,18 @@
 package org.hg.energy.Interface;
 
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.hg.energy.Mesh;
 import org.hg.energy.Objects.Container;
 import org.hg.energy.Objects.Converter;
 import org.hg.energy.Objects.Fabrication;
@@ -28,12 +34,13 @@ public enum _Icons {
             WHITE + "Хранит энергию, и больше ничего",
             (shareData) -> {
                 if (shareData.getLocation() != null) {
-                    return new SettingsStructure(new Container(
+                    shareData.setStructure(new Container(
                             "fumo",
                             Collections.singletonList(shareData.getLocation())
-                    )).getInventory();
+                    ));
+                    return new SettingsStructure(shareData).getInventory();
                 } else if (shareData.getStructure() != null) {
-                    return new SettingsStructure(shareData.getStructure()).getInventory();
+                    return new SettingsStructure(shareData).getInventory();
                 }
                 return null;
             }
@@ -44,12 +51,13 @@ public enum _Icons {
             WHITE + "Генерирует энергию, потребляя ресурсы",
             (shareData) -> {
                 if (shareData.getLocation() != null) {
-                    return new SettingsStructure(new Generator(
+                    shareData.setStructure(new Generator(
                             "fumo",
                             Collections.singletonList(shareData.getLocation())
-                    )).getInventory();
+                    ));
+                    return new SettingsStructure(shareData).getInventory();
                 } else if (shareData.getStructure() != null) {
-                    return new SettingsStructure(shareData.getStructure()).getInventory();
+                    return new SettingsStructure(shareData).getInventory();
                 }
                 return null;
             }
@@ -62,12 +70,13 @@ public enum _Icons {
                     WHITE + "с заданным коофициентом.",
             (shareData) -> {
                 if (shareData.getLocation() != null) {
-                    return new SettingsStructure(new Converter(
+                    shareData.setStructure(new Converter(
                             "fumo",
                             Collections.singletonList(shareData.getLocation())
-                    )).getInventory();
+                    ));
+                    return new SettingsStructure(shareData).getInventory();
                 } else if (shareData.getStructure() != null) {
-                    return new SettingsStructure(shareData.getStructure()).getInventory();
+                    return new SettingsStructure(shareData).getInventory();
                 }
                 return null;
             }
@@ -79,12 +88,13 @@ public enum _Icons {
                     WHITE + "потребляя при этом энергию.",
             (shareData) -> {
                 if (shareData.getLocation() != null) {
-                    return new SettingsStructure(new Fabrication(
+                    shareData.setStructure(new Fabrication(
                             "fumo",
                             Collections.singletonList(shareData.getLocation())
-                    )).getInventory();
+                    ));
+                    return new SettingsStructure(shareData).getInventory();
                 } else if (shareData.getStructure() != null) {
-                    return new SettingsStructure(shareData.getStructure()).getInventory();
+                    return new SettingsStructure(shareData).getInventory();
                 }
                 return null;
             }
@@ -131,13 +141,42 @@ public enum _Icons {
             GOLD + "Задать блоки, которым соответсвует структура",
             WHITE + "Блоки не должны быть слишком далеко друг от друга"
     ),
-    ПрисоеденитьСтруктуру(
+    ПрисоеденитьСетькКСтруктуре(
             Material.STRING,
-            AQUA + "Присоеденить структуру к сети",
-            GRAY + "" + ITALIC + "(Только к одной)\n" +
+            AQUA + "Присоединить к структуре сеть",
+            GRAY + "" + ITALIC + "(Только одну)\n" +
                     WHITE + "Текущая сеть: {}\n"
-                    + WHITE + "Энергия сети: {}"
-
+                    + WHITE + "Энергия сети: {}",
+            shareData -> {
+                if (shareData.getStructure() != null) {
+                    return new ListMeshes(shareData).getInventory();
+                }
+                return null;
+            }
+    ),
+    СтраницаНазад(
+            getFlag(true),
+            AQUA + "На страницу назад",
+            "",
+            shareData -> {
+                if (shareData.getHolder() instanceof Pagination pagination) {
+                    pagination.setPage(pagination.getPage() - 1);
+                    return shareData.getHolder().getInventory();
+                }
+                return null;
+            }
+    ),
+    СтраницаВперед(
+            getFlag(false),
+            AQUA + "На страницу вперед",
+            "",
+            shareData -> {
+                if (shareData.getHolder() instanceof Pagination pagination) {
+                    pagination.setPage(pagination.getPage() + 1);
+                    return shareData.getHolder().getInventory();
+                }
+                return null;
+            }
     ),
     ЗадатьКоличествоЭнергии(
             Material.BARREL,
@@ -151,6 +190,15 @@ public enum _Icons {
             RED + "Удалить структуру",
             GOLD + "Внимание! Действие произойдет\n" +
                     GOLD + "без повторного подтверждения!"
+
+    ),
+    УдалитьСеть(
+            Material.BARRIER,
+            RED + "Удалить сеть",
+            GOLD + "Внимание! Действие произойдет\n" +
+                    GOLD + "без повторного подтверждения!\n"+
+                    RED+"Это приведет к удалению всех\n"+
+                    RED+"подключенных элементов!"
 
     ),
     ЗадатьРасход(
@@ -258,19 +306,45 @@ public enum _Icons {
             WHITE + "Нажмите, что бы включить.\n" +
                     GRAY + ITALIC + "При отключенной сети, привязанные\n"
                     + GRAY + ITALIC + "структуры перестанут обновляться (работать)"
-    );
+    ),
+    ИконкаСети(
+            Material.NETHER_STAR,
+            LIGHT_PURPLE + "Сеть",
+            GOLD + "Имя:{}\n" +
+                    GRAY + "Энергия:{}"
+    ),
+    СоздатьСеть(
+            Material.COOKIE,
+            GREEN + "Создать новую сеть",
+            WHITE + "И привязать ее к структуре\n" +
+                    GRAY + "(Если возможно)",
+            shareData -> {
+                Mesh mesh = new Mesh("new_mesh", "energy");
+                if (shareData.getStructure() != null) {
+                    mesh.addStructure(shareData.getStructure());
+                }
+                shareData.getPlugin().meshes.add(mesh);
+                return new SettingsMesh(new _ShareData(mesh, null, null, shareData.getPlugin())).getInventory();
+            }
+    ),
+    ;
 
     private final ItemStack item;
     private final String name;
     private final Function<_ShareData, Inventory> function;
     private String lore;
+    private UUID uuid;
 
     _Icons(Material material, String name, String lore) {
         this(material, name, lore, shareData -> null);
     }
 
     _Icons(Material material, String name, String lore, Function<_ShareData, Inventory> function) {
-        this.item = new ItemStack(material);
+        this(new ItemStack(material), name, lore, function);
+    }
+
+    _Icons(ItemStack item, String name, String lore, Function<_ShareData, Inventory> function) {
+        this.item = item.clone();
         this.lore = lore;
         this.name = name;
         this.function = function;
@@ -290,21 +364,22 @@ public enum _Icons {
     }
 
     /**
-     * Проверить, является ли предмет выходцем из данного массива
+     * Проверить, является ли предмет выходцем из иконок
      */
     public static _Icons isSimilar(ItemStack item) {
         if (item == null || item.getItemMeta() == null) {
             return _Icons.empty;
         }
-        for (_Icons icons : _Icons.values()) {
-            ItemStack icon = icons.getItem();
-            if (item.getItemMeta() != null && icon.getItemMeta() != null
-                    && Objects.equals(icon.getItemMeta().displayName(), item.getItemMeta().displayName())
-                    && icon.getType().equals(item.getType())) {
-                return icons;
+        item = item.clone();
+        String name_item = item.getItemMeta().getDisplayName();
+        Material material_item = item.getType();
+        for (_Icons icon : _Icons.values()) {
+            if (icon.getMaterial().equals(material_item) &&
+                    icon.getName().equals(name_item)) {
+                return icon;
             }
         }
-        return empty;
+        return _Icons.empty;
     }
 
     public static void setUUID(ItemMeta itemMeta, UUID uuid) {
@@ -336,6 +411,34 @@ public enum _Icons {
                                                                                                )));
     }
 
+    private static ItemStack getFlag(boolean left) {
+        // Создаем ItemStack с типом GRAY_BANNER
+        ItemStack flag = new ItemStack(Material.GRAY_BANNER);
+        ItemMeta meta = flag.getItemMeta();
+        BannerMeta bannerMeta = (BannerMeta) meta;
+        if (left) {
+            bannerMeta.addPattern(new Pattern(DyeColor.ORANGE, PatternType.STRIPE_LEFT));
+        } else {
+            bannerMeta.addPattern(new Pattern(DyeColor.ORANGE, PatternType.STRIPE_RIGHT));
+        }
+        bannerMeta.addPattern(new Pattern(DyeColor.GRAY, PatternType.CURLY_BORDER));
+        bannerMeta.addPattern(new Pattern(DyeColor.GRAY, PatternType.STRIPE_BOTTOM));
+        bannerMeta.addPattern(new Pattern(DyeColor.GRAY, PatternType.STRIPE_TOP));
+        bannerMeta.addPattern(new Pattern(DyeColor.ORANGE, PatternType.STRIPE_MIDDLE));
+        bannerMeta.addPattern(new Pattern(DyeColor.GRAY, PatternType.CURLY_BORDER));
+        bannerMeta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+        flag.setItemMeta(bannerMeta);
+        return flag;
+    }
+
+    public Material getMaterial() {
+        return this.item.getType();
+    }
+
+    public String getName() {
+        return name;
+    }
+
     /**
      * Использовать заложенную в иконку функцию
      */
@@ -346,12 +449,12 @@ public enum _Icons {
         }
     }
 
-    public ItemStack getItem() {
-        return this.getItem("empty", "empty", null);
-    }
+//    public ItemStack getItem() {
+//        return this.getItem("{{empty1_}}", "{{empty2_}}", null);
+//    }
 
     public ItemStack getItem(String arg1) {
-        return this.getItem(arg1, "empty", null);
+        return this.getItem(arg1, "{{empty2}}", null);
     }
 
     public ItemStack getItem(String arg1, String arg2) {

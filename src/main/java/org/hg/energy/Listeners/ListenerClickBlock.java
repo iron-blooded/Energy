@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.hg.energy.Energy;
 import org.hg.energy.Interface.CreateStructure;
 import org.hg.energy.Interface.SettingsStructure;
+import org.hg.energy.Interface._ShareData;
 
 public class ListenerClickBlock implements Listener {
     Energy plugin;
@@ -34,8 +35,12 @@ public class ListenerClickBlock implements Listener {
                         .filter(str -> str.getLocations().contains(block.getLocation()))
                         .findFirst()
                         .ifPresentOrElse(
-                                structure -> player.openInventory(new SettingsStructure(structure).getInventory()),
-                                () -> player.openInventory(new CreateStructure(block.getLocation()).getInventory())
+                                structure -> player.openInventory(new SettingsStructure(
+                                        new _ShareData(null, structure, null, plugin)
+                                ).getInventory()),
+                                () -> player.openInventory(new CreateStructure(
+                                        new _ShareData(null, null, block.getLocation(), plugin)
+                                ).getInventory())
                                         );
 
             }

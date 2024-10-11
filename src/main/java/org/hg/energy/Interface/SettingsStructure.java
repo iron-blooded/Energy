@@ -16,12 +16,14 @@ import static org.hg.energy.Interface._Icons.*;
 
 public class SettingsStructure implements InventoryHolder, Window {
     private final Structure structure;
+    private _ShareData data;
 
     /**
      * Представляет интерфейс для настройки структуры
      */
-    public SettingsStructure(Structure structure) {
-        this.structure = structure;
+    public SettingsStructure(_ShareData data) {
+        this.structure = data.getStructure();
+        this.data = data;
     }
 
     @Override
@@ -39,11 +41,11 @@ public class SettingsStructure implements InventoryHolder, Window {
                 String.valueOf(structure.getCooldown()),
                 String.valueOf(structure.getMaxCooldown())
                                                                          ));
-        inventory.setItem(calculate(1, 4), ЗадатьБлокиСтруктуры.getItem());
-        inventory.setItem(calculate(1, 5), ПрисоеденитьСтруктуру.getItem(
+        inventory.setItem(calculate(1, 4), ЗадатьБлокиСтруктуры.getItem(""));
+        inventory.setItem(calculate(1, 5), ПрисоеденитьСетькКСтруктуре.getItem(
                 mesh.getDisplayName(),
                 mesh.getEnergyName()
-                                                                        ));
+                                                                             ));
         inventory.setItem(
                 calculate(1, 6),
                 ЗадатьКоличествоЭнергии.getItem(
@@ -51,10 +53,10 @@ public class SettingsStructure implements InventoryHolder, Window {
                         mesh.getEnergyName()
                                                )
                          );
-        inventory.setItem(calculate(2, 1), ВызватьРаботуСтруктуры.getItem());
-        inventory.setItem(calculate(2, 2), ИспользоатьШансРаботыСтруктуры.getItem());
-        inventory.setItem(calculate(2, 3), ЗадатьКулдаун.getItem());
-        inventory.setItem(calculate(2, 9), УдалитьСтруктуру.getItem());
+        inventory.setItem(calculate(2, 1), ВызватьРаботуСтруктуры.getItem(""));
+        inventory.setItem(calculate(2, 2), ИспользоатьШансРаботыСтруктуры.getItem(""));
+        inventory.setItem(calculate(2, 3), ЗадатьКулдаун.getItem(""));
+        inventory.setItem(calculate(2, 9), УдалитьСтруктуру.getItem(""));
         if (structure instanceof Converter converter) {
             Mesh outputMesh = new Mesh("empty", "empty_energy");
             if (converter.getOutputMesh() != null) {
@@ -74,7 +76,7 @@ public class SettingsStructure implements InventoryHolder, Window {
                     calculate(3, 1),
                     ДистаницяМатериал.getItem(String.valueOf(generator.getDistanceMaterial()))
                              );
-            inventory.setItem(calculate(3, 2), СписокПотребляемыхРесурсов.getItem());
+            inventory.setItem(calculate(3, 2), СписокПотребляемыхРесурсов.getItem(""));
             inventory.setItem(
                     calculate(3, 3),
                     КоличествоЭнергииНаВыходе.getItem(String.valueOf(generator.getAmountEnergyProduced()))
@@ -84,8 +86,8 @@ public class SettingsStructure implements InventoryHolder, Window {
                     calculate(3, 1),
                     ДистаницяМатериал.getItem(String.valueOf(fabricator.getDistanceMaterial()))
                              );
-            inventory.setItem(calculate(3, 2), СписокПотребляемыхРесурсов.getItem());
-            inventory.setItem(calculate(3, 3), СписокПроизводимыхПредметов.getItem());
+            inventory.setItem(calculate(3, 2), СписокПотребляемыхРесурсов.getItem(""));
+            inventory.setItem(calculate(3, 3), СписокПроизводимыхПредметов.getItem(""));
             inventory.setItem(calculate(3, 4), ЦенаПроизводства.getItem(String.valueOf(fabricator.getPrice())));
             inventory.setItem(
                     calculate(3, 5),
@@ -97,6 +99,6 @@ public class SettingsStructure implements InventoryHolder, Window {
 
     @Override
     public _ShareData getObject() {
-        return new _ShareData(null, structure, structure.getLocations().get(0));
+        return new _ShareData(null, structure, structure.getLocations().get(0), data.getPlugin());
     }
 }
