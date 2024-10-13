@@ -443,16 +443,7 @@ public enum _Icons {
         if (item == null || item.getItemMeta() == null) {
             return _Icons.empty;
         }
-        item = item.clone();
-        String name_item = item.getItemMeta().getDisplayName();
-        Material material_item = item.getType();
-        for (_Icons icon : _Icons.values()) {
-            if (icon.getMaterial().equals(material_item) &&
-                    icon.getName().equals(name_item)) {
-                return icon;
-            }
-        }
-        return _Icons.empty;
+        return getOrdinal(item);
     }
 
     public static void setUUID(ItemMeta itemMeta, UUID uuid) {
@@ -504,6 +495,29 @@ public enum _Icons {
         return flag;
     }
 
+    private static void setOrdinal(ItemMeta itemMeta, int num) {
+        if (itemMeta == null) {
+            return;
+        }
+        itemMeta.getPersistentDataContainer().set(
+                new NamespacedKey("energy", "ordinal"), PersistentDataType.INTEGER, num);
+    }
+
+    public static _Icons getOrdinal(ItemStack itemStack) {
+        if (itemStack == null || itemStack.getItemMeta() == null) {
+            return _Icons.empty;
+        }
+        int num = 0;
+        try {
+            num = itemStack.getItemMeta().getPersistentDataContainer().get(
+                    new NamespacedKey("energy", "ordinal"),
+                    PersistentDataType.INTEGER
+                                                                          );
+        } catch (Exception ignored) {
+        }
+        return _Icons.values()[num];
+    }
+
     public Material getMaterial() {
         return this.item.getType();
     }
@@ -511,6 +525,10 @@ public enum _Icons {
     public String getName() {
         return name;
     }
+
+//    public ItemStack getItem() {
+//        return this.getItem("{{empty1_}}", "{{empty2_}}", null);
+//    }
 
     /**
      * Использовать заложенную в иконку функцию
@@ -521,10 +539,6 @@ public enum _Icons {
             player.openInventory(inventory);
         }
     }
-
-//    public ItemStack getItem() {
-//        return this.getItem("{{empty1_}}", "{{empty2_}}", null);
-//    }
 
     public ItemStack getItem(String arg1) {
         return this.getItem(arg1, "{{empty2}}", null);
@@ -543,6 +557,7 @@ public enum _Icons {
             itemMeta.setLore(List.of(lore.split("\n")));
             itemMeta.setDisplayName(name);
             setUUID(itemMeta, uuid);
+            setOrdinal(itemMeta, this.ordinal());
             item.setItemMeta(itemMeta);
         }
         return item;
