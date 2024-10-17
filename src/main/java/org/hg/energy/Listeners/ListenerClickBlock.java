@@ -9,6 +9,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.hg.energy.Energy;
 import org.hg.energy.Interface.CreateStructure;
+import org.hg.energy.Interface.ListMeshes;
 import org.hg.energy.Interface.SettingsStructure;
 import org.hg.energy.Interface._ShareData;
 
@@ -29,7 +30,7 @@ public class ListenerClickBlock implements Listener {
         ItemStack item = player.getItemInHand();
         if (item != null && item.getItemMeta() != null && !item.getType().isAir() &&
                 block != null && block.isSolid()) {
-            if (item.getItemMeta().getDisplayName().contains("Настроечный ключ")) {
+            if (item.getItemMeta().getDisplayName().contains("Настроечный ключ")) { // Настройка структур
                 event.setCancelled(true);
                 plugin.getStructures().stream()
                         .filter(str -> str.getLocations().contains(block.getLocation()))
@@ -43,6 +44,9 @@ public class ListenerClickBlock implements Listener {
                                 ).getInventory())
                                         );
 
+            } else if (item.getItemMeta().getDisplayName().contains("поволжье")) {//Настройка сети
+                player.openInventory(new ListMeshes(new _ShareData(null, null, null, plugin), 0).getInventory());
+                event.setCancelled(true);
             }
         }
     }

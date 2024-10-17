@@ -5,24 +5,26 @@ import org.bukkit.ChatColor;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.hg.energy.Mesh;
-import org.hg.energy.Objects.Structure;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.hg.energy.Interface._Icons.calculate;
 
 public class ListMeshes implements Window, InventoryHolder, Pagination {
-    private Structure structure;
     private _ShareData data;
     private int page;
+    private UUID uuid_structure = null;
 
     public ListMeshes(_ShareData data) {
         this(data, 0);
     }
 
     public ListMeshes(_ShareData data, int page) {
-        this.structure = data.getStructure();
+        if (data.getStructure() != null) {
+            this.uuid_structure = data.getStructure().getUuid();
+        }
         this.data = data;
         this.page = page;
     }
@@ -60,7 +62,7 @@ public class ListMeshes implements Window, InventoryHolder, Pagination {
                              );
         }
         inventory.setItem(calculate(6, 6), _Icons.СтраницаВперед.getItem("", ""));
-        inventory.setItem(calculate(6, 5), _Icons.СоздатьСеть.getItem("", "", structure.getUuid()));
+        inventory.setItem(calculate(6, 5), _Icons.СоздатьСеть.getItem("", "", uuid_structure));
         inventory.setItem(calculate(6, 4), _Icons.СтраницаНазад.getItem("", ""));
         return inventory;
     }
