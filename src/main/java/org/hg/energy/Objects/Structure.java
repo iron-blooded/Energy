@@ -103,11 +103,21 @@ public abstract class Structure {
      * @return время перезарядки (в секундах)
      */
     public int getCooldown() {
-        return cooldown_required;
+        return cooldown;
     }
 
-    public int getMaxCooldown(){
-        return this.cooldown;
+    /**
+     * Задать, сколько осталось до срабатывания структуры
+     */
+    public void setCooldown(int cooldown) {
+        this.cooldown = Math.max(0, cooldown);
+    }
+
+    /**
+     * Получить требуемый куладун
+     */
+    public int getMaxCooldown() {
+        return this.cooldown_required;
     }
 
     /**
@@ -115,7 +125,7 @@ public abstract class Structure {
      *
      * @param cooldown_required время перезарядки (в секундах)
      */
-    public void setCooldown(int cooldown_required) {
+    public void setCooldownRequired(int cooldown_required) {
         this.cooldown_required = Math.max(0, cooldown_required);
     }
 

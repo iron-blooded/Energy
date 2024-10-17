@@ -38,14 +38,14 @@ public class SettingsStructure implements InventoryHolder, Window {
         inventory.setItem(calculate(1, 1), ИзменитьИмяСтруктуры.getItem(structure.getName()));
         inventory.setItem(calculate(1, 2), ШансРаботыСтруктуры.getItem(String.valueOf(structure.getChanceWork())));
         inventory.setItem(calculate(1, 3), КулдаунРаботыСтруктуры.getItem(
-                String.valueOf(structure.getCooldown()),
-                String.valueOf(structure.getMaxCooldown())
+                String.valueOf(structure.getMaxCooldown()),
+                String.valueOf(structure.getCooldown())
                                                                          ));
         inventory.setItem(calculate(1, 4), ЗадатьБлокиСтруктуры.getItem(""));
         inventory.setItem(calculate(1, 5), ПрисоеденитьСетькКСтруктуре.getItem(
                 mesh.getDisplayName(),
                 mesh.getEnergyName()
-                                                                             ));
+                                                                              ));
         inventory.setItem(
                 calculate(1, 6),
                 ЗадатьКоличествоЭнергии.getItem(

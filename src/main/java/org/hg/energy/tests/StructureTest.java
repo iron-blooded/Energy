@@ -1,11 +1,11 @@
 package org.hg.energy.tests;
 
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Server;
+import org.bukkit.World;
 import org.hg.energy.Mesh;
 import org.hg.energy.Objects.Container;
-import org.hg.energy.Objects.Converter;
-import org.hg.energy.Objects.Fabrication;
-import org.hg.energy.Objects.Generator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -71,17 +71,17 @@ public class StructureTest {
     }
 
     @Test
-    void testGetAndSetCooldown() {
-        structure.setCooldown(10);
+    void testGetAndSetCooldownRequired() {
+        structure.setCooldownRequired(10);
         assertEquals(10, structure.getCooldown());
 
-        structure.setCooldown(-1);  // Должно быть установлено в 0
+        structure.setCooldownRequired(-1);  // Должно быть установлено в 0
         assertEquals(0, structure.getCooldown());
     }
 
     @Test
     void testUseCooldown() {
-        structure.setCooldown(3);
+        structure.setCooldownRequired(3);
         assertFalse(structure.useCooldown());
         assertFalse(structure.useCooldown());
         assertTrue(structure.useCooldown());  // Должно сработать на третьем вызове
@@ -121,9 +121,9 @@ public class StructureTest {
 
     @Test
     void DefaultStructure() {
-        structure.setCooldown(0);
+        structure.setCooldownRequired(0);
         assertTrue(structure.useCooldown());
-        structure.setCooldown(2);
+        structure.setCooldownRequired(2);
         assertFalse(structure.useCooldown());
         assertNull(structure.getMesh());
         structure.setChanceWork(100);

@@ -33,7 +33,7 @@ public class ListenerIcons implements Listener {
             if (itemStack != null && itemStack.getItemMeta() != null) {
                 event.setCancelled(true);
                 _Icons icon = isSimilar(itemStack.clone());
-                _ShareData data = holder.getObject().setHolder(inventory.getHolder());
+                _ShareData data = holder.getObject().setHolder(inventory.getHolder()).setPlayer(player);
                 UUID uuid = getUUID(itemStack);
                 if (uuid != null) {
                     plugin.meshes.stream()

@@ -17,7 +17,6 @@ import org.hg.energy.Objects.*;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -99,7 +98,20 @@ public enum _Icons {
     ИзменитьИмяСтруктуры(
             Material.BIRCH_SIGN,
             WHITE + "Изменить имя структуры",
-            GOLD + "Текущее имя: {}"
+            GOLD + "Текущее имя: {}",
+            shareData -> {
+                if (shareData.getStructure() != null) {
+                    new TextBox(shareData, string -> {
+                        try {
+                            shareData.getStructure().setName(string);
+                            return true;
+                        } catch (Exception ignored) {
+                        }
+                        return false;
+                    }).apply();
+                }
+                return null;
+            }
     ),
     ВызватьРаботуСтруктуры(
             Material.CHAIN_COMMAND_BLOCK,
@@ -119,20 +131,58 @@ public enum _Icons {
             Material.COMPARATOR,
             WHITE + "Задать шанс, с которым структура выполнит работу",
             GRAY + "" + ITALIC + "(Если работа у структуры вообще есть)\n" +
-                    GREEN + "Текущий шанс: {}%"
+                    GREEN + "Текущий шанс: {}%",
+            shareData -> {
+                if (shareData.getStructure() != null) {
+                    new TextBox(shareData, string -> {
+                        try {
+                            shareData.getStructure().setChanceWork(Double.parseDouble(string));
+                            return true;
+                        } catch (Exception ignored) {
+                        }
+                        return false;
+                    }).apply();
+                }
+                return null;
+            }
     ),
     КулдаунРаботыСтруктуры(
             Material.CLOCK,
             DARK_AQUA + "Задать кулдаун структуры",
             YELLOW + "Текущий кулдаун: {} сек.\n" +
-                    GOLD + "Осталось до срабатывания структуры: {} сек."
+                    GOLD + "Осталось до срабатывания структуры: {} сек.",
+            shareData -> {
+                if (shareData.getStructure() != null) {
+                    new TextBox(shareData, string -> {
+                        try {
+                            shareData.getStructure().setCooldownRequired(Integer.parseInt(string));
+                            return true;
+                        } catch (Exception ignored) {
+                        }
+                        return false;
+                    }).apply();
+                }
+                return null;
+            }
     ),
     ЗадатьКулдаун(
             Material.COMMAND_BLOCK,
             RED + "Задать время (кулдаун) до срабатывания структуры",
             WHITE + "Техническая функция\n" +
-                    WHITE + "Создана для ивентеров"
-
+                    WHITE + "Создана для ивентеров",
+            shareData -> {
+                if (shareData.getStructure() != null) {
+                    new TextBox(shareData, string -> {
+                        try {
+                            shareData.getStructure().setCooldown(Integer.parseInt(string));
+                            return true;
+                        } catch (Exception ignored) {
+                        }
+                        return false;
+                    }).apply();
+                }
+                return null;
+            }
     ),
     ЗадатьБлокиСтруктуры(
             Material.BLAZE_ROD,
@@ -178,9 +228,22 @@ public enum _Icons {
     ),
     ЗадатьКоличествоЭнергии(
             Material.BARREL,
-            GREEN + "Задать хранимое количесвто энергии",
+            GREEN + "Задать хранимое количество энергии",
             WHITE + "Установка объема, который может хранить структура\n" +
-                    AQUA + "Текущий объем: {} {}"
+                    AQUA + "Текущий объем: {} {}",
+            shareData -> {
+                if (shareData.getStructure() != null) {
+                    new TextBox(shareData, string -> {
+                        try {
+                            shareData.getStructure().setVolume(Double.parseDouble(string));
+                            return true;
+                        } catch (Exception ignored) {
+                        }
+                        return false;
+                    }).apply();
+                }
+                return null;
+            }
 
     ),
     УдалитьСтруктуру(
@@ -227,7 +290,20 @@ public enum _Icons {
             DARK_BLUE + "Задать кол-во энергии забираемое конвертером",
             GRAY + "" + ITALIC + "Количество энергии, которое за раз\n" +
                     GRAY + ITALIC + "забирает конвертер из родительской сети\n" +
-                    WHITE + "Текущее количество: {}"
+                    WHITE + "Текущее количество: {}",
+            shareData -> {
+                if (shareData.getStructure() instanceof Converter converter) {
+                    new TextBox(shareData, string -> {
+                        try {
+                            converter.setAmount(Double.parseDouble(string));
+                            return true;
+                        } catch (Exception ignored) {
+                        }
+                        return false;
+                    }).apply();
+                }
+                return null;
+            }
     ),
     ВыходнаяСеть(
             Material.NETHER_STAR,
@@ -247,7 +323,20 @@ public enum _Icons {
             DARK_AQUA + "Задать коофициент конвертации",
             GRAY + "" + ITALIC + "Например, 0.94 = каждая еденица энергии на входе\n" +
                     GRAY + ITALIC + "преобразуется в 0.94 едениц энергии на выходе\n"
-                    + RESET + WHITE + "Текущий коофициент: {}"
+                    + RESET + WHITE + "Текущий коофициент: {}",
+            shareData -> {
+                if (shareData.getStructure() instanceof Converter converter) {
+                    new TextBox(shareData, string -> {
+                        try {
+                            converter.setCoefficient(Double.parseDouble(string));
+                            return true;
+                        } catch (Exception ignored) {
+                        }
+                        return false;
+                    }).apply();
+                }
+                return null;
+            }
     ),
     ДистаницяМатериал(
             Material.OBSERVER,
@@ -255,12 +344,47 @@ public enum _Icons {
             AQUA + "Задает дистанцию, на которой\n" +
                     AQUA + "cтруктура будет брать ресурсы.\n" +
                     GRAY + ITALIC + "Не более 16 блоков\n" + RESET +
-                    RED + "Текущее значение: {}"
+                    RED + "Текущее значение: {}",
+            shareData -> {
+                if (shareData.getStructure() instanceof Generator generator) {
+                    new TextBox(shareData, string -> {
+                        try {
+                            generator.setDistanceMaterial(Integer.parseInt(string));
+                            return true;
+                        } catch (Exception ignored) {
+                        }
+                        return false;
+                    }).apply();
+                } else if (shareData.getStructure() instanceof Fabrication fabrication) {
+                    new TextBox(shareData, string -> {
+                        try {
+                            fabrication.setDistanceMaterial(Integer.parseInt(string));
+                            return true;
+                        } catch (Exception ignored) {
+                        }
+                        return false;
+                    }).apply();
+                }
+                return null;
+            }
     ),
     КоличествоЭнергииНаВыходе(
             Material.LIGHT,
             GOLD + "Задать количество производимой энергии",
-            WHITE + "Текущее значение: {}"
+            WHITE + "Текущее значение: {}",
+            shareData -> {
+                if (shareData.getStructure() instanceof Generator generator) {
+                    new TextBox(shareData, string -> {
+                        try {
+                            generator.setAmountEnergyProduced(Double.parseDouble(string));
+                            return true;
+                        } catch (Exception ignored) {
+                        }
+                        return false;
+                    }).apply();
+                }
+                return null;
+            }
     ),
     СписокПотребляемыхРесурсов(
             Material.HOPPER,
@@ -277,7 +401,20 @@ public enum _Icons {
             DARK_AQUA + "Задать цену производства",
             GRAY + "" + ITALIC + "Количество энергии, которое при производстве\n" +
                     GRAY + ITALIC + "потребляет фабрикатор из родительской сети\n" +
-                    WHITE + "Текущее количество: {}"
+                    WHITE + "Текущее количество: {}",
+            shareData -> {
+                if (shareData.getStructure() instanceof Fabrication fabrication) {
+                    new TextBox(shareData, string -> {
+                        try {
+                            fabrication.setPrice(Double.parseDouble(string));
+                            return true;
+                        } catch (Exception ignored) {
+                        }
+                        return false;
+                    }).apply();
+                }
+                return null;
+            }
     ),
     ЛогикаПроизводства(
             Material.KNOWLEDGE_BOOK,
@@ -302,14 +439,40 @@ public enum _Icons {
     ИмяСети(
             Material.BIRCH_SIGN,
             WHITE + "Изменить имя сети",
-            GOLD + "Текущее имя: {}"
+            GOLD + "Текущее имя: {}",
+            shareData -> {
+                if (shareData.getMesh() != null) {
+                    new TextBox(shareData, string -> {
+                        try {
+                            shareData.getMesh().setDisplayName(string);
+                            return true;
+                        } catch (Exception ignored) {
+                        }
+                        return false;
+                    }).apply();
+                }
+                return null;
+            }
     ),
     ИмяЭнергии(
             Material.BIRCH_SIGN,
             WHITE + "Изменить имя энергии",
             GRAY + "" + ITALIC + "Название энергии, которая\n" +
                     GRAY + ITALIC + "используется в данной сети\n" + RESET +
-                    GOLD + "Текущее название: {}"
+                    GOLD + "Текущее название: {}",
+            shareData -> {
+                if (shareData.getMesh() != null) {
+                    new TextBox(shareData, string -> {
+                        try {
+                            shareData.getMesh().setEnergyName(string);
+                            return true;
+                        } catch (Exception ignored) {
+                        }
+                        return false;
+                    }).apply();
+                }
+                return null;
+            }
     ),
     СписокСтруктур(
             Material.BARREL,
@@ -320,7 +483,20 @@ public enum _Icons {
             Material.REDSTONE,
             RED + "Задать количество хранимой энергии",
             WHITE + "На момент входа в настройки\n"
-                    + WHITE + "сеть хранит: {} {}"
+                    + WHITE + "сеть хранит: {} {}",
+            shareData -> {
+                if (shareData.getMesh() != null) {
+                    new TextBox(shareData, string -> {
+                        try {
+                            shareData.getMesh().setEnergyCount(Double.parseDouble(string));
+                            return true;
+                        } catch (Exception ignored) {
+                        }
+                        return false;
+                    }).apply();
+                }
+                return null;
+            }
     ),
     МаксимальноеКоличествоЭнергии(
             Material.GUNPOWDER,
@@ -333,7 +509,22 @@ public enum _Icons {
     ДобавитьЭнергию(
             Material.CLAY_BALL,
             WHITE + "Добавить энергию в сеть",
-            GRAY + "" + ITALIC + "Задавать можно и отрицательные числа"
+            GRAY + "" + ITALIC + "Задавать можно и отрицательные числа",
+            shareData -> {
+                if (shareData.getMesh() != null) {
+                    Mesh mesh = shareData.getMesh();
+                    new TextBox(shareData, string -> {
+                        try {
+                            mesh.setEnergyCount(Math.max(0, Math.min(
+                                    mesh.getEnergyLimit(), mesh.getEnergyCount() + Double.parseDouble(string))));
+                            return true;
+                        } catch (Exception ignored) {
+                        }
+                        return false;
+                    }).apply();
+                }
+                return null;
+            }
     ),
     ВыключитьСеть(
             Material.GREEN_CONCRETE,
@@ -466,13 +657,14 @@ public enum _Icons {
         if (itemMeta == null || itemMeta.getPersistentDataContainer().isEmpty()) {
             return null;
         }
-        return UUID.fromString(Objects.requireNonNull(itemMeta.getPersistentDataContainer().get(
-                new NamespacedKey(
-                        "energy",
-                        "uuid"
-                ),
+        String result = itemMeta.getPersistentDataContainer().get(
+                new NamespacedKey("energy", "uuid"),
                 PersistentDataType.STRING
-                                                                                               )));
+                                                                 );
+        if (result != null) {
+            return UUID.fromString(result);
+        }
+        return UUID.randomUUID();
     }
 
     private static ItemStack getFlag(boolean left) {
@@ -550,6 +742,7 @@ public enum _Icons {
 
     public ItemStack getItem(String arg1, String arg2, UUID uuid) {
         String lore = this.lore.replaceFirst("[{][}]", arg1);
+        String name = this.name.replaceFirst("[{][}]", arg1);
         lore = lore.replaceFirst("[{][}]", arg2);
         ItemStack item = this.item.clone();
         ItemMeta itemMeta = item.getItemMeta();

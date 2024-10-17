@@ -1,10 +1,12 @@
 package org.hg.energy.Interface;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryHolder;
 import org.hg.energy.Energy;
 import org.hg.energy.Mesh;
 import org.hg.energy.Objects.Structure;
+import org.jetbrains.annotations.NotNull;
 
 public class _ShareData {
     private Mesh mesh;
@@ -13,8 +15,10 @@ public class _ShareData {
     private Energy plugin;
     private InventoryHolder holder;
     private boolean bol = false;
+    private String name_item = "";
+    private Player player;
 
-    public _ShareData(Mesh mesh, Structure structure, Location location, Energy plugin) {
+    public _ShareData(Mesh mesh, Structure structure, Location location, @NotNull Energy plugin) {
         this.mesh = mesh;
         this.structure = structure;
         this.location = location;
@@ -64,5 +68,22 @@ public class _ShareData {
 
     public void setBoolean(boolean bol) {
         this.bol = bol;
+    }
+
+    public String getName_item() {
+        return name_item;
+    }
+
+    public void setName_item(String name_item) {
+        this.name_item = name_item;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public _ShareData setPlayer(Player player) {
+        this.player = player;
+        return this;
     }
 }

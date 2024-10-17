@@ -59,9 +59,9 @@ public class ListMeshes implements Window, InventoryHolder, Pagination {
                                                              )
                              );
         }
-        inventory.setItem(calculate(6, 6), _Icons.СтраницаВперед.getItem("", "", structure.getUuid()));
+        inventory.setItem(calculate(6, 6), _Icons.СтраницаВперед.getItem("", ""));
         inventory.setItem(calculate(6, 5), _Icons.СоздатьСеть.getItem("", "", structure.getUuid()));
-        inventory.setItem(calculate(6, 4), _Icons.СтраницаНазад.getItem("", "", structure.getUuid()));
+        inventory.setItem(calculate(6, 4), _Icons.СтраницаНазад.getItem("", ""));
         return inventory;
     }
 
