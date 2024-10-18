@@ -36,12 +36,12 @@ public class Converter extends Structure {
     }
 
     @Override
-    public void work(){
+    public void work() {
         if (super.getMesh().getEnergyCount() - getAmount() > 0
                 && this.getOutputMesh().getEnergyCount() + (getAmount() * getCoefficient())
                 <= this.getOutputMesh().getEnergyLimit()) {
-            if (super.getMesh().removeEnergy(getAmount()) && this.getOutputMesh().addEnergy(
-                    getAmount() * getCoefficient())) {
+            if (!(super.getMesh().removeEnergy(getAmount()) && this.getOutputMesh().addEnergy(
+                    getAmount() * getCoefficient()))) {
                 throw new RuntimeException("При конвертации добавлении энергии произошла ошибка");
             }
         } else {
