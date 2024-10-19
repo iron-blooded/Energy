@@ -410,8 +410,6 @@ public enum _Icons {
                 }
                 return null;
             }
-            //TODO: инвентарь, че потребляет
-            // - сделано?
     ),
     СписокПроизводимыхПредметов(
             Material.DROPPER,
@@ -430,8 +428,6 @@ public enum _Icons {
                 }
                 return null;
             }
-            //TODO: инвентарь, че производит
-            // - сделано?
     ),
     ЦенаПроизводства(
             Material.BLAST_FURNACE,
@@ -548,7 +544,6 @@ public enum _Icons {
                 }
                 return null;
             }
-            //TODO: инвентарь, список структур в сети
     ),
     КоличествоХранимойЭнергии(
             Material.REDSTONE,
