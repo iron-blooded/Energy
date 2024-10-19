@@ -75,7 +75,7 @@ public class Fabrication extends Structure {
                         Comparator.comparingDouble(Location::getY)
                                                          ).add(0, 1, 0);
                 for (ItemStack product : products) {
-                    if (product.getAmount() > 0) {
+                    if (product.getAmount() > 0 && !product.getType().equals(Material.AIR)) {
                         upper_location.getWorld().dropItem(upper_location, product);
                     }
                 }
@@ -111,12 +111,12 @@ public class Fabrication extends Structure {
         switch (this.getMultiProduct()) {
             case OneThing -> { //Выпадает гарантировано один
                 double sum = 0;
-                for (double chance : products.values()) {
+                for (double chance : getProducts().values()) {
                     sum += chance;
                 }
                 double randomValue = random.nextDouble() * sum;
                 double cumulativeSum = 0;
-                for (Map.Entry<ItemStack, Double> entry : products.entrySet()) {
+                for (Map.Entry<ItemStack, Double> entry : getProducts().entrySet()) {
                     cumulativeSum += entry.getValue();
                     if (randomValue <= cumulativeSum) {
                         result.add(entry.getKey());
@@ -125,16 +125,18 @@ public class Fabrication extends Structure {
                 }
             }
             case Lot -> {  // Выпадет один или более
-                for (ItemStack product : products.keySet()) {
-                    if (random.nextDouble() * 100 <= products.get(product)) {
+                for (ItemStack product : getProducts().keySet()) {
+                    if (random.nextDouble() * 100 <= getProducts().get(product)) {
                         result.add(product);
                     }
                 }
                 return result;
             }
             case MaybeNothing -> { //Может не выпасть ничего
-                for (ItemStack product : products.keySet()) {
-                    if (random.nextDouble() * 100 <= products.get(product)) {
+                for (ItemStack product : getProducts().keySet()) {
+                    if (!getProducts().isEmpty()
+                            && !product.getType().equals(Material.AIR)
+                            && random.nextDouble() * 100 <= getProducts().get(product)) {
                         result.add(product);
                         return result;
 
@@ -209,7 +211,11 @@ public class Fabrication extends Structure {
      * @return таблица предметов и шансов
      */
     public HashMap<ItemStack, Double> getProducts() {
-        return new HashMap<>(products);
+        HashMap<ItemStack, Double> map = new HashMap<>();
+        for (Map.Entry<ItemStack, Double> entry : this.products.entrySet()) {
+            map.put(entry.getKey().clone(), entry.getValue());
+        }
+        return map;
     }
 
     /**
@@ -240,6 +246,10 @@ public class Fabrication extends Structure {
      * @return список предметов
      */
     public List<ItemStack> getMaterials() {
-        return new ArrayList<>(materials);
+        List<ItemStack> list = new ArrayList<>();
+        for (ItemStack item : this.materials) {
+            list.add(item.clone());
+        }
+        return list;
     }
 }

@@ -15,6 +15,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.hg.energy.Mesh;
 import org.hg.energy.Objects.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -390,14 +391,47 @@ public enum _Icons {
     СписокПотребляемыхРесурсов(
             Material.HOPPER,
             GOLD + "Задать список потребляемых предметов",
-            ""
+            "",
+            shareData -> {
+                if (shareData.getStructure() instanceof Generator generator) {
+                    return new ListItems(
+                            shareData,
+                            generator::getMaterials,
+                            generator::addMaterial,
+                            generator::removeMaterial
+                    ).getInventory();
+                } else if (shareData.getStructure() instanceof Fabrication fabrication) {
+                    return new ListItems(
+                            shareData,
+                            fabrication::getMaterials,
+                            fabrication::addMaterial,
+                            fabrication::removeMaterial
+                    ).getInventory();
+                }
+                return null;
+            }
             //TODO: инвентарь, че потребляет
+            // - сделано?
     ),
     СписокПроизводимыхПредметов(
             Material.DROPPER,
             RED + "Задать список производимых предметов",
-            ""
+            "",
+            shareData -> {
+                if (shareData.getStructure() instanceof Fabrication fabrication) {
+                    return new ListItems(
+                            shareData,
+                            () -> new ArrayList<>(fabrication.getProducts().keySet()),
+                            () -> new ArrayList<>(fabrication.getProducts().values()),
+                            fabrication::addProduct,
+                            itemStack -> fabrication.addProduct(itemStack, 0),
+                            fabrication::removeProduct
+                    ).getInventory();
+                }
+                return null;
+            }
             //TODO: инвентарь, че производит
+            // - сделано?
     ),
     ЦенаПроизводства(
             Material.BLAST_FURNACE,
@@ -480,7 +514,40 @@ public enum _Icons {
     СписокСтруктур(
             Material.BARREL,
             WHITE + "Показать список структур в сети",
-            ""
+            "",
+            shareData -> {
+                if (shareData.getMesh() != null) {
+                    return new ListItems(
+                            new _ShareData(shareData.getMesh(), null, null, shareData.getPlugin()),
+                            () -> {
+                                List<ItemStack> items = new ArrayList<>();
+                                for (Structure structure : shareData.getMesh().getStructures()) {
+                                    if (structure instanceof Container container) {
+                                        items.add(_Icons.ХранилищеЭнергии.getItem("", "", structure.getUuid()));
+                                    } else if (structure instanceof Converter converter) {
+                                        items.add(_Icons.Конвертер.getItem("", "", structure.getUuid()));
+                                    } else if (structure instanceof Fabrication fabrication) {
+                                        items.add(_Icons.Фабрикатор.getItem("", "", structure.getUuid()));
+                                    } else if (structure instanceof Generator generator) {
+                                        items.add(_Icons.Генератор.getItem("", "", structure.getUuid()));
+                                    }
+                                }
+                                return items;
+                            },
+                            itemStack -> {},
+                            itemStack -> {
+                                UUID uuid = getUUID(itemStack);
+                                if (uuid != null) {
+                                    shareData.getPlugin().getStructures().stream()
+                                            .filter(structure -> structure.getUuid().equals(uuid))
+                                            .findFirst()
+                                            .ifPresent(Structure::disconnectToMesh);
+                                }
+                            }
+                    ).getInventory();
+                }
+                return null;
+            }
             //TODO: инвентарь, список структур в сети
     ),
     КоличествоХранимойЭнергии(
@@ -595,7 +662,48 @@ public enum _Icons {
                 return new SettingsMesh(new _ShareData(mesh, null, null, shareData.getPlugin())).getInventory();
             }
     ),
-    ;
+    ДобавитьПредмет(
+            Material.SUNFLOWER,
+            GOLD + "Добавить",
+            WHITE + "Кликните предметом, что бы\n" +
+                    WHITE + "добавить предмет",
+            shareData -> {
+                if (shareData.getCursorItem() != null && shareData.getHolder() instanceof ListItems holder) {
+                    holder.addItem(shareData.getCursorItem());
+                    return holder.getInventory();
+                }
+                return null;
+            }
+    ),
+    УдалитьПредмет(
+            Material.BARRIER,
+            RED + "Подтвердить удаление",
+            RED + "Нажмите, если подтверждаете\n" +
+                    RED + "удаление предмета",
+            shareData -> {
+                if (shareData.getHolder() instanceof ListItems holder) {
+                    holder.deleteItem();
+                    return holder.getInventory();
+                }
+                return null;
+            }
+    ),
+    ЗадатьЗначениеПредмету(
+            Material.STRUCTURE_VOID,
+            WHITE + "Задать значение предмету",
+            WHITE + "Нажмите, что бы задать\n" +
+                    WHITE + "значение предмету.\n" +
+                    GOLD + "Текущее значение: {}",
+            shareData -> {
+                if (shareData.getHolder() instanceof ListItems holder) {
+                    new TextBox(shareData, string -> {
+                        holder.setNumber(holder.getInsertedItem(shareData.getClickItem()), Double.parseDouble(string));
+                        return true;
+                    }).apply();
+                }
+                return null;
+            }
+    );
 
     private final ItemStack item;
     private final String name;

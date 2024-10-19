@@ -28,12 +28,17 @@ public class ListenerIcons implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         Inventory inventory = event.getClickedInventory();
         Player player = (Player) event.getWhoClicked();
-        if (inventory.getHolder() instanceof Window holder) {
+        if (inventory != null && inventory.getHolder() instanceof Window holder) {
             ItemStack itemStack = event.getCurrentItem();
             if (itemStack != null && itemStack.getItemMeta() != null) {
                 event.setCancelled(true);
                 _Icons icon = isSimilar(itemStack.clone());
-                _ShareData data = holder.getObject().setHolder(inventory.getHolder()).setPlayer(player);
+                _ShareData data =
+                        holder.getObject()
+                                .setHolder(inventory.getHolder())
+                                .setPlayer(player)
+                                .setCursorItem(event.getCursor())
+                                .setClickItem(itemStack);
                 UUID uuid = getUUID(itemStack);
                 if (uuid != null) {
                     plugin.meshes.stream()

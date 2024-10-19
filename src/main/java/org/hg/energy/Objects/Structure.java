@@ -2,18 +2,16 @@ package org.hg.energy.Objects;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.hg.energy.Mesh;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public abstract class Structure {
     private final UUID uuid;
     private String name;
-    private HashMap<Location, Material> locations;
+    private Map<Block, Material> locations;
     private Mesh mesh;
     private int cooldown_required;
     private int cooldown;
@@ -175,22 +173,26 @@ public abstract class Structure {
      */
     public void addLocation(@NotNull Location location) {
         boolean validate = false;
-        for (Location l : locations.keySet()) {
-            if (l.distance(location) < 5) {
+        for (Block block : locations.keySet()) {
+            if (block.getLocation().distance(location) < 5) {
                 validate = true;
             }
         }
         if (!validate) {
             return;
         }
-        location.add(location);
+        location.add(location.clone());
     }
 
     /**
      * @return Возвращает список локаций, которым соответствует структура данного генератора
      */
     public List<Location> getLocations() {
-        return new ArrayList<>(locations.keySet());
+        List<Location> loc = new ArrayList<>();
+        for (Block block : locations.keySet()) {
+            loc.add(block.getLocation());
+        }
+        return loc;
     }
 
     /**
@@ -204,7 +206,7 @@ public abstract class Structure {
         this.locations = new HashMap<>();
         for (Location location : locations) {
             if (location.getWorld() != null) {
-                this.locations.put(location, location.getBlock().getType());
+                this.locations.put(location.getBlock(), location.getBlock().getType());
             }
         }
     }
@@ -213,15 +215,18 @@ public abstract class Structure {
      * Вызывается сетью для проверки соответствия блоков структуры заданным
      */
     public void checkLocationsMatching() {
-        for (Location location : locations.keySet()) {
+        for (Block block1 : locations.keySet()) {
             boolean validate = false;
-            for (Location l : locations.keySet()) {
-                if (l.distance(location) < 5) {
+            for (Block block2 : locations.keySet()) {
+                if (block1.getLocation().distance(block2.getLocation()) < 5) {
                     validate = true;
                 }
             }
-            if (!validate || location.getBlock().getType().equals(locations.get(location))) {
-                location.createExplosion(0);
+            if (!block1.getType().equals(this.locations.get(block1))) {
+                validate = false;
+            }
+            if (!validate) {
+                block1.getLocation().createExplosion(0);
                 this.disconnectToMesh();
                 return;
             }

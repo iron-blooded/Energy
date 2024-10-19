@@ -3,10 +3,12 @@ package org.hg.energy.Interface;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 import org.hg.energy.Energy;
 import org.hg.energy.Mesh;
 import org.hg.energy.Objects.Structure;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class _ShareData {
     private Mesh mesh;
@@ -17,12 +19,34 @@ public class _ShareData {
     private boolean bol = false;
     private String name_item = "";
     private Player player;
+    private ItemStack cursor_item = null;
+    private ItemStack click_item = null;
 
     public _ShareData(Mesh mesh, Structure structure, Location location, @NotNull Energy plugin) {
         this.mesh = mesh;
         this.structure = structure;
         this.location = location;
         this.plugin = plugin;
+    }
+
+    public ItemStack getClickItem() {
+        return click_item;
+    }
+
+    public _ShareData setClickItem(ItemStack click_item) {
+        this.click_item = click_item.clone();
+        return this;
+    }
+
+    public ItemStack getCursorItem() {
+        return cursor_item.clone();
+    }
+
+    public _ShareData setCursorItem(@Nullable ItemStack click_item) {
+        if (click_item != null) {
+            this.cursor_item = click_item.clone();
+        }
+        return this;
     }
 
     public InventoryHolder getHolder() {

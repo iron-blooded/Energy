@@ -1,5 +1,7 @@
 package org.hg.energy.Listeners;
 
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -33,7 +35,16 @@ public class ListenerClickBlock implements Listener {
             if (item.getItemMeta().getDisplayName().contains("Настроечный ключ")) { // Настройка структур
                 event.setCancelled(true);
                 plugin.getStructures().stream()
-                        .filter(str -> str.getLocations().contains(block.getLocation()))
+                        .filter(str -> {
+                            for (Location location : str.getLocations()) {
+                                Material type1 = location.getBlock().getType();
+                                Material type2 = block.getType();
+                                if (type1.equals(type2)) {
+                                    return true;
+                                }
+                            }
+                            return false;
+                        })
                         .findFirst()
                         .ifPresentOrElse(
                                 structure -> player.openInventory(new SettingsStructure(
