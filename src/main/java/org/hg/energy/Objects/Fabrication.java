@@ -6,18 +6,20 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.io.Serial;
 import java.util.*;
 
 import static org.hg.energy.Objects._InteractInventories.consumeResources;
 import static org.hg.energy.Objects._InteractInventories.getNearInventories;
 
 public class Fabrication extends Structure {
-    private final Map<ItemStack, Double> products;
-    private final Random random;
-    private final List<ItemStack> materials;
+    private List<ItemStack> materials;
+    private Map<ItemStack, Double> products;
+    private Random random;
     private int distance_material;
-    private MultiProduct isMultiProduct = MultiProduct.MaybeNothing;
     private double price = 0;
+    private MultiProduct isMultiProduct = MultiProduct.MaybeNothing;
 
     /**
      * Представляет собой производство физических предметов
@@ -32,6 +34,50 @@ public class Fabrication extends Structure {
         distance_material = 2;
         random = new Random();
         super.setPriority(3);
+    }
+
+    /**
+     * Серелизация
+     */
+    @Serial
+    private void writeObject(java.io.ObjectOutputStream stream)
+    throws IOException {
+        this.defaultSerialize(stream);
+        stream.writeInt(distance_material);
+        stream.writeDouble(price);
+        stream.writeObject(isMultiProduct);
+        stream.writeInt(materials.size());
+        for (ItemStack item : materials) {
+            stream.writeObject(item);
+        }
+        stream.writeInt(products.size());
+        for (Map.Entry<ItemStack, Double> entry : products.entrySet()) {
+            stream.writeObject(entry.getKey());
+            stream.writeDouble(entry.getValue());
+        }
+    }
+
+    /**
+     * Десерелизация
+     */
+    @Serial
+    private void readObject(java.io.ObjectInputStream stream)
+    throws IOException, ClassNotFoundException {
+        this.defaultSerialize(stream);
+        random = new Random();
+        distance_material = stream.readInt();
+        price = stream.readDouble();
+        isMultiProduct = (MultiProduct) stream.readObject();
+        materials = new ArrayList<>();
+        int size = stream.readInt();
+        for (int i = 0; i < size; i++) {
+            materials.add((ItemStack) stream.readObject());
+        }
+        products = new HashMap<>();
+        size = stream.readInt();
+        for (int i = 0; i < size; i++) {
+            products.put((ItemStack) stream.readObject(), stream.readDouble());
+        }
     }
 
     /**

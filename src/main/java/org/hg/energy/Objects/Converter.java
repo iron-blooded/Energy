@@ -3,13 +3,15 @@ package org.hg.energy.Objects;
 import org.bukkit.Location;
 import org.hg.energy.Mesh;
 
+import java.io.IOException;
+import java.io.Serial;
 import java.util.List;
 
 public class Converter extends Structure {
-    private Mesh outputMesh;
     private double coefficient;
     private double chance_use;
     private double amount = 0;
+    private Mesh outputMesh;
 
     /**
      * Представляет структуру, которая перебрасывает энергию из одной сети в другую
@@ -23,6 +25,32 @@ public class Converter extends Structure {
         this.coefficient = 0;
         this.chance_use = 0;
         super.setPriority(2);
+    }
+
+    /**
+     * Серелизация
+     */
+    @Serial
+    private void writeObject(java.io.ObjectOutputStream stream)
+    throws IOException {
+        this.defaultSerialize(stream);
+        stream.writeDouble(coefficient);
+        stream.writeDouble(chance_use);
+        stream.writeDouble(amount);
+        stream.writeObject(outputMesh);
+    }
+
+    /**
+     * Десерелизация
+     */
+    @Serial
+    private void readObject(java.io.ObjectInputStream stream)
+    throws IOException, ClassNotFoundException {
+        this.defaultSerialize(stream);
+        coefficient = stream.readDouble();
+        chance_use = stream.readDouble();
+        amount = stream.readDouble();
+        outputMesh = (Mesh) stream.readObject();
     }
 
     /**

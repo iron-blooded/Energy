@@ -3,15 +3,19 @@ package org.hg.energy;
 import org.bukkit.Location;
 import org.hg.energy.Objects.Structure;
 
+import java.io.IOException;
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.*;
 
-public class Mesh {
-    private final UUID uuid;
+public class Mesh implements Serializable {
+    private UUID uuid;
     private Set<Structure> structures = new TreeSet<>(Comparator.comparingInt(Structure::getPriority));
     private String display_name;
     private String energy_name;
     private double energy_count = 0;
     private boolean enabled = false;
+
 
     /**
      * Представляет объект сети, к которой подключаются блоки для обмена энергией
@@ -23,6 +27,41 @@ public class Mesh {
         this.uuid = UUID.randomUUID();
         setDisplayName(display_name);
         setEnergyName(energy_name);
+    }
+
+    /**
+     * Серелизация
+     */
+    @Serial
+    private void writeObject(java.io.ObjectOutputStream stream)
+    throws IOException {
+        stream.writeObject(uuid);
+        stream.writeUTF(display_name);
+        stream.writeUTF(energy_name);
+        stream.writeDouble(energy_count);
+        stream.writeBoolean(enabled);
+        stream.writeInt(structures.size());
+        for (Structure structure : structures) {
+            stream.writeObject(structure);
+        }
+    }
+
+    /**
+     * Десерелизация
+     */
+    @Serial
+    private void readObject(java.io.ObjectInputStream stream)
+    throws IOException, ClassNotFoundException {
+        uuid = (UUID) stream.readObject();
+        display_name = stream.readUTF();
+        energy_name = stream.readUTF();
+        energy_count = stream.readDouble();
+        enabled = stream.readBoolean();
+        int size = stream.readInt();
+        structures = new TreeSet<>(Comparator.comparingInt(Structure::getPriority));
+        for (int i = 0; i < size; i++) {
+            structures.add((Structure) stream.readObject());
+        }
     }
 
     public UUID getUuid() {

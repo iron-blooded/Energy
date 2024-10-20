@@ -5,6 +5,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -14,10 +16,10 @@ import static org.hg.energy.Objects._InteractInventories.consumeResources;
 import static org.hg.energy.Objects._InteractInventories.getNearInventories;
 
 public class Generator extends Structure {
+    private Set<ItemStack> materials = new HashSet<>();
     private double amount_energy_produced = 0;
     private double chance_use = 0;
-    private final Set<ItemStack> materials = new HashSet<>();
-     private int distance_material;
+    private int distance_material;
 
     /**
      * Представляет собой структуру генератора, который предоставляет возможность производить энергию в сеть
@@ -31,6 +33,38 @@ public class Generator extends Structure {
         super.setPriority(1);
     }
 
+    /**
+     * Серелизация
+     */
+    @Serial
+    private void writeObject(java.io.ObjectOutputStream stream)
+    throws IOException {
+        this.defaultSerialize(stream);
+        stream.writeDouble(amount_energy_produced);
+        stream.writeDouble(chance_use);
+        stream.writeInt(distance_material);
+        stream.writeInt(materials.size());
+        for (ItemStack itemStack : materials) {
+            stream.writeObject(itemStack);
+        }
+    }
+
+    /**
+     * Десерелизация
+     */
+    @Serial
+    private void readObject(java.io.ObjectInputStream stream)
+    throws IOException, ClassNotFoundException {
+        this.defaultSerialize(stream);
+        amount_energy_produced = stream.readDouble();
+        chance_use = stream.readDouble();
+        distance_material = stream.readInt();
+        int size = stream.readInt();
+        materials = new HashSet<>();
+        for (int i = 0; i < size; i++) {
+            materials.add((ItemStack) stream.readObject());
+        }
+    }
 
     /**
      * Радиус, в котором нужно искать материалы для производства

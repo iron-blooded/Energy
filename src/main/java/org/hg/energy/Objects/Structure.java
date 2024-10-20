@@ -1,23 +1,30 @@
 package org.hg.energy.Objects;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.hg.energy.Mesh;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.*;
 
-public abstract class Structure {
-    private final UUID uuid;
+public abstract class Structure implements Serializable {
+    private UUID uuid;
     private String name;
-    private Map<Block, Material> locations;
-    private Mesh mesh;
     private int cooldown_required;
     private int cooldown;
     private double chance;
     private double volume = 0;
     private int priority = 9494;
+    private Map<Block, Material> locations = new HashMap<>();
+    private Mesh mesh;
 
     /**
      * Представляет собой структуру
@@ -32,6 +39,80 @@ public abstract class Structure {
         this.cooldown_required = 0;
         this.cooldown = 0;
         this.chance = 100;
+    }
+
+    /**
+     * Стандартная для структуры серелизация
+     */
+    public void defaultSerialize(java.io.ObjectOutputStream stream)
+    throws IOException {
+        stream.writeObject(uuid);
+        stream.writeUTF(name);
+        stream.writeInt(cooldown_required);
+        stream.writeInt(cooldown);
+        stream.writeDouble(chance);
+        stream.writeDouble(volume);
+        stream.writeInt(priority);
+
+        stream.writeInt(locations.size());
+        for (Map.Entry<Block, Material> entry : locations.entrySet()) {
+            stream.writeUTF(new Gson().toJson(entry.getKey().getLocation().serialize()));
+            stream.writeObject(entry.getValue());
+        }
+        stream.writeObject(mesh);
+    }
+
+    /**
+     * Стандартная для структуры десерелизация
+     */
+    public void defaultSerialize(java.io.ObjectInputStream stream)
+    throws IOException, ClassNotFoundException {
+        uuid = (UUID) stream.readObject();
+        name = stream.readUTF();
+        cooldown_required = stream.readInt();
+        cooldown = stream.readInt();
+        chance = stream.readDouble();
+        volume = stream.readDouble();
+        priority = stream.readInt();
+        int size = stream.readInt();
+        locations = new HashMap<>();
+        for (int i = 0; i < size; i++) {
+            locations.put(deserilazeLocation(new Gson().fromJson(
+                    stream.readUTF(),
+                    new TypeToken<Map<String, Object>>() {}.getType()
+                                                                )).getBlock(), (Material) stream.readObject());
+        }
+        mesh = (Mesh) stream.readObject();
+    }
+
+    /**
+     * Серелизация
+     */
+    @Serial
+    private void writeObject(java.io.ObjectOutputStream stream)
+    throws IOException {
+        this.defaultSerialize(stream);
+    }
+
+    /**
+     * Десерелизация
+     */
+    @Serial
+    private void readObject(java.io.ObjectInputStream stream)
+    throws IOException, ClassNotFoundException {
+        this.defaultSerialize(stream);
+    }
+
+
+    private Location deserilazeLocation(Map<String, Object> serializedLocation) {
+        World world = Bukkit.getWorld(serializedLocation.get("world").toString());
+        double x = (double) serializedLocation.get("x");
+        double y = (double) serializedLocation.get("y");
+        double z = (double) serializedLocation.get("z");
+        float yaw = Float.parseFloat(serializedLocation.get("yaw").toString());
+        float pitch = Float.parseFloat(serializedLocation.get("pitch").toString());
+
+        return new Location(world, x, y, z, yaw, pitch);
     }
 
     /**
