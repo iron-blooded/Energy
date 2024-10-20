@@ -78,7 +78,7 @@ public class ListItems implements InventoryHolder, Pagination, Window {
         if (itemStack == null || itemStack.getItemMeta() == null) {
             return null;
         }
-        int num = -1;
+        int num;
         try {
             num = itemStack.getItemMeta().getPersistentDataContainer().get(
                     new NamespacedKey("energy", "item_pos"),
@@ -93,7 +93,8 @@ public class ListItems implements InventoryHolder, Pagination, Window {
     @Override
     public @NotNull Inventory getInventory() {
         List<ItemStack> list_items = f_get_items.get();
-        list_items.replaceAll(itemStack -> itemStack.isSimilar(this.item_delete) ? _Icons.УдалитьПредмет.getItem("") : itemStack);
+        list_items.replaceAll(itemStack -> itemStack.isSimilar(this.item_delete)
+                && itemStack.getAmount() == item_delete.getAmount() ? _Icons.УдалитьПредмет.getItem("") : itemStack);
         int max_elements = 9 * 5;
         if (this.f_get_numbers_for_items != null && this.f_get_numbers_for_items.get() != null) {
             max_elements /= 3;
@@ -140,6 +141,7 @@ public class ListItems implements InventoryHolder, Pagination, Window {
 
     public void deleteItem() {
         this.f_remove_item.accept(this.item_delete);
+        this.item_delete = null;
     }
 
     public void setNumber(ItemStack itemStack, Double oDouble) {

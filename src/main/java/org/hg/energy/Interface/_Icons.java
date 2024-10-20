@@ -854,10 +854,6 @@ public enum _Icons {
         return name;
     }
 
-//    public ItemStack getItem() {
-//        return this.getItem("{{empty1_}}", "{{empty2_}}", null);
-//    }
-
     /**
      * Использовать заложенную в иконку функцию
      */

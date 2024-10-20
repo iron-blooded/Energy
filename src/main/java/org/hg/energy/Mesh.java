@@ -10,7 +10,10 @@ import java.util.*;
 
 public class Mesh implements Serializable {
     private UUID uuid;
-    private Set<Structure> structures = new TreeSet<>(Comparator.comparingInt(Structure::getPriority));
+    private Set<Structure> structures = new TreeSet<>(Comparator
+                                                              .comparingInt(Structure::getPriority)
+                                                              .thenComparing(Structure::getUuid)
+    );
     private String display_name;
     private String energy_name;
     private double energy_count = 0;
@@ -58,7 +61,7 @@ public class Mesh implements Serializable {
         energy_count = stream.readDouble();
         enabled = stream.readBoolean();
         int size = stream.readInt();
-        structures = new TreeSet<>(Comparator.comparingInt(Structure::getPriority));
+        structures = new TreeSet<>(Comparator.comparingInt(Structure::getPriority).thenComparing(Structure::getUuid));
         for (int i = 0; i < size; i++) {
             structures.add((Structure) stream.readObject());
         }
@@ -187,7 +190,7 @@ public class Mesh implements Serializable {
      * @throws RuntimeException если имя сети длиннее 16 символов или содержит пробел
      */
     public void setDisplayName(String display_name) {
-        if (display_name.length() > 16 || display_name.contains(" ")) {
+        if (display_name.length() > 32 || display_name.contains(" ")) {
             throw new RuntimeException("Имя сети не прошло валидацию!");
         }
         this.display_name = display_name;

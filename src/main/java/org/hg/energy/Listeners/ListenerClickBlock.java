@@ -1,7 +1,7 @@
 package org.hg.energy.Listeners;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,7 +24,7 @@ public class ListenerClickBlock implements Listener {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.getHand().equals(EquipmentSlot.OFF_HAND) || event.getAction().isLeftClick()) {
+        if (EquipmentSlot.OFF_HAND.equals(event.getHand()) || event.getAction().isLeftClick()) {
             return;
         }
         Player player = event.getPlayer();
@@ -32,14 +32,14 @@ public class ListenerClickBlock implements Listener {
         ItemStack item = player.getItemInHand();
         if (item != null && item.getItemMeta() != null && !item.getType().isAir() &&
                 block != null && block.isSolid()) {
-            if (item.getItemMeta().getDisplayName().contains("Настроечный ключ")) { // Настройка структур
+            if (item.getItemMeta().getDisplayName().contains("Отвёртка")
+                    && item.getItemMeta().getDisplayName().contains("" + ChatColor.COLOR_CHAR)
+                    && player.hasPermission("energy.settings.structure")) { // Настройка структур
                 event.setCancelled(true);
                 plugin.getStructures().stream()
                         .filter(str -> {
                             for (Location location : str.getLocations()) {
-                                Material type1 = location.getBlock().getType();
-                                Material type2 = block.getType();
-                                if (type1.equals(type2)) {
+                                if (block.equals(location.getBlock())) {
                                     return true;
                                 }
                             }
@@ -55,7 +55,9 @@ public class ListenerClickBlock implements Listener {
                                 ).getInventory())
                                         );
 
-            } else if (item.getItemMeta().getDisplayName().contains("поволжье")) {//Настройка сети
+            } else if (item.getItemMeta().getDisplayName().contains("Паяльник")
+                    && item.getItemMeta().getDisplayName().contains("" + ChatColor.COLOR_CHAR)
+                    && player.hasPermission("energy.settings.mesh")) {//Настройка сети
                 player.openInventory(new ListMeshes(new _ShareData(null, null, null, plugin), 0).getInventory());
                 event.setCancelled(true);
             }

@@ -192,7 +192,7 @@ public abstract class Structure implements Serializable {
      * Задать, сколько осталось до срабатывания структуры
      */
     public void setCooldown(int cooldown) {
-        this.cooldown = Math.max(0, cooldown);
+        this.cooldown = Math.max(0, getMaxCooldown() - cooldown);
     }
 
     /**

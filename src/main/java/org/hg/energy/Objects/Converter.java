@@ -56,7 +56,8 @@ public class Converter extends Structure {
 
     @Override
     public void work() {
-        if (super.getMesh().getEnergyCount() - getAmount() > 0
+        if (this.getOutputMesh() != null
+                && super.getMesh().getEnergyCount() - getAmount() > 0
                 && this.getOutputMesh().getEnergyCount() + (getAmount() * getCoefficient())
                 <= this.getOutputMesh().getEnergyLimit()) {
             if (!(super.getMesh().removeEnergy(getAmount()) && this.getOutputMesh().addEnergy(

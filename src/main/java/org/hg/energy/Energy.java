@@ -23,6 +23,12 @@ public final class Energy extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        //TODO: Управление для игрока
+        // - Админам опция, может ли игрок включить
+        // - Игрокам возможность включать/выключать
+        //TODO: шанс поломки структуры
+        // - При поломке опция, может ли игрок включить выключается
+        //TODO: Названия структур в списке структур
         database = new SetupDatabase(this);
         this.meshes = database.meshDatabase.getListMesh();
         Bukkit.getServer().getPluginManager().registerEvents(new ListenerIcons(this), this);

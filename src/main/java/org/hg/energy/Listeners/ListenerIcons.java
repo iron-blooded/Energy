@@ -3,6 +3,7 @@ package org.hg.energy.Listeners;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -28,10 +29,11 @@ public class ListenerIcons implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         Inventory inventory = event.getClickedInventory();
         Player player = (Player) event.getWhoClicked();
-        if (inventory != null && inventory.getHolder() instanceof Window holder) {
+        if (inventory != null && inventory.getHolder() instanceof Window holder
+                && event.getClick() != ClickType.MIDDLE) {
+            event.setCancelled(true);
             ItemStack itemStack = event.getCurrentItem();
             if (itemStack != null && itemStack.getItemMeta() != null) {
-                event.setCancelled(true);
                 _Icons icon = isSimilar(itemStack.clone());
                 _ShareData data =
                         holder.getObject()
