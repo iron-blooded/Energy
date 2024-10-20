@@ -60,6 +60,11 @@ public class SettingsStructure implements InventoryHolder, Window {
         } else {
             inventory.setItem(calculate(2, 7), ВключитьСтруктуру.getItem(""));
         }
+        if (structure.isCanPlayerEdit()) {
+            inventory.setItem(calculate(2, 8), ЗапретитьРедактироватьИгрокам.getItem(""));
+        } else {
+            inventory.setItem(calculate(2, 8), РазрешитьРедактироватьИгрокам.getItem(""));
+        }
         inventory.setItem(calculate(2, 9), УдалитьСтруктуру.getItem(""));
         if (structure instanceof Converter converter) {
             Mesh outputMesh = new Mesh("empty", "empty_energy");

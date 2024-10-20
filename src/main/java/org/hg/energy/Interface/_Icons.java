@@ -33,8 +33,8 @@ public enum _Icons {
     ХранилищеЭнергии(
             Material.BARREL,
             BLUE + "Хранилище энергии",
-            WHITE + "Хранит энергию, и больше ничего\n"+
-            WHITE+"{}",
+            WHITE + "Хранит энергию, и больше ничего\n" +
+                    WHITE + "{}",
             (shareData) -> {
                 if (shareData.getLocation() != null) {
                     shareData.setStructure(new Container(
@@ -51,8 +51,8 @@ public enum _Icons {
     Генератор(
             Material.IRON_BLOCK,
             GOLD + "Генератор" + BLACK + "Бензиновый Генератор",
-            WHITE + "Генерирует энергию, потребляя ресурсы\n"+
-            WHITE+"{}",
+            WHITE + "Генерирует энергию, потребляя ресурсы\n" +
+                    WHITE + "{}",
             (shareData) -> {
                 if (shareData.getLocation() != null) {
                     shareData.setStructure(new Generator(
@@ -71,8 +71,8 @@ public enum _Icons {
             AQUA + "Конвертер",
             WHITE + "Так же можно назвать трансформатором.\n" +
                     WHITE + "Преобразует энергию одной сети в энергию другой сети\n" +
-                    WHITE + "с заданным коофициентом.\n"+
-                    WHITE+"{}",
+                    WHITE + "с заданным коофициентом.\n" +
+                    WHITE + "{}",
             (shareData) -> {
                 if (shareData.getLocation() != null) {
                     shareData.setStructure(new Converter(
@@ -90,8 +90,8 @@ public enum _Icons {
             Material.SMOKER,
             LIGHT_PURPLE + "Фабрикатор",
             WHITE + "Производит из одних ресурсов другие\n" +
-                    WHITE + "потребляя при этом энергию.\n"+
-                    WHITE+"{}",
+                    WHITE + "потребляя при этом энергию.\n" +
+                    WHITE + "{}",
             (shareData) -> {
                 if (shareData.getLocation() != null) {
                     shareData.setStructure(new Fabrication(
@@ -528,13 +528,17 @@ public enum _Icons {
                                 List<ItemStack> items = new ArrayList<>();
                                 for (Structure structure : shareData.getMesh().getStructures()) {
                                     if (structure instanceof Container container) {
-                                        items.add(_Icons.ХранилищеЭнергии.getItem("Имя: "+structure.getName(), "", structure.getUuid()));
+                                        items.add(_Icons.ХранилищеЭнергии.getItem(
+                                                "Имя: " + structure.getName(), "", structure.getUuid()));
                                     } else if (structure instanceof Converter converter) {
-                                        items.add(_Icons.Конвертер.getItem("Имя: "+structure.getName(), "", structure.getUuid()));
+                                        items.add(_Icons.Конвертер.getItem(
+                                                "Имя: " + structure.getName(), "", structure.getUuid()));
                                     } else if (structure instanceof Fabrication fabrication) {
-                                        items.add(_Icons.Фабрикатор.getItem("Имя: "+structure.getName(), "", structure.getUuid()));
+                                        items.add(_Icons.Фабрикатор.getItem(
+                                                "Имя: " + structure.getName(), "", structure.getUuid()));
                                     } else if (structure instanceof Generator generator) {
-                                        items.add(_Icons.Генератор.getItem("Имя: "+structure.getName(), "", structure.getUuid()));
+                                        items.add(_Icons.Генератор.getItem(
+                                                "Имя: " + structure.getName(), "", structure.getUuid()));
                                     }
                                 }
                                 return items;
@@ -731,6 +735,32 @@ public enum _Icons {
                 }
                 return null;
             }
+    ),
+    ЗапретитьРедактироватьИгрокам(
+            Material.EMERALD_BLOCK,
+            RED + "Запретить игрокам доступ",
+            WHITE + "Запретить простым игрокам заходить\n" +
+                    WHITE + "в интерфейс",
+            shareData -> {
+                if (shareData.getStructure() != null) {
+                    shareData.getStructure().setCanPlayerEdit(false);
+                    return shareData.getHolder().getInventory();
+                }
+                return null;
+            }
+    ),
+    РазрешитьРедактироватьИгрокам(
+            Material.REDSTONE_BLOCK,
+            GREEN + "Разрешить игрокам доступ",
+            WHITE + "Разрешить простым игрокам заходить\n" +
+                    WHITE + "в интерфейс",
+            shareData -> {
+                if (shareData.getStructure() != null) {
+                    shareData.getStructure().setCanPlayerEdit(true);
+                    return shareData.getHolder().getInventory();
+                }
+                return null;
+            }
     );
 
     private final ItemStack item;
@@ -868,7 +898,10 @@ public enum _Icons {
                 case Фабрикатор:
                 case Конвертер:
                 case ХранилищеЭнергии:
-                    player.teleport(data.getStructure().getLocations().get(0), PlayerTeleportEvent.TeleportCause.COMMAND);
+                    player.teleport(
+                            data.getStructure().getLocations().get(0),
+                            PlayerTeleportEvent.TeleportCause.COMMAND
+                                   );
                     player.openInventory(data.getHolder().getInventory());
                     Location location = data.getStructure().getLocations().get(0);
                     player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
