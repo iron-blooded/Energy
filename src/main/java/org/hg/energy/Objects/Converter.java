@@ -61,10 +61,8 @@ public class Converter extends Structure {
                 <= this.getOutputMesh().getEnergyLimit()) {
             if (!(super.getMesh().removeEnergy(getAmount()) && this.getOutputMesh().addEnergy(
                     getAmount() * getCoefficient()))) {
-                throw new RuntimeException("При конвертации добавлении энергии произошла ошибка");
+                throw new RuntimeException("При конвертации энергии произошла ошибка");
             }
-        } else {
-            //TODO: тут звук пуф такой типа вхолостую
         }
     }
 

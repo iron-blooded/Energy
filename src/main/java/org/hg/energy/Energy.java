@@ -51,7 +51,6 @@ public final class Energy extends JavaPlugin {
     @Override
     public void onDisable() {
         database.meshDatabase.save();
-        //TODO: телепорт к структурам
         try {
             database.connection.close();
         } catch (SQLException e) {

@@ -2,6 +2,7 @@ package org.hg.energy.Objects;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -126,8 +127,9 @@ public class Fabrication extends Structure {
                     }
                 }
             }
+            getLocations().get(0).getWorld().playSound(getLocations().get(0), Sound.BLOCK_IRON_DOOR_CLOSE, 1.0f, 0.1f);
         } else {
-            //TODO: Сделать тут визуальный какой нибудь пух типа не хватило в холостую сработал
+            getLocations().get(0).getWorld().playSound(getLocations().get(0), Sound.BLOCK_IRON_DOOR_OPEN, 1.0f, 2f);
         }
     }
 
