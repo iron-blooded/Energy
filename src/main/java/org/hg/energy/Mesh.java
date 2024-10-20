@@ -9,6 +9,8 @@ import java.io.Serializable;
 import java.util.*;
 
 public class Mesh implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private UUID uuid;
     private Set<Structure> structures = new TreeSet<>(Comparator
                                                               .comparingInt(Structure::getPriority)

@@ -2,10 +2,7 @@ package org.hg.energy.Objects;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.hg.energy.Mesh;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +13,8 @@ import java.io.Serializable;
 import java.util.*;
 
 public abstract class Structure implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private UUID uuid;
     private String name;
     private int cooldown_required;
@@ -26,6 +25,8 @@ public abstract class Structure implements Serializable {
     private Map<Block, Material> locations = new HashMap<>();
     private Mesh mesh;
     private boolean enabled = true;
+    private double chance_break = 0;
+    private boolean can_player_edit = false;
 
     /**
      * Представляет собой структуру
@@ -62,6 +63,9 @@ public abstract class Structure implements Serializable {
         }
         stream.writeObject(mesh);
         stream.writeBoolean(enabled);
+        stream.writeDouble(chance_break);
+        stream.writeBoolean(can_player_edit);
+        stream.writeChar(ChatColor.COLOR_CHAR); // окончание дефолтной структуры
     }
 
     /**
@@ -86,6 +90,14 @@ public abstract class Structure implements Serializable {
         }
         mesh = (Mesh) stream.readObject();
         enabled = stream.readBoolean();
+        chance_break = stream.readDouble();
+        can_player_edit = stream.readBoolean();
+        try {
+            while (stream.readChar() != ChatColor.COLOR_CHAR) {
+                continue;
+            }
+        } catch (Exception ignored) {
+        }
     }
 
     /**
@@ -117,6 +129,35 @@ public abstract class Structure implements Serializable {
 
         return new Location(world, x, y, z, yaw, pitch);
     }
+
+    /**
+     * Получить шанс того, что структура сломается
+     */
+    public double getChanceBreak() {
+        return chance_break;
+    }
+
+    /**
+     * Задать шанс поломки
+     */
+    public void setChanceBreak(double chance_break) {
+        this.chance_break = Math.max(0, Math.min(100, chance_break));
+    }
+
+    /**
+     * Может ли игрок редактировать структуру
+     */
+    public boolean isCanPlayerEdit() {
+        return can_player_edit;
+    }
+
+    /**
+     * Задать, может ли игрок редактировать структуру
+     */
+    public void setCanPlayerEdit(boolean can_player_edit) {
+        this.can_player_edit = can_player_edit;
+    }
+
 
     /**
      * Представляет собой метод, который отвечает за работу структуры
