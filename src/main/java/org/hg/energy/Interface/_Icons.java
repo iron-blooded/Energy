@@ -1,11 +1,16 @@
 package org.hg.energy.Interface;
 
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.DyeColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -857,6 +862,22 @@ public enum _Icons {
      * Использовать заложенную в иконку функцию
      */
     public void use(Player player, _ShareData data) {
+        if (data.getClickType() == ClickType.RIGHT) {
+            switch (getOrdinal(data.getClickItem())) {
+                case Генератор:
+                case Фабрикатор:
+                case Конвертер:
+                case ХранилищеЭнергии:
+                    player.teleport(data.getStructure().getLocations().get(0), PlayerTeleportEvent.TeleportCause.COMMAND);
+                    player.openInventory(data.getHolder().getInventory());
+                    Location location = data.getStructure().getLocations().get(0);
+                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
+                            "x: %.2f, y: %.2f, z: %.2f".formatted(location.getX(), location.getY(), location.getZ())));
+                    return;
+                default:
+                    break;
+            }
+        }
         Inventory inventory = this.function.apply(data);
         if (inventory != null) {
             player.openInventory(inventory);

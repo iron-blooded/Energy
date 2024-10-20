@@ -2,6 +2,7 @@ package org.hg.energy.Interface;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.hg.energy.Energy;
@@ -21,12 +22,22 @@ public class _ShareData {
     private Player player;
     private ItemStack cursor_item = null;
     private ItemStack click_item = null;
+    private ClickType clickType;
 
     public _ShareData(Mesh mesh, Structure structure, Location location, @NotNull Energy plugin) {
         this.mesh = mesh;
         this.structure = structure;
         this.location = location;
         this.plugin = plugin;
+    }
+
+    public ClickType getClickType() {
+        return clickType;
+    }
+
+    public _ShareData setClickType(ClickType clickType) {
+        this.clickType = clickType;
+        return this;
     }
 
     public ItemStack getClickItem() {

@@ -38,7 +38,8 @@ public class ListenerIcons implements Listener {
                                 .setHolder(inventory.getHolder())
                                 .setPlayer(player)
                                 .setCursorItem(event.getCursor())
-                                .setClickItem(itemStack);
+                                .setClickItem(itemStack)
+                                .setClickType(event.getClick());
                 UUID uuid = getUUID(itemStack);
                 if (uuid != null) {
                     plugin.meshes.stream()
