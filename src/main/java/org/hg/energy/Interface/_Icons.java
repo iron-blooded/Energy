@@ -33,7 +33,8 @@ public enum _Icons {
     ХранилищеЭнергии(
             Material.BARREL,
             BLUE + "Хранилище энергии",
-            WHITE + "Хранит энергию, и больше ничего",
+            WHITE + "Хранит энергию, и больше ничего\n"+
+            WHITE+"{}",
             (shareData) -> {
                 if (shareData.getLocation() != null) {
                     shareData.setStructure(new Container(
@@ -50,7 +51,8 @@ public enum _Icons {
     Генератор(
             Material.IRON_BLOCK,
             GOLD + "Генератор" + BLACK + "Бензиновый Генератор",
-            WHITE + "Генерирует энергию, потребляя ресурсы",
+            WHITE + "Генерирует энергию, потребляя ресурсы\n"+
+            WHITE+"{}",
             (shareData) -> {
                 if (shareData.getLocation() != null) {
                     shareData.setStructure(new Generator(
@@ -69,7 +71,8 @@ public enum _Icons {
             AQUA + "Конвертер",
             WHITE + "Так же можно назвать трансформатором.\n" +
                     WHITE + "Преобразует энергию одной сети в энергию другой сети\n" +
-                    WHITE + "с заданным коофициентом.",
+                    WHITE + "с заданным коофициентом.\n"+
+                    WHITE+"{}",
             (shareData) -> {
                 if (shareData.getLocation() != null) {
                     shareData.setStructure(new Converter(
@@ -87,7 +90,8 @@ public enum _Icons {
             Material.SMOKER,
             LIGHT_PURPLE + "Фабрикатор",
             WHITE + "Производит из одних ресурсов другие\n" +
-                    WHITE + "потребляя при этом энергию.",
+                    WHITE + "потребляя при этом энергию.\n"+
+                    WHITE+"{}",
             (shareData) -> {
                 if (shareData.getLocation() != null) {
                     shareData.setStructure(new Fabrication(
@@ -524,13 +528,13 @@ public enum _Icons {
                                 List<ItemStack> items = new ArrayList<>();
                                 for (Structure structure : shareData.getMesh().getStructures()) {
                                     if (structure instanceof Container container) {
-                                        items.add(_Icons.ХранилищеЭнергии.getItem("", "", structure.getUuid()));
+                                        items.add(_Icons.ХранилищеЭнергии.getItem("Имя: "+structure.getName(), "", structure.getUuid()));
                                     } else if (structure instanceof Converter converter) {
-                                        items.add(_Icons.Конвертер.getItem("", "", structure.getUuid()));
+                                        items.add(_Icons.Конвертер.getItem("Имя: "+structure.getName(), "", structure.getUuid()));
                                     } else if (structure instanceof Fabrication fabrication) {
-                                        items.add(_Icons.Фабрикатор.getItem("", "", structure.getUuid()));
+                                        items.add(_Icons.Фабрикатор.getItem("Имя: "+structure.getName(), "", structure.getUuid()));
                                     } else if (structure instanceof Generator generator) {
-                                        items.add(_Icons.Генератор.getItem("", "", structure.getUuid()));
+                                        items.add(_Icons.Генератор.getItem("Имя: "+structure.getName(), "", structure.getUuid()));
                                     }
                                 }
                                 return items;
