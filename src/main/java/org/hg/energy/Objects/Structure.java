@@ -25,6 +25,7 @@ public abstract class Structure implements Serializable {
     private int priority = 9494;
     private Map<Block, Material> locations = new HashMap<>();
     private Mesh mesh;
+    private boolean enabled = true;
 
     /**
      * Представляет собой структуру
@@ -60,6 +61,7 @@ public abstract class Structure implements Serializable {
             stream.writeObject(entry.getValue());
         }
         stream.writeObject(mesh);
+        stream.writeBoolean(enabled);
     }
 
     /**
@@ -83,6 +85,7 @@ public abstract class Structure implements Serializable {
                                                                 )).getBlock(), (Material) stream.readObject());
         }
         mesh = (Mesh) stream.readObject();
+        enabled = stream.readBoolean();
     }
 
     /**
@@ -347,7 +350,7 @@ public abstract class Structure implements Serializable {
      * Тем, кому нужна механика работы структуры, необходимо переопределить логику работы самостоятельно
      */
     public void update() {
-        if (useCooldown() && castChanceWork()) {
+        if (isEnabled() && useCooldown() && castChanceWork()) {
             work();
         }
     }
@@ -366,5 +369,20 @@ public abstract class Structure implements Serializable {
      */
     public void setVolume(double volume) {
         this.volume = Math.max(volume, 0);
+    }
+
+
+    /**
+     * Включена ли структура
+     */
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    /**
+     * Задать, включена структура или нет
+     */
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }

@@ -620,6 +620,30 @@ public enum _Icons {
                 return null;
             }
     ),
+    ВыключитьСтруктуру(
+            Material.GREEN_CONCRETE,
+            GREEN + "Структура включена",
+            WHITE + "Нажмите, что бы выключить.",
+            shareData -> {
+                if (shareData.getStructure() != null) {
+                    shareData.getStructure().setEnabled(false);
+                    return new SettingsStructure(shareData).getInventory();
+                }
+                return null;
+            }
+    ),
+    ВключитьСтруктуру(
+            Material.RED_CONCRETE,
+            GREEN + "Структура выключена",
+            WHITE + "Нажмите, что бы включить.",
+            shareData -> {
+                if (shareData.getStructure() != null) {
+                    shareData.getStructure().setEnabled(true);
+                    return new SettingsStructure(shareData).getInventory();
+                }
+                return null;
+            }
+    ),
     ИконкаСети(
             Material.NETHER_STAR,
             LIGHT_PURPLE + "Сеть",

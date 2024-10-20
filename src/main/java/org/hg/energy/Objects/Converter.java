@@ -53,15 +53,6 @@ public class Converter extends Structure {
         outputMesh = (Mesh) stream.readObject();
     }
 
-    /**
-     * Вызывает перекачку энергии
-     */
-    @Override
-    public void update() {
-        if (super.useCooldown() && super.castChanceWork()) {
-            work();
-        }
-    }
 
     @Override
     public void work() {
