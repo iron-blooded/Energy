@@ -761,6 +761,23 @@ public enum _Icons {
                 }
                 return null;
             }
+    ),
+    ЗадатьШансПоломки(
+            Material.STRUCTURE_VOID,
+            WHITE + "Задать шанс поломки",
+            WHITE + "Если структура сломается,\n" +
+                    WHITE + "Она отключается, как и \n" +
+                    WHITE + "возможность игрокам редачить.\n" +
+                    GOLD + "Текущий шанс: {}%",
+            shareData -> {
+                if (shareData.getStructure() != null) {
+                    new TextBox(shareData, string -> {
+                        shareData.getStructure().setChanceBreak(Double.parseDouble(string));
+                        return true;
+                    }).apply();
+                }
+                return null;
+            }
     );
 
     private final ItemStack item;

@@ -88,7 +88,10 @@ public class Fabrication extends Structure {
     @Override
     public void update() {
         // Смотрим кулдаун, прокнулся ли шанс на работу и хватает ли энергии в сети
-        if (isEnabled() && super.getMesh().getEnergyCount() - getPrice() >= 0 && useCooldown() && castChanceWork()) {
+        if (isEnabled()
+                && super.getMesh().getEnergyCount() - getPrice() >= 0
+                && useCooldown() && castChanceWork()
+                && useChanceBreak()) {
             work();
         }
     }

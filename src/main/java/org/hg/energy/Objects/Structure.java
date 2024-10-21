@@ -90,9 +90,9 @@ public abstract class Structure implements Serializable {
         }
         mesh = (Mesh) stream.readObject();
         enabled = stream.readBoolean();
-        chance_break = stream.readDouble();
-        can_player_edit = stream.readBoolean();
         try {
+            chance_break = stream.readDouble();
+            can_player_edit = stream.readBoolean();
             while (stream.readChar() != ChatColor.COLOR_CHAR) {
                 continue;
             }
@@ -142,6 +142,22 @@ public abstract class Structure implements Serializable {
      */
     public void setChanceBreak(double chance_break) {
         this.chance_break = Math.max(0, Math.min(100, chance_break));
+    }
+
+    /**
+     * Использовать шанс поломки
+     * <br>
+     * Если сломается - возвращается false и работа структуры должна отмениться
+     */
+    public boolean useChanceBreak() {
+        if (new Random().nextDouble() * 100 <= getChanceBreak()) {
+            this.setCanPlayerEdit(false);
+            this.setEnabled(false);
+            Location location = getLocations().get(0);
+            location.getWorld().playSound(location, Sound.ENTITY_ITEM_BREAK, 2f, 0.6f);
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -391,7 +407,7 @@ public abstract class Structure implements Serializable {
      * Тем, кому нужна механика работы структуры, необходимо переопределить логику работы самостоятельно
      */
     public void update() {
-        if (isEnabled() && useCooldown() && castChanceWork()) {
+        if (isEnabled() && useCooldown() && castChanceWork() && useChanceBreak()) {
             work();
         }
     }

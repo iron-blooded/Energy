@@ -53,6 +53,7 @@ public class SettingsStructure implements InventoryHolder, Window {
                         mesh.getEnergyName()
                                                )
                          );
+        inventory.setItem(calculate(1, 8), ЗадатьШансПоломки.getItem(String.valueOf(structure.getChanceBreak())));
         inventory.setItem(calculate(2, 1), ВызватьРаботуСтруктуры.getItem(""));
         inventory.setItem(calculate(2, 3), ЗадатьКулдаун.getItem(""));
         if (structure.isEnabled()) {

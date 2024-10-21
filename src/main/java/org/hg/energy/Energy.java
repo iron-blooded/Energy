@@ -23,8 +23,6 @@ public final class Energy extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        //TODO: шанс поломки структуры
-        // - При поломке опция, может ли игрок включить выключается
         //TODO: клонирование структур
         //TODO: звуки структурам
         database = new SetupDatabase(this);
