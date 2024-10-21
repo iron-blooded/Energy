@@ -640,7 +640,7 @@ public enum _Icons {
             shareData -> {
                 if (shareData.getStructure() != null) {
                     shareData.getStructure().setEnabled(false);
-                    return new SettingsStructure(shareData).getInventory();
+                    return shareData.getHolder().getInventory();
                 }
                 return null;
             }
@@ -652,7 +652,7 @@ public enum _Icons {
             shareData -> {
                 if (shareData.getStructure() != null) {
                     shareData.getStructure().setEnabled(true);
-                    return new SettingsStructure(shareData).getInventory();
+                    return shareData.getHolder().getInventory();
                 }
                 return null;
             }
