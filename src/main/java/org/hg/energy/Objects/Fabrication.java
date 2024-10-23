@@ -3,8 +3,10 @@ package org.hg.energy.Objects;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BlockStateMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -107,9 +109,10 @@ public class Fabrication extends Structure {
         if (consumeResources(inventories, this.getMaterials(), super.getLocations())) {
             super.getMesh().removeEnergy(getPrice());
             List<ItemStack> products = getRandomProducts();
+            products = unpackingItems(products);
             for (Inventory inventory : inventories) {
                 for (ItemStack product : products) {
-                    if (product.getAmount() > 0) {
+                    if (product != null && product.getAmount() > 0) {
                         HashMap<Integer, ItemStack> notAdded = inventory.addItem(product);
                         if (notAdded.isEmpty()) {
                             product.setAmount(0);
@@ -125,7 +128,7 @@ public class Fabrication extends Structure {
                         Comparator.comparingDouble(Location::getY)
                                                          ).add(0, 1, 0);
                 for (ItemStack product : products) {
-                    if (product.getAmount() > 0 && !product.getType().equals(Material.AIR)) {
+                    if (product != null && product.getAmount() > 0 && !product.getType().equals(Material.AIR)) {
                         upper_location.getWorld().dropItem(upper_location, product);
                     }
                 }
@@ -134,6 +137,22 @@ public class Fabrication extends Structure {
         } else {
             getLocations().get(0).getWorld().playSound(getLocations().get(0), Sound.BLOCK_IRON_DOOR_OPEN, 1.0f, 2f);
         }
+    }
+
+    private List<ItemStack> unpackingItems(List<ItemStack> list) {
+        for (ItemStack item : list.stream().toList()) {
+            if (item != null && Material.TRAPPED_CHEST.equals(item.getType())) {
+                ItemStack item_clone = item.clone();
+                item_clone.setType(Material.SHULKER_BOX);
+                if (item_clone.getItemMeta() instanceof BlockStateMeta blockStateMeta) {
+                    if (blockStateMeta.getBlockState() instanceof ShulkerBox shulkerBox) {
+                        list.addAll(Arrays.asList(shulkerBox.getInventory().getContents()));
+                        list.remove(item);
+                    }
+                }
+            }
+        }
+        return list;
     }
 
     /**
