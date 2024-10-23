@@ -16,6 +16,8 @@ import static org.hg.energy.Objects._InteractInventories.consumeResources;
 import static org.hg.energy.Objects._InteractInventories.getNearInventories;
 
 public class Generator extends Structure {
+    @Serial
+    private static final long serialVersionUID = 7053901061634288913L;
     private Set<ItemStack> materials = new HashSet<>();
     private double amount_energy_produced = 0;
     private double chance_use = 0;

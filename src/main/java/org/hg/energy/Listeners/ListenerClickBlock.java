@@ -11,6 +11,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.hg.energy.Energy;
 import org.hg.energy.Interface.*;
+import org.hg.energy.Objects.Structure;
 
 public class ListenerClickBlock implements Listener {
     Energy plugin;
@@ -33,38 +34,29 @@ public class ListenerClickBlock implements Listener {
                     && item.getItemMeta().getDisplayName().contains("" + ChatColor.COLOR_CHAR)) { // Настройка структур
                 event.setCancelled(true);
                 if (player.hasPermission("energy.settings.structure")) {
-                    plugin.getStructures().stream()
-                            .filter(str -> {
-                                for (Location location : str.getLocations()) {
-                                    if (block.equals(location.getBlock())) {
-                                        return true;
-                                    }
-                                }
-                                return false;
-                            })
-                            .findFirst()
-                            .ifPresentOrElse(
-                                    structure -> player.openInventory(new SettingsStructure(
-                                            new _ShareData(null, structure, null, plugin)
-                                    ).getInventory()),
-                                    () -> player.openInventory(new CreateStructure(
-                                            new _ShareData(null, null, block.getLocation(), plugin)
-                                    ).getInventory())
-                                            );
+                    for (Structure structure : plugin.getStructures()) {
+                        for (Location location : structure.getLocations()) {
+                            if (block.equals(location.getBlock())) {
+                                player.openInventory(new SettingsStructure(
+                                        new _ShareData(null, structure, null, plugin)
+                                ).getInventory());
+                                return;
+                            }
+                        }
+                    }
+                    player.openInventory(new CreateStructure(
+                            new _ShareData(null, null, block.getLocation(), plugin)
+                    ).getInventory());
                 } else {
-                    plugin.getStructures().stream()
-                            .filter(str -> {
-                                for (Location location : str.getLocations()) {
-                                    if (block.equals(location.getBlock())) {
-                                        return true;
-                                    }
-                                }
-                                return false;
-                            })
-                            .findFirst()
-                            .ifPresent(
-                                    structure -> player.openInventory(new PlayerSettingStructure(new _ShareData(null,
-                                                                                                                structure, null, plugin)).getInventory()));
+                    for (Structure structure : plugin.getStructures()) {
+                        for (Location location : structure.getLocations()) {
+                            if (block.equals(location.getBlock())) {
+                                player.openInventory(new PlayerSettingStructure(new _ShareData(null,
+                                                                                               structure, null, plugin
+                                )).getInventory());
+                            }
+                        }
+                    }
                 }
 
             } else if (item.getItemMeta().getDisplayName().contains("Паяльник")

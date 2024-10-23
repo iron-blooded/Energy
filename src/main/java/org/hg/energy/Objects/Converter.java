@@ -8,6 +8,8 @@ import java.io.Serial;
 import java.util.List;
 
 public class Converter extends Structure {
+    @Serial
+    private static final long serialVersionUID = 3676946077098929366L;
     private double coefficient;
     private double chance_use;
     private double amount = 0;
