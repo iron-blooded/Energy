@@ -778,6 +778,41 @@ public enum _Icons {
                 }
                 return null;
             }
+    ),
+    ЗадатьКулдаунРаботыДляИгрока(
+            Material.COMPASS,
+            GOLD + "Задать кулдаун работы для игрока",
+            WHITE + "Кулдаун, который будет применяться\n" +
+                    WHITE + "когда игрок самостоятельно вызывает\n" +
+                    WHITE + "работу структуры\n" +
+                    GRAY + "Если значение 0 - игрок не\n" +
+                    GRAY + "может сам вызвать работу\n" +
+                    GREEN + "Значение: {}\n" +
+                    RED + "Осталось: {} сек.",
+            shareData -> {
+                if (shareData.getStructure() != null) {
+                    new TextBox(shareData, string -> {
+                        shareData.getStructure().setCooldownForPlayer(Integer.parseInt(string));
+                        return true;
+                    }).apply();
+                }
+                return null;
+            }
+    ),
+    ВызыватьРаботуСтруктурыИгроку(
+            Material.STONE_BUTTON,
+            WHITE + "Привести в действие",
+            GRAY + "Вызывать работу структуры\n" +
+                    GOLD + "Осталось времени: {} сек.",
+            shareData -> {
+                if (shareData.getStructure() != null) {
+                    if (shareData.getStructure().useCooldownForPlayer()) {
+                        shareData.getStructure().work();
+                    }
+                    return shareData.getHolder().getInventory();
+                }
+                return null;
+            }
     );
 
     private final ItemStack item;

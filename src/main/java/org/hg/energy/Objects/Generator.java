@@ -124,11 +124,13 @@ public class Generator extends Structure {
      * При этом не должны учитываться такие параметры как шанс работы и кулдаун
      */
     @Override
-    public void work() {
+    public boolean work() {
         List<Inventory> inventories = getNearInventories(this.getDistanceMaterial(), super.getLocations());
         if (consumeResources(inventories, this.getMaterials(), super.getLocations())) {
             super.getMesh().addEnergy(getAmountEnergyProduced());
+            return true;
         }
+        return false;
     }
 
     /**

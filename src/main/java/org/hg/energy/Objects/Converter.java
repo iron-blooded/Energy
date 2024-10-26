@@ -57,7 +57,7 @@ public class Converter extends Structure {
 
 
     @Override
-    public void work() {
+    public boolean work() {
         if (this.getOutputMesh() != null
                 && super.getMesh().getEnergyCount() - getAmount() > 0
                 && this.getOutputMesh().getEnergyCount() + (getAmount() * getCoefficient())
@@ -65,8 +65,11 @@ public class Converter extends Structure {
             if (!(super.getMesh().removeEnergy(getAmount()) && this.getOutputMesh().addEnergy(
                     getAmount() * getCoefficient()))) {
                 throw new RuntimeException("При конвертации энергии произошла ошибка");
+            } else {
+                return true;
             }
         }
+        return false;
     }
 
     /**

@@ -2,7 +2,6 @@ package org.hg.energy.Interface;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.hg.energy.Mesh;
@@ -29,7 +28,7 @@ public class SettingsStructure implements InventoryHolder, Window {
     @Override
     public @NotNull Inventory getInventory() {
         Inventory inventory = Bukkit.createInventory(
-                this, InventoryType.BARREL, ChatColor.GOLD + "Настройка структуры");
+                this, 9 * 6, ChatColor.GOLD + "Настройка структуры");
         Mesh mesh = structure.getMesh();
         if (mesh == null) {
             mesh = new Mesh("no_mesh", "no_mesh");
@@ -67,40 +66,55 @@ public class SettingsStructure implements InventoryHolder, Window {
             inventory.setItem(calculate(2, 8), РазрешитьРедактироватьИгрокам.getItem(""));
         }
         inventory.setItem(calculate(2, 9), УдалитьСтруктуру.getItem(""));
+        inventory.setItem(
+                calculate(3, 1),
+                ЗадатьКулдаунРаботыДляИгрока.getItem(
+                        String.valueOf(structure.getCooldownForPlayer()),
+                        String.valueOf(structure.getStayCooldownForPlayer())
+                                                    )
+                         );
+        if (structure.getCooldownForPlayer() != 0) {
+            inventory.setItem(
+                    calculate(4, 1),
+                    ВызыватьРаботуСтруктурыИгроку.getItem(String.valueOf(structure.getStayCooldownForPlayer()))
+                             );
+        }
+
+
         if (structure instanceof Converter converter) {
             Mesh outputMesh = new Mesh("empty", "empty_energy");
             if (converter.getOutputMesh() != null) {
                 outputMesh = converter.getOutputMesh();
             }
-            inventory.setItem(calculate(3, 1), ЗадатьРасход.getItem(String.valueOf(converter.getAmount())));
-            inventory.setItem(calculate(3, 2), ВыходнаяСеть.getItem(
+            inventory.setItem(calculate(3 + 3, 1), ЗадатьРасход.getItem(String.valueOf(converter.getAmount())));
+            inventory.setItem(calculate(3 + 3, 2), ВыходнаяСеть.getItem(
                     outputMesh.getDisplayName(),
                     outputMesh.getEnergyName()
-                                                                   ));
+                                                                       ));
             inventory.setItem(
-                    calculate(3, 3),
+                    calculate(3 + 3, 3),
                     КоофициентКонвертации.getItem(String.valueOf(converter.getCoefficient()))
                              );
         } else if (structure instanceof Generator generator) {
             inventory.setItem(
-                    calculate(3, 1),
+                    calculate(3 + 3, 1),
                     ДистаницяМатериал.getItem(String.valueOf(generator.getDistanceMaterial()))
                              );
-            inventory.setItem(calculate(3, 2), СписокПотребляемыхРесурсов.getItem(""));
+            inventory.setItem(calculate(3 + 3, 2), СписокПотребляемыхРесурсов.getItem(""));
             inventory.setItem(
-                    calculate(3, 3),
+                    calculate(3 + 3, 3),
                     КоличествоЭнергииНаВыходе.getItem(String.valueOf(generator.getAmountEnergyProduced()))
                              );
         } else if (structure instanceof Fabrication fabricator) {
             inventory.setItem(
-                    calculate(3, 1),
+                    calculate(3 + 3, 1),
                     ДистаницяМатериал.getItem(String.valueOf(fabricator.getDistanceMaterial()))
                              );
-            inventory.setItem(calculate(3, 2), СписокПотребляемыхРесурсов.getItem(""));
-            inventory.setItem(calculate(3, 3), СписокПроизводимыхПредметов.getItem(""));
-            inventory.setItem(calculate(3, 4), ЦенаПроизводства.getItem(String.valueOf(fabricator.getPrice())));
+            inventory.setItem(calculate(3 + 3, 2), СписокПотребляемыхРесурсов.getItem(""));
+            inventory.setItem(calculate(3 + 3, 3), СписокПроизводимыхПредметов.getItem(""));
+            inventory.setItem(calculate(3 + 3, 4), ЦенаПроизводства.getItem(String.valueOf(fabricator.getPrice())));
             inventory.setItem(
-                    calculate(3, 5),
+                    calculate(3 + 3, 5),
                     ЛогикаПроизводства.getItem(String.valueOf(fabricator.getMultiProduct().getName()))
                              );
         }

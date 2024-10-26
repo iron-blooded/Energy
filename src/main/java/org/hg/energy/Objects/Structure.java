@@ -27,6 +27,8 @@ public abstract class Structure implements Serializable {
     private boolean enabled = true;
     private double chance_break = 0;
     private boolean can_player_edit = false;
+    private int p_cooldown_required = 0;
+    private int p_cooldown = 0;
 
     /**
      * Представляет собой структуру
@@ -65,6 +67,10 @@ public abstract class Structure implements Serializable {
         stream.writeBoolean(enabled);
         stream.writeDouble(chance_break);
         stream.writeBoolean(can_player_edit);
+        stream.writeChar('0');
+        stream.writeInt(0);//Версия базы данных
+        stream.writeInt(p_cooldown);
+        stream.writeInt(p_cooldown_required);
         stream.writeChar(ChatColor.COLOR_CHAR); // окончание дефолтной структуры
     }
 
@@ -90,9 +96,19 @@ public abstract class Structure implements Serializable {
         }
         mesh = (Mesh) stream.readObject();
         enabled = stream.readBoolean();
+        chance_break = stream.readDouble();
+        can_player_edit = stream.readBoolean();
         try {
-            chance_break = stream.readDouble();
-            can_player_edit = stream.readBoolean();
+            switch (stream.readChar()) {
+                case '0':
+                    int version = stream.readInt();
+                    p_cooldown = stream.readInt();
+                    p_cooldown_required = stream.readInt();
+                    break;
+                case ChatColor.COLOR_CHAR:
+                default:
+                    return;
+            }
             while (stream.readChar() != ChatColor.COLOR_CHAR) {
                 continue;
             }
@@ -128,6 +144,36 @@ public abstract class Structure implements Serializable {
         float pitch = Float.parseFloat(serializedLocation.get("pitch").toString());
 
         return new Location(world, x, y, z, yaw, pitch);
+    }
+
+    /**
+     * Получить кулдаун, применяющийся для оператора, который должен вызывать работу структуры
+     */
+    public int getCooldownForPlayer() {
+        return this.p_cooldown_required;
+    }
+
+    /**
+     * Устанавливает кулдаун, применяющийся для оператора, который должен вызывать работу структуры
+     */
+    public void setCooldownForPlayer(int cooldown) {
+        this.p_cooldown_required = Math.max(0, cooldown);
+    }
+
+    /**
+     * Получить, сколько осталось игроку до возможности вызывать работу
+     */
+    public int getStayCooldownForPlayer() {
+        return this.p_cooldown;
+    }
+
+    public boolean useCooldownForPlayer() {
+        if (this.getStayCooldownForPlayer() <= 0 && this.getCooldownForPlayer() != 0) {
+            this.p_cooldown = this.getCooldownForPlayer();
+            this.cooldown = 0;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -181,9 +227,11 @@ public abstract class Structure implements Serializable {
      * При этом не должны учитываться такие параметры как шанс работы и кулдаун
      * <br>
      * Структура должна переопределить данный класс
+     *
+     * @return успешно ли отработала структура
      */
-    public void work() {
-
+    public boolean work() {
+        return true;
     }
 
     /**
@@ -407,8 +455,11 @@ public abstract class Structure implements Serializable {
      * Тем, кому нужна механика работы структуры, необходимо переопределить логику работы самостоятельно
      */
     public void update() {
-        if (isEnabled() && useCooldown() && castChanceWork() && useChanceBreak()) {
-            work();
+        if (isEnabled() && useChanceBreak()) {
+            this.p_cooldown = Math.max(0, p_cooldown - 1);
+            if (useCooldown() && castChanceWork()) {
+                work();
+            }
         }
     }
 

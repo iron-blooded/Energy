@@ -76,9 +76,7 @@ public class Mesh implements Serializable {
     public void updateStructures() {
         if (enabled) {
             for (Structure structure : this.structures) {
-                if (structure.isEnabled()) {
-                    structure.update();
-                }
+                structure.update();
             }
         }
     }

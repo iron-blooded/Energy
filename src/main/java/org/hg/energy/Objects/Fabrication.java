@@ -17,6 +17,8 @@ import static org.hg.energy.Objects._InteractInventories.consumeResources;
 import static org.hg.energy.Objects._InteractInventories.getNearInventories;
 
 public class Fabrication extends Structure {
+    @Serial
+    private static final long serialVersionUID = 7269679853745084560L;
     private List<ItemStack> materials;
     private Map<ItemStack, Double> products;
     private Random random;
@@ -83,20 +85,19 @@ public class Fabrication extends Structure {
         }
     }
 
-    /**
-     * Вызывает работу фабрикатора
-     * <br>
-     */
-    @Override
-    public void update() {
-        // Смотрим кулдаун, прокнулся ли шанс на работу и хватает ли энергии в сети
-        if (isEnabled()
-                && super.getMesh().getEnergyCount() - getPrice() >= 0
-                && useCooldown() && castChanceWork()
-                && useChanceBreak()) {
-            work();
-        }
-    }
+//    /**
+//     * Вызывает работу фабрикатора
+//     * <br>
+//     */
+//    @Override
+//    public void update() {
+//        // Смотрим кулдаун, прокнулся ли шанс на работу и хватает ли энергии в сети
+//        if (isEnabled()
+//                && useCooldown() && castChanceWork()
+//                && useChanceBreak()) {
+//            work();
+//        }
+//    }
 
     /**
      * Представляет собой метод, который отвечает за работу структуры
@@ -104,7 +105,8 @@ public class Fabrication extends Structure {
      * При этом не должны учитываться такие параметры как шанс работы и кулдаун
      */
     @Override
-    public void work() {
+    public boolean work() {
+        if (super.getMesh().getEnergyCount() - getPrice() < 0) return false;
         List<Inventory> inventories = getNearInventories(this.getDistanceMaterial(), super.getLocations());
         if (consumeResources(inventories, this.getMaterials(), super.getLocations())) {
             super.getMesh().removeEnergy(getPrice());
@@ -136,7 +138,9 @@ public class Fabrication extends Structure {
             getLocations().get(0).getWorld().playSound(getLocations().get(0), Sound.BLOCK_IRON_DOOR_CLOSE, 1.0f, 0.1f);
         } else {
             getLocations().get(0).getWorld().playSound(getLocations().get(0), Sound.BLOCK_IRON_DOOR_OPEN, 1.0f, 2f);
+            return false;
         }
+        return true;
     }
 
     private List<ItemStack> unpackingItems(List<ItemStack> list) {
