@@ -36,7 +36,7 @@ public class ListenerChat implements Listener {
             String value = event.getMessage();
             event.setMessage("");
             if (textBox.useFunction(value)) {
-                player.sendMessage(ChatColor.GREEN + "Значение принято!");
+                player.sendMessage(ChatColor.GREEN + "Успешно!");
                 plugin.textBoxMap.remove(player);
                 _ShareData shareData = textBox.getData();
                 if (shareData.getMesh() != null) {
