@@ -107,7 +107,8 @@ public class Fabrication extends Structure {
     @Override
     public boolean work() {
         if (super.getMesh().getEnergyCount() - getPrice() < 0) return false;
-        List<Inventory> inventories = getNearInventories(this.getDistanceMaterial(), super.getLocations());
+        List<Inventory> inventories = getNearInventories(
+                this.getDistanceMaterial(), super.getLocations(), super.getCooldownForPlayer() != 0);
         if (consumeResources(inventories, this.getMaterials(), super.getLocations())) {
             super.getMesh().removeEnergy(getPrice());
             List<ItemStack> products = getRandomProducts();

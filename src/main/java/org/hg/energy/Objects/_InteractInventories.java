@@ -1,14 +1,37 @@
 package org.hg.energy.Objects;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.hg.energy.Interface._Icons;
 
 import java.util.*;
 
 public class _InteractInventories {
+    /**
+     * Получить список инвентарь ближайшего к локациям игрока
+     */
+    private static Inventory getInventoryNearestPlayer(List<Location> locations) {
+        return locations.stream()
+                .flatMap(location -> location.getNearbyPlayers(3).stream()
+                        .map(player -> new AbstractMap.SimpleEntry<>(player, location.distance(player.getLocation()))))
+                .min(Comparator.comparingDouble(AbstractMap.SimpleEntry::getValue))
+                .map(entry -> (Inventory) entry.getKey().getInventory())
+                .orElseGet(_InteractInventories::createLockedInventory);
+    }
+
+    private static Inventory createLockedInventory() {
+        Inventory inventory = Bukkit.createInventory(null, InventoryType.HOPPER);
+        for (int i = 0; i < 5; i++) {
+            inventory.setItem(i, _Icons.СтраницаВперед.getItem(""));
+        }
+        return inventory;
+    }
+
     /**
      * Получить список ближайших инвентарей
      *
@@ -16,9 +39,11 @@ public class _InteractInventories {
      * @param locations локации, вокруг которых искать
      * @return список найденных инвентарей
      */
-    public static List<Inventory> getNearInventories(int radius, List<Location> locations) {
+    public static List<Inventory> getNearInventories(int radius, List<Location> locations,
+                                                     boolean need_nearest_player) {
         // Ищем все хранилища в радиусе от структуры
         List<Inventory> inventories = new ArrayList<>();
+        if (need_nearest_player) inventories.add(getInventoryNearestPlayer(locations));
         for (Location location : locations) {
             for (int x = -radius; x <= radius; x++) {
                 for (int y = -radius; y <= radius; y++) {
@@ -67,7 +92,8 @@ public class _InteractInventories {
                 }
             }
         }
-        if (!requestsMaterials.isEmpty() && Collections.max(requestsMaterials.values()) > 0) { //Есть ли требуемые материалы в полной мере
+        if (!requestsMaterials.isEmpty()
+                && Collections.max(requestsMaterials.values()) > 0) { //Есть ли требуемые материалы в полной мере
             return false;
         }
         for (ItemStack item : foundItems.keySet()) {

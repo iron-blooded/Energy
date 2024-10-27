@@ -29,12 +29,15 @@ public class ListenerIcons implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         Inventory inventory = event.getClickedInventory();
         Player player = (Player) event.getWhoClicked();
-        if (inventory != null && inventory.getHolder() instanceof Window holder
-                && event.getClick() != ClickType.MIDDLE) {
+        if (inventory != null && inventory.getHolder() instanceof Window holder) {
             event.setCancelled(true);
             ItemStack itemStack = event.getCurrentItem();
             if (itemStack != null && itemStack.getItemMeta() != null) {
                 _Icons icon = isSimilar(itemStack.clone());
+                if (icon.equals(_Icons.empty) && event.getClick() != ClickType.MIDDLE) {
+                    event.setCancelled(false);
+                    return;
+                }
                 _ShareData data =
                         holder.getObject()
                                 .setHolder(inventory.getHolder())
