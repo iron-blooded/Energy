@@ -2,10 +2,12 @@ package org.hg.energy;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.hg.energy.Database.SetupDatabase;
 import org.hg.energy.Interface.TextBox;
+import org.hg.energy.Interface.Window;
 import org.hg.energy.Listeners.ListenerChat;
 import org.hg.energy.Listeners.ListenerClickBlock;
 import org.hg.energy.Listeners.ListenerIcons;
@@ -46,6 +48,14 @@ public final class Energy extends JavaPlugin {
                     count[0] = 0;
                 }
                 count[0]++;
+
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    InventoryHolder holder = player.getOpenInventory().getTopInventory().getHolder();
+                    if (holder instanceof Window window && window.needUpdate()) {
+                        player.getOpenInventory().getTopInventory().setContents(holder.getInventory().getContents());
+                        player.updateInventory();
+                    }
+                }
             }
         }.runTaskTimer(this, 0, 20);
     }

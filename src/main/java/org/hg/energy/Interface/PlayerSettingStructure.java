@@ -45,4 +45,9 @@ public class PlayerSettingStructure implements Window, InventoryHolder {
     public _ShareData getObject() {
         return data;
     }
+
+    @Override
+    public boolean needUpdate() {
+        return true;
+    }
 }

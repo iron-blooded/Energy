@@ -163,4 +163,8 @@ public class ListItems implements InventoryHolder, Pagination, Window {
         return data;
     }
 
+    @Override
+    public boolean needUpdate() {
+        return false;
+    }
 }

@@ -34,4 +34,9 @@ public class CreateStructure implements InventoryHolder, Window {
         inventory.setItem(calculate(1, 5), Фабрикатор.getItem(""));
         return inventory;
     }
+
+    @Override
+    public boolean needUpdate() {
+        return true;
+    }
 }

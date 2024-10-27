@@ -25,12 +25,20 @@ public class SettingsMesh implements InventoryHolder, Window {
         inventory.setItem(calculate(1, 1), ИмяСети.getItem(mesh.getDisplayName()));
         inventory.setItem(calculate(2, 1), ИмяЭнергии.getItem(mesh.getEnergyName()));
         inventory.setItem(calculate(1, 2), СписокСтруктур.getItem(""));
-        inventory.setItem(calculate(1, 4),
-                          КоличествоХранимойЭнергии.getItem(String.valueOf(mesh.getEnergyCount()),
-                                                                   mesh.getEnergyName()));
-        inventory.setItem(calculate(1, 5),
-                          МаксимальноеКоличествоЭнергии.getItem(String.valueOf(mesh.getEnergyLimit()),
-                                                                       mesh.getEnergyName()));
+        inventory.setItem(
+                calculate(1, 4),
+                КоличествоХранимойЭнергии.getItem(
+                        String.valueOf(mesh.getEnergyCount()),
+                        mesh.getEnergyName()
+                                                 )
+                         );
+        inventory.setItem(
+                calculate(1, 5),
+                МаксимальноеКоличествоЭнергии.getItem(
+                        String.valueOf(mesh.getEnergyLimit()),
+                        mesh.getEnergyName()
+                                                     )
+                         );
         inventory.setItem(calculate(2, 4), ДобавитьЭнергию.getItem(""));
         if (mesh.isEnabled()) {
             inventory.setItem(calculate(2, 9), ВыключитьСеть.getItem(""));
@@ -44,5 +52,10 @@ public class SettingsMesh implements InventoryHolder, Window {
     @Override
     public _ShareData getObject() {
         return shareData;
+    }
+
+    @Override
+    public boolean needUpdate() {
+        return true;
     }
 }

@@ -125,4 +125,9 @@ public class SettingsStructure implements InventoryHolder, Window {
     public _ShareData getObject() {
         return new _ShareData(null, structure, structure.getLocations().get(0), data.getPlugin());
     }
+
+    @Override
+    public boolean needUpdate() {
+        return true;
+    }
 }
