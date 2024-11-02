@@ -20,12 +20,12 @@ import java.util.*;
 public final class Energy extends JavaPlugin {
     public List<Mesh> meshes = new ArrayList<>();
     public Map<Player, TextBox> textBoxMap = new HashMap<>();
+    public Map<Player, Structure> clone_structures = new HashMap<>();
     public SetupDatabase database;
 
 
     @Override
     public void onEnable() {
-        //TODO: клонирование структур
         database = new SetupDatabase(this);
         this.meshes = database.meshDatabase.getListMesh();
         Bukkit.getServer().getPluginManager().registerEvents(new ListenerIcons(this), this);

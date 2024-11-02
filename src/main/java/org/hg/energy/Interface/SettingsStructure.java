@@ -126,6 +126,7 @@ public class SettingsStructure implements InventoryHolder, Window {
                 structure.getSound_error().getKey().name(),
                 String.valueOf(structure.getSound_error().getValue())
                                                                    ));
+        inventory.setItem(calculate(4, 9), КлонироватьСтруктуру.getItem(""));
         return inventory;
     }
 

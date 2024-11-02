@@ -878,6 +878,23 @@ public enum _Icons {
                 return null;
             }
     ),
+    КлонироватьСтруктуру(
+            Material.MAP,
+            BLUE + "Копировать структуру",
+            WHITE + "Нажмите сначала сюда,\n" +
+                    WHITE + "после пкм на блок, куда\n" +
+                    WHITE + "вставить структуру",
+            shareData -> {
+                if (shareData.getStructure() != null) {
+                    shareData.getPlayer().sendMessage(BOLD + "" + RED
+                                                              + "Нажмите пкм отверткой на блок, в который скопировать "
+                                                              + "структуру. Лкм что бы отменить.");
+                    shareData.getPlugin().clone_structures.put(shareData.getPlayer(), shareData.getStructure());
+                    shareData.getPlayer().closeInventory();
+                }
+                return null;
+            }
+    ),
     ;
 
     private final ItemStack item;

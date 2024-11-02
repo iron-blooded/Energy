@@ -22,10 +22,14 @@ public class ListenerClickBlock implements Listener {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
         if (EquipmentSlot.OFF_HAND.equals(event.getHand()) || event.getAction().isLeftClick()) {
+            if (event.getAction().isLeftClick() && plugin.clone_structures.containsKey(player)) {
+                player.sendMessage(ChatColor.GOLD + "Вы отменили копирование структуры.");
+                plugin.clone_structures.remove(player);
+            }
             return;
         }
-        Player player = event.getPlayer();
         Block block = event.getClickedBlock();
         ItemStack item = player.getItemInHand();
         if (item != null && item.getItemMeta() != null && !item.getType().isAir() &&
@@ -45,6 +49,11 @@ public class ListenerClickBlock implements Listener {
                         break;
                     }
                 }
+                if (plugin.clone_structures.containsKey(player) && structure == null) {
+                    structure = plugin.clone_structures.get(player).cloneWithNewUUID(block.getLocation());
+                    plugin.clone_structures.remove(player);
+                    player.sendMessage(ChatColor.GREEN + "Вы успешно скопировали структуру!");
+                }
                 if (player.hasPermission("energy.settings.structure")) {
                     if (structure != null) {
                         player.openInventory(new SettingsStructure(
@@ -52,7 +61,8 @@ public class ListenerClickBlock implements Listener {
                         ).getInventory());
                     } else {
                         player.openInventory(new CreateStructure(new _ShareData(null, null, block.getLocation(),
-                                                                                plugin)).getInventory());
+                                                                                plugin
+                        )).getInventory());
                     }
                 } else {
                     player.openInventory(new PlayerSettingStructure(new _ShareData(null,

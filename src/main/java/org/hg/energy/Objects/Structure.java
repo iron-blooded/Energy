@@ -4,16 +4,17 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.util.io.BukkitObjectInputStream;
+import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.hg.energy.Mesh;
 import org.jetbrains.annotations.NotNull;
+import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
-import java.io.IOException;
-import java.io.Serial;
-import java.io.Serializable;
+import java.io.*;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.*;
 
-public abstract class Structure implements Serializable {
+public abstract class Structure implements Serializable, Cloneable {
     @Serial
     private static final long serialVersionUID = 1L;
     private UUID uuid;
@@ -564,5 +565,34 @@ public abstract class Structure implements Serializable {
      */
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+    /**
+     * Получить копию с другим uuid и локацией
+     */
+    public Structure cloneWithNewUUID(Location location) {
+        try {
+            Structure cloned = (Structure) this.clone();
+            cloned.uuid = UUID.randomUUID();
+            cloned.setLocations(Collections.singletonList(location));
+            cloned.connectToMesh(new Mesh("empty", "empty"));
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);
+            dataOutput.writeObject(cloned);
+            dataOutput.close();
+            String str = Base64Coder.encodeLines(outputStream.toByteArray());
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(str));
+            BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
+            cloned = (Structure) dataInput.readObject();
+            return cloned;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
