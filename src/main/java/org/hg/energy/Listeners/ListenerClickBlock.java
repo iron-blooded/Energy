@@ -33,30 +33,31 @@ public class ListenerClickBlock implements Listener {
             if (item.getItemMeta().getDisplayName().contains("Отвёртка")
                     && item.getItemMeta().getDisplayName().contains("" + ChatColor.COLOR_CHAR)) { // Настройка структур
                 event.setCancelled(true);
+                Structure structure = null;
+                for (Structure str : plugin.getStructures()) {
+                    for (Location location : str.getLocations()) {
+                        if (block.equals(location.getBlock())) {
+                            structure = str;
+                            break;
+                        }
+                    }
+                    if (structure != null) {
+                        break;
+                    }
+                }
                 if (player.hasPermission("energy.settings.structure")) {
-                    for (Structure structure : plugin.getStructures()) {
-                        for (Location location : structure.getLocations()) {
-                            if (block.equals(location.getBlock())) {
-                                player.openInventory(new SettingsStructure(
-                                        new _ShareData(null, structure, null, plugin)
-                                ).getInventory());
-                                return;
-                            }
-                        }
+                    if (structure != null) {
+                        player.openInventory(new SettingsStructure(
+                                new _ShareData(null, structure, block.getLocation(), plugin)
+                        ).getInventory());
+                    } else {
+                        player.openInventory(new CreateStructure(new _ShareData(null, null, block.getLocation(),
+                                                                                plugin)).getInventory());
                     }
-                    player.openInventory(new CreateStructure(
-                            new _ShareData(null, null, block.getLocation(), plugin)
-                    ).getInventory());
                 } else {
-                    for (Structure structure : plugin.getStructures()) {
-                        for (Location location : structure.getLocations()) {
-                            if (block.equals(location.getBlock())) {
-                                player.openInventory(new PlayerSettingStructure(new _ShareData(null,
-                                                                                               structure, null, plugin
-                                )).getInventory());
-                            }
-                        }
-                    }
+                    player.openInventory(new PlayerSettingStructure(new _ShareData(null,
+                                                                                   structure, null, plugin
+                    )).getInventory());
                 }
 
             } else if (item.getItemMeta().getDisplayName().contains("Паяльник")
