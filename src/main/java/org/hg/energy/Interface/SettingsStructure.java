@@ -52,7 +52,7 @@ public class SettingsStructure implements InventoryHolder, Window {
                         mesh.getEnergyName()
                                                )
                          );
-        inventory.setItem(calculate(1, 8), ЗадатьШансПоломки.getItem(String.valueOf(structure.getChanceBreak())));
+        inventory.setItem(calculate(1, 7), ЗадатьШансПоломки.getItem(String.valueOf(structure.getChanceBreak())));
         inventory.setItem(calculate(2, 1), ВызватьРаботуСтруктуры.getItem(""));
         inventory.setItem(calculate(2, 3), ЗадатьКулдаун.getItem(""));
         if (structure.isEnabled()) {
@@ -118,6 +118,14 @@ public class SettingsStructure implements InventoryHolder, Window {
                     ЛогикаПроизводства.getItem(String.valueOf(fabricator.getMultiProduct().getName()))
                              );
         }
+        inventory.setItem(calculate(3, 5), ЗадатьЗвукУспешности.getItem(
+                structure.getSound_success().getKey().name(),
+                String.valueOf(structure.getSound_success().getValue())
+                                                                       ));
+        inventory.setItem(calculate(4, 5), ЗадатьЗвукОшибки.getItem(
+                structure.getSound_error().getKey().name(),
+                String.valueOf(structure.getSound_error().getValue())
+                                                                   ));
         return inventory;
     }
 

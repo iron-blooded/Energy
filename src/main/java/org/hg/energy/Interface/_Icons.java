@@ -2,10 +2,7 @@ package org.hg.energy.Interface;
 
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.DyeColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.entity.Player;
@@ -20,10 +17,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.hg.energy.Mesh;
 import org.hg.energy.Objects.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 
 import static org.bukkit.ChatColor.*;
@@ -807,13 +801,84 @@ public enum _Icons {
             shareData -> {
                 if (shareData.getStructure() != null) {
                     if (shareData.getStructure().useCooldownForPlayer()) {
-                        shareData.getStructure().work();
+                        shareData.getStructure().useWorkAndSound();
                     }
                     return shareData.getHolder().getInventory();
                 }
                 return null;
             }
-    );
+    ),
+    ЗадатьЗвукУспешности(
+            Material.NOTE_BLOCK,
+            GREEN + "Задать звук выполнения",
+            WHITE + "Звук, который будет издавать структура\n" +
+                    WHITE + "при успешной работе\n" +
+                    GOLD + "Текущий звук: {}\n" +
+                    GOLD + "Скорость воспроизведения: {}\n" +
+                    GRAY + "Можете указывать или звук, или скорость, или все вместе",
+            shareData -> {
+                if (shareData.getStructure() != null) {
+                    new TextBox(shareData, string -> {
+                        AbstractMap.SimpleEntry<Sound, Float> sound_success =
+                                shareData.getStructure().getSound_success();
+                        for (String str : string.split(" ")) {
+                            try {
+                                sound_success = new AbstractMap.SimpleEntry<>(
+                                        Sound.valueOf(
+                                                str
+                                                        .toUpperCase()
+                                                        .replace("MINECRAFT:", "")
+                                                        .replace(".", "_")
+                                                     ),
+                                        sound_success.getValue()
+                                );
+                            } catch (Exception ignored) {
+                                sound_success.setValue(Float.valueOf(str));
+                            }
+                        }
+                        shareData.getStructure().setSound_success(sound_success);
+                        return true;
+                    }).apply();
+                }
+                return null;
+            }
+    ),
+    ЗадатьЗвукОшибки(
+            Material.NOTE_BLOCK,
+            RED + "Задать звук ошибки",
+            WHITE + "Звук, который будет издавать структура\n" +
+                    WHITE + "при ошибке в работе\n" +
+                    GOLD + "Текущий звук: {}\n" +
+                    GOLD + "Скорость воспроизведения: {}\n" +
+                    GRAY + "Можете указывать или звук, или скорость, или все вместе",
+            shareData -> {
+                if (shareData.getStructure() != null) {
+                    new TextBox(shareData, string -> {
+                        AbstractMap.SimpleEntry<Sound, Float> sound_error =
+                                shareData.getStructure().getSound_error();
+                        for (String str : string.split(" ")) {
+                            try {
+                                sound_error = new AbstractMap.SimpleEntry<>(
+                                        Sound.valueOf(
+                                                str
+                                                        .toUpperCase()
+                                                        .replace("MINECRAFT:", "")
+                                                        .replace(".", "_")
+                                                     ),
+                                        sound_error.getValue()
+                                );
+                            } catch (Exception ignored) {
+                                sound_error.setValue(Float.valueOf(str));
+                            }
+                        }
+                        shareData.getStructure().setSound_error(sound_error);
+                        return true;
+                    }).apply();
+                }
+                return null;
+            }
+    ),
+    ;
 
     private final ItemStack item;
     private final String name;

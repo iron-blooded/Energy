@@ -2,7 +2,6 @@ package org.hg.energy.Objects;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -136,9 +135,7 @@ public class Fabrication extends Structure {
                     }
                 }
             }
-            getLocations().get(0).getWorld().playSound(getLocations().get(0), Sound.BLOCK_IRON_DOOR_CLOSE, 1.0f, 0.1f);
         } else {
-            getLocations().get(0).getWorld().playSound(getLocations().get(0), Sound.BLOCK_IRON_DOOR_OPEN, 1.0f, 2f);
             return false;
         }
         return true;

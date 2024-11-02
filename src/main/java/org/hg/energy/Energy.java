@@ -26,7 +26,6 @@ public final class Energy extends JavaPlugin {
     @Override
     public void onEnable() {
         //TODO: клонирование структур
-        //TODO: звуки структурам
         database = new SetupDatabase(this);
         this.meshes = database.meshDatabase.getListMesh();
         Bukkit.getServer().getPluginManager().registerEvents(new ListenerIcons(this), this);

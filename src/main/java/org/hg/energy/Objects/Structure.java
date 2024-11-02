@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.*;
 
 public abstract class Structure implements Serializable {
@@ -29,6 +30,8 @@ public abstract class Structure implements Serializable {
     private boolean can_player_edit = false;
     private int p_cooldown_required = 0;
     private int p_cooldown = 0;
+    private SimpleEntry<Sound, Float> sound_success = new SimpleEntry<>(Sound.BLOCK_IRON_DOOR_OPEN, -1f);
+    private SimpleEntry<Sound, Float> sound_error = new SimpleEntry<>(Sound.BLOCK_IRON_DOOR_OPEN, -1f);
 
     /**
      * Представляет собой структуру
@@ -68,7 +71,13 @@ public abstract class Structure implements Serializable {
         stream.writeDouble(chance_break);
         stream.writeBoolean(can_player_edit);
         stream.writeChar('0');
-        stream.writeInt(0);//Версия базы данных
+        stream.writeInt(1); //Версия базы данных
+        // v1
+        stream.writeUTF(getSound_success().getKey().name());
+        stream.writeFloat(getSound_success().getValue());
+        stream.writeUTF(getSound_error().getKey().name());
+        stream.writeFloat(getSound_error().getValue());
+        // v0
         stream.writeInt(p_cooldown);
         stream.writeInt(p_cooldown_required);
         stream.writeChar(ChatColor.COLOR_CHAR); // окончание дефолтной структуры
@@ -102,8 +111,15 @@ public abstract class Structure implements Serializable {
             switch (stream.readChar()) {
                 case '0':
                     int version = stream.readInt();
-                    p_cooldown = stream.readInt();
-                    p_cooldown_required = stream.readInt();
+                    switch (version) {
+                        case 1:
+                            sound_success = new SimpleEntry<>(Sound.valueOf(stream.readUTF()), stream.readFloat());
+                            sound_error = new SimpleEntry<>(Sound.valueOf(stream.readUTF()), stream.readFloat());
+                        case 0:
+                            p_cooldown = stream.readInt();
+                            p_cooldown_required = stream.readInt();
+                            break;
+                    }
                     break;
                 case ChatColor.COLOR_CHAR:
                 default:
@@ -112,7 +128,8 @@ public abstract class Structure implements Serializable {
             while (stream.readChar() != ChatColor.COLOR_CHAR) {
                 continue;
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -144,6 +161,40 @@ public abstract class Structure implements Serializable {
         float pitch = Float.parseFloat(serializedLocation.get("pitch").toString());
 
         return new Location(world, x, y, z, yaw, pitch);
+    }
+
+    /**
+     * Получить звук успешной работы
+     */
+    public SimpleEntry<Sound, Float> getSound_success() {
+        if (sound_success == null || sound_success.getValue() == null || sound_success.getKey() == null) {
+            return new SimpleEntry<>(Sound.BLOCK_IRON_DOOR_OPEN, -1f);
+        }
+        return sound_success;
+    }
+
+    /**
+     * Задать звук успешной работы
+     */
+    public void setSound_success(@NotNull SimpleEntry<Sound, Float> sound_success) {
+        this.sound_success = sound_success;
+    }
+
+    /**
+     * Получить звук ошибки при работе
+     */
+    public SimpleEntry<Sound, Float> getSound_error() {
+        if (sound_error == null || sound_error.getValue() == null || sound_error.getKey() == null) {
+            return new SimpleEntry<>(Sound.BLOCK_IRON_DOOR_OPEN, -1f);
+        }
+        return sound_error;
+    }
+
+    /**
+     * Задать звук ошибки при работе
+     */
+    public void setSound_error(@NotNull SimpleEntry<Sound, Float> sound_error) {
+        this.sound_error = sound_error;
     }
 
     /**
@@ -450,6 +501,27 @@ public abstract class Structure implements Serializable {
     }
 
     /**
+     * Структура выполнит работу, и воспроизведет звук
+     */
+    public void useWorkAndSound() {
+        SimpleEntry<Sound, Float> sound;
+        if (work()) {
+            sound = getSound_success();
+        } else {
+            sound = getSound_error();
+        }
+        if (sound.getValue() >= 0) {
+            getLocations().get(0).getWorld().playSound(
+                    getLocations().get(0),
+                    sound.getKey(),
+                    SoundCategory.PLAYERS,
+                    1f,
+                    sound.getValue()
+                                                      );
+        }
+    }
+
+    /**
      * Вызывает работу структуры
      * <br>
      * Тем, кому нужна механика работы структуры, необходимо переопределить логику работы самостоятельно
@@ -458,7 +530,7 @@ public abstract class Structure implements Serializable {
         if (isEnabled() && useChanceBreak()) {
             this.p_cooldown = Math.max(0, p_cooldown - 1);
             if (useCooldown() && castChanceWork()) {
-                work();
+                useWorkAndSound();
             }
         }
     }
