@@ -39,6 +39,7 @@ public final class Energy extends JavaPlugin {
                 for (Mesh mesh : meshes) {
                     mesh.updateStructures();
                     for (Structure structure : mesh.getStructures()) {
+                        structure.connectToMesh(mesh);
                         structure.checkLocationsMatching();
                     }
                 }

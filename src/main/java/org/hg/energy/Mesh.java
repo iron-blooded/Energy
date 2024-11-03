@@ -67,6 +67,9 @@ public class Mesh implements Serializable {
         for (int i = 0; i < size; i++) {
             structures.add((Structure) stream.readObject());
         }
+        for (Structure structure : structures) {
+            structure.connectToMesh(this);
+        }
     }
 
     public UUID getUuid() {
