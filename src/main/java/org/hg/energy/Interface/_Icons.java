@@ -760,8 +760,9 @@ public enum _Icons {
             Material.STRUCTURE_VOID,
             WHITE + "Задать шанс поломки",
             WHITE + "Если структура сломается,\n" +
-                    WHITE + "Она отключается, как и \n" +
+                    WHITE + "она отключается, как и \n" +
                     WHITE + "возможность игрокам редачить.\n" +
+                    GRAY + "Срабатывает перед самой работой\n" +
                     GOLD + "Текущий шанс: {}%",
             shareData -> {
                 if (shareData.getStructure() != null) {

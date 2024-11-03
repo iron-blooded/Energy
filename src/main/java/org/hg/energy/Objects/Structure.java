@@ -506,7 +506,7 @@ public abstract class Structure implements Serializable, Cloneable {
      */
     public void useWorkAndSound() {
         SimpleEntry<Sound, Float> sound;
-        if (work()) {
+        if (useChanceBreak() && work()) {
             sound = getSound_success();
         } else {
             sound = getSound_error();
@@ -528,7 +528,7 @@ public abstract class Structure implements Serializable, Cloneable {
      * Тем, кому нужна механика работы структуры, необходимо переопределить логику работы самостоятельно
      */
     public void update() {
-        if (isEnabled() && useChanceBreak()) {
+        if (isEnabled()) {
             this.p_cooldown = Math.max(0, p_cooldown - 1);
             if (useCooldown() && castChanceWork()) {
                 useWorkAndSound();
