@@ -75,7 +75,10 @@ public class _InteractInventories {
         // Инициализируем таблицу запрашиваемых материалов
         Map<ItemStack, Integer> requestsMaterials = new HashMap<>();
         for (ItemStack material : materials) {
-            requestsMaterials.merge(material, material.getAmount(), Integer::sum);
+            material = material.clone();
+            int amount = material.getAmount();
+            material.setAmount(1);
+            requestsMaterials.merge(material, amount, Integer::sum);
         }
         // Проверяем все хранилища и собираем подходящие ItemStack
         for (Inventory inventory : inventories) {
