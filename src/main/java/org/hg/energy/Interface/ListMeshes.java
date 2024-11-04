@@ -5,6 +5,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.hg.energy.Mesh;
+import org.hg.energy.Objects.Converter;
+import org.hg.energy.Objects.Fabrication;
+import org.hg.energy.Objects.Generator;
+import org.hg.energy.Objects.Structure;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -54,9 +58,43 @@ public class ListMeshes implements Window, InventoryHolder, Pagination {
         }
         for (int slot = 0; slot < max_elements && slot < meshList.size(); slot++) {
             Mesh mesh = meshList.get(slot);
+            // вычисление, сколько энергии структура тратит и производит в минуту
+            double product_energy = 0;
+            double consumed_energy = 0;
+            for (Structure structure : data.getPlugin().getStructures()) {
+                double coefficient = 1;
+                if (structure.getMaxCooldown() >= 0) {
+                    coefficient *= 1 - (((structure.getChanceWork() / (structure.getMaxCooldown() + 1)) / 100));
+                }
+                if (structure.getCooldownForPlayer() > 0) {
+                    coefficient *= 1 - (((structure.getChanceWork() / structure.getCooldownForPlayer()) / 100));
+                }
+                coefficient = 1 - coefficient;
+                if (structure.isEnabled()) {
+                    if (structure instanceof Generator generator && generator.getMesh().equals(mesh)) {
+                        product_energy += coefficient * generator.getAmountEnergyProduced();
+                    } else if (structure instanceof Converter converter) {
+                        if (converter.getMesh().equals(mesh)) {
+                            consumed_energy += coefficient * converter.getAmount();
+                        }
+                        if (mesh.equals(converter.getOutputMesh())) {
+                            product_energy += coefficient * (converter.getCoefficient() * converter.getAmount());
+                        }
+                    } else if (structure instanceof Fabrication fabrication && fabrication.getMesh().equals(mesh)) {
+                        consumed_energy += coefficient * fabrication.getPrice();
+                    }
+                }
+            }
             inventory.setItem(slot, _Icons.ИконкаСети.getItem(
                                       mesh.getDisplayName(),
-                                      mesh.getEnergyName(),
+                                      mesh.getEnergyName() + "\n" +
+                                              ChatColor.GREEN + "Производит: " + String.format("%.4f ", product_energy)
+                                              + mesh.getEnergyName() + "/сек.\n" +
+                                              ChatColor.RED + "Потребляет: " + String.format("%.4f ", consumed_energy)
+                                              + mesh.getEnergyName() + "/сек.\n" +
+                                              ChatColor.GOLD + "Хранит: " + String.format("%.4f ",
+                                                                                          mesh.getEnergyLimit())
+                                      ,
                                       mesh.getUuid()
                                                              )
                              );

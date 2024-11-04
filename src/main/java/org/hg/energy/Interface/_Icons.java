@@ -655,7 +655,7 @@ public enum _Icons {
             Material.NETHER_STAR,
             LIGHT_PURPLE + "Сеть",
             GOLD + "Имя: {}\n" +
-                    GRAY + "Энергия: {}",
+                    WHITE + "Энергия: {}",
             shareData -> {
                 if (shareData.getStructure() != null && shareData.getMesh() != null) {
                     if (shareData.isBoolean() && shareData.getStructure() instanceof Converter converter) {
