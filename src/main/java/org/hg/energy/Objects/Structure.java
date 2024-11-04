@@ -365,7 +365,7 @@ public abstract class Structure implements Serializable, Cloneable {
      * @param cooldown_required время перезарядки (в секундах)
      */
     public void setCooldownRequired(int cooldown_required) {
-        this.cooldown_required = Math.max(0, cooldown_required);
+        this.cooldown_required = Math.max(-1, cooldown_required);
     }
 
     /**
@@ -376,10 +376,11 @@ public abstract class Structure implements Serializable, Cloneable {
      * @return True - если перезарядка кончилась, False - если структура еще на перезарядке
      */
     public boolean useCooldown() {
-        cooldown++;
-        if (cooldown >= cooldown_required) {
+        if (cooldown_required != -1 && cooldown >= cooldown_required) {
             cooldown = 0;
             return true;
+        } else if (cooldown_required != -1) {
+            cooldown++;
         }
         return false;
     }
