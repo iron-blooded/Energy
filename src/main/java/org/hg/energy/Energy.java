@@ -37,11 +37,15 @@ public final class Energy extends JavaPlugin {
             @Override
             public void run() {
                 for (Mesh mesh : meshes) {
-                    mesh.updateStructures();
                     for (Structure structure : mesh.getStructures()) {
-                        structure.connectToMesh(mesh);
+                        if (structure.getMesh() == null) {
+                            structure.connectToMesh(mesh);
+                        } else if (!structure.getMesh().equals(mesh)) {
+                            mesh.removeStructure(structure);
+                        }
                         structure.checkLocationsMatching();
                     }
+                    mesh.updateStructures();
                 }
                 if (count[0] > 60) {
                     database.meshDatabase.save();
