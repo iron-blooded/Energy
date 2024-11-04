@@ -3,6 +3,7 @@ package org.hg.energy.Listeners;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -23,7 +24,12 @@ public class ListenerListItems implements Listener {
         Player player = (Player) event.getWhoClicked();
         if (inventory != null && inventory.getHolder() instanceof ListItems holder) {
             ItemStack clicked_item = event.getCurrentItem();
+            event.setCancelled(true);
             if (clicked_item != null && _Icons.isSimilar(clicked_item).equals(_Icons.empty)) {
+                if (event.getClick().equals(ClickType.MIDDLE)){
+                    event.setCancelled(false);
+                    return;
+                }
                 holder.clickItem(clicked_item);
                 player.openInventory(holder.getInventory());
             }
