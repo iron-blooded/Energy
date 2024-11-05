@@ -92,8 +92,12 @@ public class ListMeshes implements Window, InventoryHolder, Pagination {
                                               + mesh.getEnergyName() + "/сек.\n" +
                                               ChatColor.RED + "Потребляет: " + String.format("%.4f ", consumed_energy)
                                               + mesh.getEnergyName() + "/сек.\n" +
-                                              ChatColor.GOLD + "Хранит: " + String.format("%.4f ",
-                                                                                          mesh.getEnergyLimit())
+                                              ChatColor.GOLD + "Хранит: " + String.format(
+                                              "%.3f/%.3f %s",
+                                              mesh.getEnergyCount(),
+                                              mesh.getEnergyLimit(),
+                                              mesh.getEnergyName()
+                                                                                         )
                                       ,
                                       mesh.getUuid()
                                                              )
