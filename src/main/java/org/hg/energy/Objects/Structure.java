@@ -425,7 +425,7 @@ public abstract class Structure implements Serializable, Cloneable {
         if (!validate) {
             return;
         }
-        location.add(location.clone());
+        locations.put(location.getBlock(), location.getBlock().getType());
     }
 
     /**
