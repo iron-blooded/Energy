@@ -14,6 +14,8 @@ import java.io.*;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.*;
 
+import static org.hg.energy.Objects._LitBlocks.lit;
+
 public abstract class Structure implements Serializable, Cloneable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -509,8 +511,10 @@ public abstract class Structure implements Serializable, Cloneable {
         SimpleEntry<Sound, Float> sound;
         if (useChanceBreak() && work()) {
             sound = getSound_success();
+            lit(getLocations(), true);
         } else {
             sound = getSound_error();
+            lit(getLocations(), false);
         }
         if (sound.getValue() >= 0) {
             getLocations().get(0).getWorld().playSound(
@@ -533,8 +537,10 @@ public abstract class Structure implements Serializable, Cloneable {
             this.p_cooldown = Math.max(0, p_cooldown - 1);
             if (useCooldown() && castChanceWork()) {
                 useWorkAndSound();
+                return;
             }
         }
+        lit(getLocations(), false);
     }
 
     /**

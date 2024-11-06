@@ -8,6 +8,8 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 
+import static org.hg.energy.Objects._LitBlocks.lit;
+
 public class Mesh implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -77,9 +79,11 @@ public class Mesh implements Serializable {
     }
 
     public void updateStructures() {
-        if (enabled) {
-            for (Structure structure : this.structures) {
+        for (Structure structure : this.structures) {
+            if (enabled) {
                 structure.update();
+            } else {
+                lit(structure.getLocations(), false);
             }
         }
     }
