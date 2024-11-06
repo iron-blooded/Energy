@@ -190,8 +190,21 @@ public enum _Icons {
     ),
     ЗадатьБлокиСтруктуры(
             Material.BLAZE_ROD,
-            GOLD + "Задать блоки, которым соответсвует структура",
-            WHITE + "Блоки не должны быть слишком далеко друг от друга"
+            GOLD + "Задать блоки, которым соответствует структура",
+            WHITE + "Блоки не должны быть слишком далеко друг от друга",
+            shareData -> {
+                if (shareData.getStructure() != null) {
+                    Player player = shareData.getPlayer();
+                    player.sendMessage(ChatColor.RED
+                                               + "Кликните отверткой ПКМ по блоку, который нужно добавить или удалить"
+                                               + " из структуры");
+                    player.sendMessage(
+                            BLUE + "Кликните ЛКМ, если нужно прекратить процесс");
+                    player.closeInventory();
+                    shareData.getPlugin().edit_locations_structure.put(player, shareData.getStructure());
+                }
+                return null;
+            }
             //TODO: выбор игроком блоков, которым соответствует структура
     ),
     ПрисоеденитьСетькКСтруктуре(

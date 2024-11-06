@@ -24,9 +24,16 @@ public class ListenerClickBlock implements Listener {
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         if (EquipmentSlot.OFF_HAND.equals(event.getHand()) || event.getAction().isLeftClick()) {
-            if (event.getAction().isLeftClick() && plugin.clone_structures.containsKey(player)) {
-                player.sendMessage(ChatColor.GOLD + "Вы отменили копирование структуры.");
-                plugin.clone_structures.remove(player);
+            if (event.getAction().isLeftClick()) {
+                if (plugin.clone_structures.containsKey(player)) {
+                    plugin.clone_structures.remove(player);
+                    player.sendMessage(ChatColor.GOLD + "Вы отменили копирование структуры.");
+                    event.setCancelled(true);
+                } else if (plugin.edit_locations_structure.containsKey(player)) {
+                    plugin.edit_locations_structure.remove(player);
+                    player.sendMessage(ChatColor.GOLD + "Вы отменили добавление блока в структуру");
+                    event.setCancelled(true);
+                }
             }
             return;
         }
@@ -53,6 +60,26 @@ public class ListenerClickBlock implements Listener {
                     structure = plugin.clone_structures.get(player).cloneWithNewUUID(block.getLocation());
                     plugin.clone_structures.remove(player);
                     player.sendMessage(ChatColor.GREEN + "Вы успешно скопировали структуру!");
+                } else if (plugin.edit_locations_structure.containsKey(player)) {
+                    if (structure == null) {
+                        if (plugin.edit_locations_structure.get(player).addLocation(block.getLocation())) {
+                            player.sendMessage(
+                                    ChatColor.GREEN + "Вы успешно добавили блок в структуру. Можете продолжать.");
+                        } else {
+                            player.sendMessage(
+                                    ChatColor.YELLOW+"Добавить блок не удалось.");
+                        }
+                    } else if (structure.equals(plugin.edit_locations_structure.get(player))) {
+                        if (plugin.edit_locations_structure.get(player).removeLocation(block.getLocation())) {
+                            player.sendMessage(
+                                    ChatColor.GREEN + "Вы успешно " + ChatColor.RED + "удалили" + ChatColor.GREEN
+                                            + " блок из структуры. Можете продолжать.");
+                        } else {
+                            player.sendMessage(
+                                    ChatColor.YELLOW + "Удалить блок из структуры не получилось.");
+                        }
+                    }
+                    return;
                 }
                 if (player.hasPermission("energy.settings.structure")) {
                     if (structure != null) {

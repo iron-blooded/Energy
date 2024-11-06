@@ -415,17 +415,30 @@ public abstract class Structure implements Serializable, Cloneable {
     /**
      * @param location Добавляет блок, которому соответствует структура данного генератора
      */
-    public void addLocation(@NotNull Location location) {
+    public boolean addLocation(@NotNull Location location) {
         boolean validate = false;
         for (Block block : locations.keySet()) {
             if (block.getLocation().distance(location) < 5) {
                 validate = true;
             }
         }
-        if (!validate) {
-            return;
+        if (!validate || locations.size() >= 16) {
+            return false;
         }
         locations.put(location.getBlock(), location.getBlock().getType());
+        return true;
+    }
+
+    /**
+     * @param location Удаляет координаты из списка соответствий структуре
+     * @return успешно было ли удаление структуры
+     */
+    public boolean removeLocation(@NotNull Location location) {
+        if (locations.size() > 1) {
+            locations.remove(location.getBlock());
+            return true;
+        }
+        return false;
     }
 
     /**

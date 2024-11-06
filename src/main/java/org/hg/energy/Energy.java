@@ -21,6 +21,7 @@ public final class Energy extends JavaPlugin {
     public List<Mesh> meshes = new ArrayList<>();
     public Map<Player, TextBox> textBoxMap = new HashMap<>();
     public Map<Player, Structure> clone_structures = new HashMap<>();
+    public Map<Player, Structure> edit_locations_structure = new HashMap<>();
     public SetupDatabase database;
 
 
