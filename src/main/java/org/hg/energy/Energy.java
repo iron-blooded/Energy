@@ -1,6 +1,9 @@
 package org.hg.energy;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -59,6 +62,28 @@ public final class Energy extends JavaPlugin {
                     if (holder instanceof Window window && window.needUpdate()) {
                         player.getOpenInventory().getTopInventory().setContents(holder.getInventory().getContents());
                         player.updateInventory();
+                    }
+                }
+                Random random = new Random();
+                for (Player player : edit_locations_structure.keySet()) {
+                    if (!player.isOnline()) continue;
+                    Structure structure = edit_locations_structure.get(player);
+                    for (Location location : structure.getLocations()) {
+                        double radius = 0.6;
+                        for (double phi = 0; phi < Math.PI; phi += Math.PI / 10) {
+                            for (double theta = 0; theta < 2 * Math.PI; theta += Math.PI / 10) {
+                                double x = radius * Math.cos(theta) * Math.sin(phi);
+                                double y = radius * Math.cos(phi);
+                                double z = radius * Math.sin(theta) * Math.sin(phi);
+                                Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromBGR(
+                                        (int) (random.nextDouble() * 255), (int) (random.nextDouble() * 255),
+                                        (int) (random.nextDouble() * 255)
+                                                                                                         ), 1.0f);
+                                location.getWorld().spawnParticle(Particle.REDSTONE, location.clone().add(x, y, z), 0
+                                        , 0, 0, 0, dustOptions);
+                            }
+                        }
+//                        player.spawnParticle(Particle.COMPOSTER, location, 50, 0.25, 0.25, 0.25, 1);
                     }
                 }
             }

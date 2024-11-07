@@ -447,7 +447,7 @@ public abstract class Structure implements Serializable, Cloneable {
     public List<Location> getLocations() {
         List<Location> loc = new ArrayList<>();
         for (Block block : locations.keySet()) {
-            loc.add(block.getLocation());
+            loc.add(block.getLocation().clone().add(0.5, 0.5, 0.5));
         }
         return loc;
     }
