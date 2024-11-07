@@ -191,17 +191,32 @@ public enum _Icons {
     ЗадатьБлокиСтруктуры(
             Material.BLAZE_ROD,
             GOLD + "Задать блоки, которым соответствует структура",
-            WHITE + "Блоки не должны быть слишком далеко друг от друга",
+            WHITE + "Блоки не должны быть слишком далеко друг от друга\n" +
+                    YELLOW + "Кликните ПКМ, что бы удалить все блоки структуры\n" +
+                    YELLOW + "кроме ближайшего",
             shareData -> {
                 if (shareData.getStructure() != null) {
                     Player player = shareData.getPlayer();
-                    player.sendMessage(ChatColor.RED
-                                               + "Кликните отверткой ПКМ по блоку, который нужно добавить или удалить"
-                                               + " из структуры");
-                    player.sendMessage(
-                            BLUE + "Кликните ЛКМ, если нужно прекратить процесс");
+                    if (shareData.getClickType().equals(ClickType.LEFT)) {
+                        player.sendMessage(ChatColor.RED
+                                                   + "Кликните отверткой ПКМ по блоку, который нужно добавить или "
+                                                   + "удалить"
+                                                   + " из структуры");
+                        player.sendMessage(
+                                BLUE + "Кликните ЛКМ, если нужно прекратить процесс");
+                        shareData.getPlugin().edit_locations_structure.put(player, shareData.getStructure());
+                    } else if (shareData.getClickType().equals(ClickType.RIGHT)) {
+                        shareData.getStructure().setLocations(Collections.singletonList(
+                                shareData.getStructure().getLocations().stream()
+                                        .min(Comparator.comparingDouble(location -> location.distance(player.getLocation())))
+                                        .orElse(shareData.getStructure().getLocations().get(0))));
+                        player.sendMessage(
+                                GREEN
+                                        + "Вы успешно удалили все блоки структуры, кроме ближайшего. На него вас и "
+                                        + "переместило.");
+                        player.teleport(shareData.getStructure().getLocations().get(0));
+                    }
                     player.closeInventory();
-                    shareData.getPlugin().edit_locations_structure.put(player, shareData.getStructure());
                 }
                 return null;
             }
