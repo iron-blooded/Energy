@@ -23,7 +23,7 @@ public class PlayerSettingStructure implements Window, InventoryHolder {
     @Override
     public @NotNull Inventory getInventory() {
         Inventory inventory = Bukkit.createInventory(
-                this, InventoryType.HOPPER, ChatColor.GOLD + "Настройка структуры");
+                this, InventoryType.HOPPER, ChatColor.GOLD + "Настройка структуры " + structure.getName());
         if (structure == null) return inventory;
         if (structure.getCooldownForPlayer() != 0) {
             inventory.setItem(
