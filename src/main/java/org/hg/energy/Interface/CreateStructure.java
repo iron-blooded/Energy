@@ -28,10 +28,10 @@ public class CreateStructure implements InventoryHolder, Window {
     public @NotNull Inventory getInventory() {
         Inventory inventory = Bukkit.createInventory(
                 this, InventoryType.HOPPER, ChatColor.GOLD + "Выбор типа структуры");
-        inventory.setItem(calculate(1, 1), ХранилищеЭнергии.getItem(""));
-        inventory.setItem(calculate(1, 2), Генератор.getItem(""));
-        inventory.setItem(calculate(1, 4), Конвертер.getItem(""));
-        inventory.setItem(calculate(1, 5), Фабрикатор.getItem(""));
+        inventory.setItem(calculate(1, 1), ХранилищеЭнергии.getItem("", ""));
+        inventory.setItem(calculate(1, 2), Генератор.getItem("", ""));
+        inventory.setItem(calculate(1, 4), Конвертер.getItem("", ""));
+        inventory.setItem(calculate(1, 5), Фабрикатор.getItem("",""));
         return inventory;
     }
 

@@ -28,7 +28,7 @@ public enum _Icons {
             Material.BARREL,
             BLUE + "Хранилище энергии",
             WHITE + "Хранит энергию, и больше ничего\n" +
-                    WHITE + "{}",
+                    WHITE + "{}\n{}",
             (shareData) -> {
                 if (shareData.getLocation() != null) {
                     shareData.setStructure(new Container(
@@ -46,7 +46,7 @@ public enum _Icons {
             Material.IRON_BLOCK,
             GOLD + "Генератор" + BLACK + "Бензиновый Генератор",
             WHITE + "Генерирует энергию, потребляя ресурсы\n" +
-                    WHITE + "{}",
+                    WHITE + "{}\n{}",
             (shareData) -> {
                 if (shareData.getLocation() != null) {
                     shareData.setStructure(new Generator(
@@ -66,7 +66,7 @@ public enum _Icons {
             WHITE + "Так же можно назвать трансформатором.\n" +
                     WHITE + "Преобразует энергию одной сети в энергию другой сети\n" +
                     WHITE + "с заданным коофициентом.\n" +
-                    WHITE + "{}",
+                    WHITE + "{}\n{}",
             (shareData) -> {
                 if (shareData.getLocation() != null) {
                     shareData.setStructure(new Converter(
@@ -85,7 +85,7 @@ public enum _Icons {
             LIGHT_PURPLE + "Фабрикатор",
             WHITE + "Производит из одних ресурсов другие\n" +
                     WHITE + "потребляя при этом энергию.\n" +
-                    WHITE + "{}",
+                    WHITE + "{}\n{}",
             (shareData) -> {
                 if (shareData.getLocation() != null) {
                     shareData.setStructure(new Fabrication(
@@ -551,16 +551,28 @@ public enum _Icons {
                                 for (Structure structure : shareData.getMesh().getStructures()) {
                                     if (structure instanceof Container container) {
                                         items.add(_Icons.ХранилищеЭнергии.getItem(
-                                                "Имя: " + structure.getName(), "", structure.getUuid()));
+                                                "Имя: " + structure.getName(),
+                                                structure.isEnabled() ? GREEN + "Включен" : RED + "Выключен",
+                                                structure.getUuid()
+                                                                                 ));
                                     } else if (structure instanceof Converter converter) {
                                         items.add(_Icons.Конвертер.getItem(
-                                                "Имя: " + structure.getName(), "", structure.getUuid()));
+                                                "Имя: " + structure.getName(),
+                                                structure.isEnabled() ? GREEN + "Включен" : RED + "Выключен",
+                                                structure.getUuid()
+                                                                          ));
                                     } else if (structure instanceof Fabrication fabrication) {
                                         items.add(_Icons.Фабрикатор.getItem(
-                                                "Имя: " + structure.getName(), "", structure.getUuid()));
+                                                "Имя: " + structure.getName(),
+                                                structure.isEnabled() ? GREEN + "Включен" : RED + "Выключен",
+                                                structure.getUuid()
+                                                                           ));
                                     } else if (structure instanceof Generator generator) {
                                         items.add(_Icons.Генератор.getItem(
-                                                "Имя: " + structure.getName(), "", structure.getUuid()));
+                                                "Имя: " + structure.getName(),
+                                                structure.isEnabled() ? GREEN + "Включен" : RED + "Выключен",
+                                                structure.getUuid()
+                                                                          ));
                                     }
                                 }
                                 return items;
