@@ -105,14 +105,16 @@ public enum _Icons {
             GOLD + "Текущее имя: {}",
             shareData -> {
                 if (shareData.getStructure() != null) {
-                    new TextBox(shareData, string -> {
+                    new TextBox(
+                            shareData, string -> {
                         try {
                             shareData.getStructure().setName(string);
                             return true;
                         } catch (Exception ignored) {
                         }
                         return false;
-                    }).apply();
+                    }
+                    ).apply();
                 }
                 return null;
             }
@@ -138,14 +140,16 @@ public enum _Icons {
                     GREEN + "Текущий шанс: {}%",
             shareData -> {
                 if (shareData.getStructure() != null) {
-                    new TextBox(shareData, string -> {
+                    new TextBox(
+                            shareData, string -> {
                         try {
                             shareData.getStructure().setChanceWork(Double.parseDouble(string));
                             return true;
                         } catch (Exception ignored) {
                         }
                         return false;
-                    }).apply();
+                    }
+                    ).apply();
                 }
                 return null;
             }
@@ -157,14 +161,16 @@ public enum _Icons {
                     GOLD + "Осталось до срабатывания структуры: {} сек.",
             shareData -> {
                 if (shareData.getStructure() != null) {
-                    new TextBox(shareData, string -> {
+                    new TextBox(
+                            shareData, string -> {
                         try {
                             shareData.getStructure().setCooldownRequired(Integer.parseInt(string));
                             return true;
                         } catch (Exception ignored) {
                         }
                         return false;
-                    }).apply();
+                    }
+                    ).apply();
                 }
                 return null;
             }
@@ -176,14 +182,16 @@ public enum _Icons {
                     WHITE + "Создана для ивентеров",
             shareData -> {
                 if (shareData.getStructure() != null) {
-                    new TextBox(shareData, string -> {
+                    new TextBox(
+                            shareData, string -> {
                         try {
                             shareData.getStructure().setCooldown(Integer.parseInt(string));
                             return true;
                         } catch (Exception ignored) {
                         }
                         return false;
-                    }).apply();
+                    }
+                    ).apply();
                 }
                 return null;
             }
@@ -266,14 +274,16 @@ public enum _Icons {
                     AQUA + "Текущий объем: {} {}",
             shareData -> {
                 if (shareData.getStructure() != null) {
-                    new TextBox(shareData, string -> {
+                    new TextBox(
+                            shareData, string -> {
                         try {
                             shareData.getStructure().setVolume(Double.parseDouble(string));
                             return true;
                         } catch (Exception ignored) {
                         }
                         return false;
-                    }).apply();
+                    }
+                    ).apply();
                 }
                 return null;
             }
@@ -326,14 +336,16 @@ public enum _Icons {
                     WHITE + "Текущее количество: {}",
             shareData -> {
                 if (shareData.getStructure() instanceof Converter converter) {
-                    new TextBox(shareData, string -> {
+                    new TextBox(
+                            shareData, string -> {
                         try {
                             converter.setAmount(Double.parseDouble(string));
                             return true;
                         } catch (Exception ignored) {
                         }
                         return false;
-                    }).apply();
+                    }
+                    ).apply();
                 }
                 return null;
             }
@@ -359,14 +371,16 @@ public enum _Icons {
                     + RESET + WHITE + "Текущий коофициент: {}",
             shareData -> {
                 if (shareData.getStructure() instanceof Converter converter) {
-                    new TextBox(shareData, string -> {
+                    new TextBox(
+                            shareData, string -> {
                         try {
                             converter.setCoefficient(Double.parseDouble(string));
                             return true;
                         } catch (Exception ignored) {
                         }
                         return false;
-                    }).apply();
+                    }
+                    ).apply();
                 }
                 return null;
             }
@@ -380,23 +394,27 @@ public enum _Icons {
                     RED + "Текущее значение: {}",
             shareData -> {
                 if (shareData.getStructure() instanceof Generator generator) {
-                    new TextBox(shareData, string -> {
+                    new TextBox(
+                            shareData, string -> {
                         try {
                             generator.setDistanceMaterial(Integer.parseInt(string));
                             return true;
                         } catch (Exception ignored) {
                         }
                         return false;
-                    }).apply();
+                    }
+                    ).apply();
                 } else if (shareData.getStructure() instanceof Fabrication fabrication) {
-                    new TextBox(shareData, string -> {
+                    new TextBox(
+                            shareData, string -> {
                         try {
                             fabrication.setDistanceMaterial(Integer.parseInt(string));
                             return true;
                         } catch (Exception ignored) {
                         }
                         return false;
-                    }).apply();
+                    }
+                    ).apply();
                 }
                 return null;
             }
@@ -407,14 +425,16 @@ public enum _Icons {
             WHITE + "Текущее значение: {}",
             shareData -> {
                 if (shareData.getStructure() instanceof Generator generator) {
-                    new TextBox(shareData, string -> {
+                    new TextBox(
+                            shareData, string -> {
                         try {
                             generator.setAmountEnergyProduced(Double.parseDouble(string));
                             return true;
                         } catch (Exception ignored) {
                         }
                         return false;
-                    }).apply();
+                    }
+                    ).apply();
                 }
                 return null;
             }
@@ -468,14 +488,16 @@ public enum _Icons {
                     WHITE + "Текущее количество: {}",
             shareData -> {
                 if (shareData.getStructure() instanceof Fabrication fabrication) {
-                    new TextBox(shareData, string -> {
+                    new TextBox(
+                            shareData, string -> {
                         try {
                             fabrication.setPrice(Double.parseDouble(string));
                             return true;
                         } catch (Exception ignored) {
                         }
                         return false;
-                    }).apply();
+                    }
+                    ).apply();
                 }
                 return null;
             }
@@ -506,14 +528,16 @@ public enum _Icons {
             GOLD + "Текущее имя: {}",
             shareData -> {
                 if (shareData.getMesh() != null) {
-                    new TextBox(shareData, string -> {
+                    new TextBox(
+                            shareData, string -> {
                         try {
                             shareData.getMesh().setDisplayName(string);
                             return true;
                         } catch (Exception ignored) {
                         }
                         return false;
-                    }).apply();
+                    }
+                    ).apply();
                 }
                 return null;
             }
@@ -526,14 +550,16 @@ public enum _Icons {
                     GOLD + "Текущее название: {}",
             shareData -> {
                 if (shareData.getMesh() != null) {
-                    new TextBox(shareData, string -> {
+                    new TextBox(
+                            shareData, string -> {
                         try {
                             shareData.getMesh().setEnergyName(string);
                             return true;
                         } catch (Exception ignored) {
                         }
                         return false;
-                    }).apply();
+                    }
+                    ).apply();
                 }
                 return null;
             }
@@ -599,14 +625,16 @@ public enum _Icons {
                     + WHITE + "сеть хранит: {} {}",
             shareData -> {
                 if (shareData.getMesh() != null) {
-                    new TextBox(shareData, string -> {
+                    new TextBox(
+                            shareData, string -> {
                         try {
                             shareData.getMesh().setEnergyCount(Double.parseDouble(string));
                             return true;
                         } catch (Exception ignored) {
                         }
                         return false;
-                    }).apply();
+                    }
+                    ).apply();
                 }
                 return null;
             }
@@ -626,15 +654,19 @@ public enum _Icons {
             shareData -> {
                 if (shareData.getMesh() != null) {
                     Mesh mesh = shareData.getMesh();
-                    new TextBox(shareData, string -> {
+                    new TextBox(
+                            shareData, string -> {
                         try {
-                            mesh.setEnergyCount(Math.max(0, Math.min(
-                                    mesh.getEnergyLimit(), mesh.getEnergyCount() + Double.parseDouble(string))));
+                            mesh.setEnergyCount(Math.max(
+                                    0, Math.min(
+                                            mesh.getEnergyLimit(), mesh.getEnergyCount() + Double.parseDouble(string))
+                                                        ));
                             return true;
                         } catch (Exception ignored) {
                         }
                         return false;
-                    }).apply();
+                    }
+                    ).apply();
                 }
                 return null;
             }
@@ -762,10 +794,12 @@ public enum _Icons {
                     GOLD + "Текущее значение: {}",
             shareData -> {
                 if (shareData.getHolder() instanceof ListItems holder) {
-                    new TextBox(shareData, string -> {
+                    new TextBox(
+                            shareData, string -> {
                         holder.setNumber(holder.getInsertedItem(shareData.getClickItem()), Double.parseDouble(string));
                         return true;
-                    }).apply();
+                    }
+                    ).apply();
                 }
                 return null;
             }
@@ -806,10 +840,12 @@ public enum _Icons {
                     GOLD + "Текущий шанс: {}%",
             shareData -> {
                 if (shareData.getStructure() != null) {
-                    new TextBox(shareData, string -> {
+                    new TextBox(
+                            shareData, string -> {
                         shareData.getStructure().setChanceBreak(Double.parseDouble(string));
                         return true;
-                    }).apply();
+                    }
+                    ).apply();
                 }
                 return null;
             }
@@ -826,10 +862,12 @@ public enum _Icons {
                     RED + "Осталось: {} сек.",
             shareData -> {
                 if (shareData.getStructure() != null) {
-                    new TextBox(shareData, string -> {
+                    new TextBox(
+                            shareData, string -> {
                         shareData.getStructure().setCooldownForPlayer(Integer.parseInt(string));
                         return true;
-                    }).apply();
+                    }
+                    ).apply();
                 }
                 return null;
             }
@@ -859,7 +897,8 @@ public enum _Icons {
                     GRAY + "Можете указывать или звук, или скорость, или все вместе",
             shareData -> {
                 if (shareData.getStructure() != null) {
-                    new TextBox(shareData, string -> {
+                    new TextBox(
+                            shareData, string -> {
                         AbstractMap.SimpleEntry<Sound, Float> sound_success =
                                 shareData.getStructure().getSound_success();
                         for (String str : string.split(" ")) {
@@ -879,7 +918,8 @@ public enum _Icons {
                         }
                         shareData.getStructure().setSound_success(sound_success);
                         return true;
-                    }).apply();
+                    }
+                    ).apply();
                 }
                 return null;
             }
@@ -894,7 +934,8 @@ public enum _Icons {
                     GRAY + "Можете указывать или звук, или скорость, или все вместе",
             shareData -> {
                 if (shareData.getStructure() != null) {
-                    new TextBox(shareData, string -> {
+                    new TextBox(
+                            shareData, string -> {
                         AbstractMap.SimpleEntry<Sound, Float> sound_error =
                                 shareData.getStructure().getSound_error();
                         for (String str : string.split(" ")) {
@@ -914,7 +955,8 @@ public enum _Icons {
                         }
                         shareData.getStructure().setSound_error(sound_error);
                         return true;
-                    }).apply();
+                    }
+                    ).apply();
                 }
                 return null;
             }
@@ -986,8 +1028,9 @@ public enum _Icons {
         if (uuid == null || itemMeta == null) {
             return;
         }
-        itemMeta.getPersistentDataContainer().set(new NamespacedKey("energy", "uuid"), PersistentDataType.STRING,
-                                                  uuid.toString()
+        itemMeta.getPersistentDataContainer().set(
+                new NamespacedKey("energy", "uuid"), PersistentDataType.STRING,
+                uuid.toString()
                                                  );
     }
 
@@ -1079,8 +1122,11 @@ public enum _Icons {
                                    );
                     player.openInventory(data.getHolder().getInventory());
                     Location location = data.getStructure().getLocations().get(0);
-                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-                            "x: %.2f, y: %.2f, z: %.2f".formatted(location.getX(), location.getY(), location.getZ())));
+                    player.spigot().sendMessage(
+                            ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
+                                    "x: %.2f, y: %.2f, z: %.2f".formatted(location.getX(), location.getY(),
+                                                                          location.getZ()))
+                                               );
                     return;
                 default:
                     break;
