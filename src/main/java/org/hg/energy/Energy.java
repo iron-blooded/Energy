@@ -79,7 +79,7 @@ public final class Energy extends JavaPlugin {
                                         (int) (random.nextDouble() * 255), (int) (random.nextDouble() * 255),
                                         (int) (random.nextDouble() * 255)
                                                                                                          ), 1.0f);
-                                location.getWorld().spawnParticle(Particle.REDSTONE, location.clone().add(x, y, z), 0
+                                player.spawnParticle(Particle.REDSTONE, location.clone().add(x, y, z), 0
                                         , 0, 0, 0, dustOptions);
                             }
                         }
