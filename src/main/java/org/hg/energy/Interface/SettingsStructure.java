@@ -4,12 +4,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.hg.energy.FunctionsTemperature;
 import org.hg.energy.Mesh;
 import org.hg.energy.Objects.Converter;
 import org.hg.energy.Objects.Fabrication;
 import org.hg.energy.Objects.Generator;
 import org.hg.energy.Objects.Structure;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
 
 import static org.hg.energy.Interface._Icons.*;
 
@@ -36,15 +39,19 @@ public class SettingsStructure implements InventoryHolder, Window {
         // настройка содержимого
         inventory.setItem(calculate(1, 1), ИзменитьИмяСтруктуры.getItem(structure.getName()));
         inventory.setItem(calculate(1, 2), ШансРаботыСтруктуры.getItem(String.valueOf(structure.getChanceWork())));
-        inventory.setItem(calculate(1, 3), КулдаунРаботыСтруктуры.getItem(
-                String.valueOf(structure.getMaxCooldown()),
-                String.valueOf(structure.getMaxCooldown() - structure.getCooldown())
-                                                                         ));
+        inventory.setItem(
+                calculate(1, 3), КулдаунРаботыСтруктуры.getItem(
+                        String.valueOf(structure.getMaxCooldown()),
+                        String.valueOf(structure.getMaxCooldown() - structure.getCooldown())
+                                                               )
+                         );
         inventory.setItem(calculate(1, 4), ЗадатьБлокиСтруктуры.getItem(""));
-        inventory.setItem(calculate(1, 5), ПрисоеденитьСетькКСтруктуре.getItem(
-                mesh.getDisplayName(),
-                mesh.getEnergyName()
-                                                                              ));
+        inventory.setItem(
+                calculate(1, 5), ПрисоеденитьСетькКСтруктуре.getItem(
+                        mesh.getDisplayName(),
+                        mesh.getEnergyName()
+                                                                    )
+                         );
         inventory.setItem(
                 calculate(1, 6),
                 ЗадатьКоличествоЭнергии.getItem(
@@ -79,6 +86,12 @@ public class SettingsStructure implements InventoryHolder, Window {
                     ВызыватьРаботуСтруктурыИгроку.getItem(String.valueOf(structure.getStayCooldownForPlayer()))
                              );
         }
+        inventory.setItem(
+                calculate(4, 7), ЗадатьТемпературу.getItem(
+                        String.valueOf(structure.getTemperature().getNumber()),
+                        Arrays.stream(FunctionsTemperature.values()).filter(functionsTemperature -> functionsTemperature.getOperator().equals(structure.getTemperature().getMath())).findFirst().orElse(FunctionsTemperature.Sum).name()
+                                                          )
+                         );
 
 
         if (structure instanceof Converter converter) {
@@ -87,10 +100,12 @@ public class SettingsStructure implements InventoryHolder, Window {
                 outputMesh = converter.getOutputMesh();
             }
             inventory.setItem(calculate(3 + 3, 1), ЗадатьРасход.getItem(String.valueOf(converter.getAmount())));
-            inventory.setItem(calculate(3 + 3, 2), ВыходнаяСеть.getItem(
-                    outputMesh.getDisplayName(),
-                    outputMesh.getEnergyName()
-                                                                       ));
+            inventory.setItem(
+                    calculate(3 + 3, 2), ВыходнаяСеть.getItem(
+                            outputMesh.getDisplayName(),
+                            outputMesh.getEnergyName()
+                                                             )
+                             );
             inventory.setItem(
                     calculate(3 + 3, 3),
                     КоофициентКонвертации.getItem(String.valueOf(converter.getCoefficient()))
@@ -118,14 +133,18 @@ public class SettingsStructure implements InventoryHolder, Window {
                     ЛогикаПроизводства.getItem(String.valueOf(fabricator.getMultiProduct().getName()))
                              );
         }
-        inventory.setItem(calculate(3, 5), ЗадатьЗвукУспешности.getItem(
-                structure.getSound_success().getKey().name(),
-                String.valueOf(structure.getSound_success().getValue())
-                                                                       ));
-        inventory.setItem(calculate(4, 5), ЗадатьЗвукОшибки.getItem(
-                structure.getSound_error().getKey().name(),
-                String.valueOf(structure.getSound_error().getValue())
-                                                                   ));
+        inventory.setItem(
+                calculate(3, 5), ЗадатьЗвукУспешности.getItem(
+                        structure.getSound_success().getKey().name(),
+                        String.valueOf(structure.getSound_success().getValue())
+                                                             )
+                         );
+        inventory.setItem(
+                calculate(4, 5), ЗадатьЗвукОшибки.getItem(
+                        structure.getSound_error().getKey().name(),
+                        String.valueOf(structure.getSound_error().getValue())
+                                                         )
+                         );
         inventory.setItem(calculate(4, 9), КлонироватьСтруктуру.getItem(""));
         return inventory;
     }

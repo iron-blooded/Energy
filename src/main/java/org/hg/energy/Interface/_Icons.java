@@ -14,10 +14,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.hg.energy.FunctionsTemperature;
 import org.hg.energy.Mesh;
 import org.hg.energy.Objects.*;
 
 import java.util.*;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
 import static org.bukkit.ChatColor.*;
@@ -978,7 +980,41 @@ public enum _Icons {
                 return null;
             }
     ),
-    ;
+    ЗадатьТемпературу(
+            Material.MAGMA_CREAM,
+            DARK_AQUA + "Излучаемая температура",
+            WHITE + "ЛКМ - Задать температуру, которую\n"
+                    + WHITE + "будет излучать при работе\n"
+                    + WHITE + "структура.\n"
+                    + BLUE + "Пкм - тип.\n"
+                    + GOLD + "Текущее значение: {}°"
+                    + GOLD + "Текущий тип: {}",
+            shareData -> {
+                if (shareData.getStructure() != null) {
+                    if (ClickType.LEFT.equals(shareData.getClickType())) {
+                        new TextBox(
+                                shareData,
+                                string -> {
+                                    double temperature = Double.parseDouble(string);
+                                    shareData.getStructure().setTemperatureValue(temperature);
+                                    return true;
+                                }
+                        ).apply();
+                    } else if (ClickType.RIGHT.equals(shareData.getClickType())) {
+                        List<BinaryOperator<Double>> list =
+                                Arrays.stream(FunctionsTemperature.values()).map(FunctionsTemperature::getOperator).toList();
+                        int pos = list.indexOf(shareData.getStructure().getTemperature().getMath());
+                        pos++;
+                        if (pos > list.size() - 1) {
+                            pos = 0;
+                        }
+                        shareData.getStructure().setTemperatureOperator(list.get(pos));
+                        return shareData.getHolder().getInventory();
+                    }
+                }
+                return null;
+            }
+    );
 
     private final ItemStack item;
     private final String name;
@@ -1124,8 +1160,10 @@ public enum _Icons {
                     Location location = data.getStructure().getLocations().get(0);
                     player.spigot().sendMessage(
                             ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-                                    "x: %.2f, y: %.2f, z: %.2f".formatted(location.getX(), location.getY(),
-                                                                          location.getZ()))
+                                    "x: %.2f, y: %.2f, z: %.2f".formatted(
+                                            location.getX(), location.getY(),
+                                            location.getZ()
+                                                                         ))
                                                );
                     return;
                 default:

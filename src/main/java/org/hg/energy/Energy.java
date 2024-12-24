@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.hg.energy.Database.SetupDatabase;
@@ -16,6 +17,7 @@ import org.hg.energy.Listeners.ListenerClickBlock;
 import org.hg.energy.Listeners.ListenerIcons;
 import org.hg.energy.Listeners.ListenerListItems;
 import org.hg.energy.Objects.Structure;
+import org.hg.scorchingsun.ScorchingSun;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -106,5 +108,13 @@ public final class Energy extends JavaPlugin {
             list.addAll(mesh.getStructures());
         }
         return new ArrayList<>(list);
+    }
+
+    public static ScorchingSun getScorchingSun() {
+        Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("ScorchingSun");
+        if (plugin instanceof ScorchingSun) {
+            return (ScorchingSun) plugin;
+        }
+        return null;
     }
 }

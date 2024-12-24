@@ -3,13 +3,22 @@ package org.hg.energy.Objects;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
+import org.hg.scorchingsun.ScorchingSun;
 
-import java.util.List;
+import static org.hg.energy.Energy.getScorchingSun;
 
 public class _LitBlocks {
-    public static void lit(List<Location> list, boolean lit){
-        for (Location location: list){
+    public static void lit(Structure structure, boolean lit) {
+        ScorchingSun scorchingSun = getScorchingSun();
+        for (Location location : structure.getLocations()) {
             Block block = location.getBlock();
+            if (scorchingSun != null) {
+                if (lit) {
+                    scorchingSun.addFromListCustomTempLocations(block, structure.getTemperature());
+                } else {
+                    scorchingSun.removeFromListCustomTempLocations(block);
+                }
+            }
             BlockData blockData = block.getBlockData();
             try {
                 blockData.getClass().getMethod("setLit", boolean.class).invoke(blockData, lit);
@@ -18,4 +27,6 @@ public class _LitBlocks {
             }
         }
     }
+
+
 }

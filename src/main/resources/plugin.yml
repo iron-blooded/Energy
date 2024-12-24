@@ -3,3 +3,5 @@ version: '${version}'
 main: org.hg.energy.Energy
 api-version: '1.18'
 authors: [ Filabdict ]
+softdepend:
+  - ScorchingSun

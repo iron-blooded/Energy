@@ -52,6 +52,18 @@
     </repositories>
     <dependencies>
         <dependency>
+            <groupId>org.hg</groupId>
+            <artifactId>scorchingsun</artifactId>
+            <version>1.1</version>
+            <scope>system</scope>
+            <systemPath>/home/logris/IdeaProjects/ScorchingSun/target/ScorchingSun-1.1.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+            <version>5.5.0</version>
+        </dependency>
+        <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
             <version>1.18.1-R0.1-SNAPSHOT</version>

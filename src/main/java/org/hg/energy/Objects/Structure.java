@@ -6,13 +6,16 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
+import org.hg.energy.FunctionsTemperature;
 import org.hg.energy.Mesh;
+import org.hg.scorchingsun.process.editTemp.calculate;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.io.*;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.*;
+import java.util.function.BinaryOperator;
 
 import static org.hg.energy.Objects._LitBlocks.lit;
 
@@ -35,6 +38,7 @@ public abstract class Structure implements Serializable, Cloneable {
     private int p_cooldown = 0;
     private SimpleEntry<Sound, Float> sound_success = new SimpleEntry<>(Sound.BLOCK_IRON_DOOR_OPEN, -1f);
     private SimpleEntry<Sound, Float> sound_error = new SimpleEntry<>(Sound.BLOCK_IRON_DOOR_OPEN, -1f);
+    private calculate temperature = new calculate(0, Double::sum);
 
     /**
      * Представляет собой структуру
@@ -74,7 +78,16 @@ public abstract class Structure implements Serializable, Cloneable {
         stream.writeDouble(chance_break);
         stream.writeBoolean(can_player_edit);
         stream.writeChar('0');
-        stream.writeInt(1); //Версия базы данных
+        stream.writeInt(2); //Версия базы данных
+        // v2
+        stream.writeUTF(
+                Arrays.stream(FunctionsTemperature.values())
+                        .filter(functionsTemperature -> functionsTemperature.getOperator().equals(getTemperature().getMath()))
+                        .findFirst()
+                        .map(FunctionsTemperature::name)
+                        .orElse("")
+                       );
+        stream.writeDouble(getTemperature().getNumber());
         // v1
         stream.writeUTF(getSound_success().getKey().name());
         stream.writeFloat(getSound_success().getValue());
@@ -101,10 +114,12 @@ public abstract class Structure implements Serializable, Cloneable {
         int size = stream.readInt();
         locations = new HashMap<>();
         for (int i = 0; i < size; i++) {
-            locations.put(deserilazeLocation(new Gson().fromJson(
-                    stream.readUTF(),
-                    new TypeToken<Map<String, Object>>() {}.getType()
-                                                                )).getBlock(), (Material) stream.readObject());
+            locations.put(
+                    deserilazeLocation(new Gson().fromJson(
+                            stream.readUTF(),
+                            new TypeToken<Map<String, Object>>() {}.getType()
+                                                          )).getBlock(), (Material) stream.readObject()
+                         );
         }
         mesh = (Mesh) stream.readObject();
         enabled = stream.readBoolean();
@@ -115,6 +130,18 @@ public abstract class Structure implements Serializable, Cloneable {
                 case '0':
                     int version = stream.readInt();
                     switch (version) {
+                        case 2:
+                            BinaryOperator<Double> operator = Double::sum;
+                            String op = stream.readUTF();
+                            for (FunctionsTemperature o : FunctionsTemperature.values()) {
+                                if (o.name().equals(op)) {
+                                    operator = o.getOperator();
+                                }
+                            }
+                            temperature = new calculate(
+                                    stream.readDouble(),
+                                    operator
+                            );
                         case 1:
                             sound_success = new SimpleEntry<>(Sound.valueOf(stream.readUTF()), stream.readFloat());
                             sound_error = new SimpleEntry<>(Sound.valueOf(stream.readUTF()), stream.readFloat());
@@ -164,6 +191,30 @@ public abstract class Structure implements Serializable, Cloneable {
         float pitch = Float.parseFloat(serializedLocation.get("pitch").toString());
 
         return new Location(world, x, y, z, yaw, pitch);
+    }
+
+    /**
+     * Задать значение температуры для данной структуры
+     */
+    public void setTemperatureValue(@NotNull Double num) {
+        this.temperature.setNumber(num);
+    }
+
+    /**
+     * Задать способ, которым будет рассчитываться температура
+     */
+    public void setTemperatureOperator(@NotNull BinaryOperator<Double> operator) {
+        this.temperature.setMath(operator);
+    }
+
+    /**
+     * Получить температуру, которую излучает структура
+     */
+    public calculate getTemperature() {
+        if (temperature == null || temperature.getMath() == null) {
+            return new calculate(0, Double::sum);
+        }
+        return temperature;
     }
 
     /**
@@ -524,10 +575,10 @@ public abstract class Structure implements Serializable, Cloneable {
         SimpleEntry<Sound, Float> sound;
         if (useChanceBreak() && work()) {
             sound = getSound_success();
-            lit(getLocations(), true);
+            lit(this, true);
         } else {
             sound = getSound_error();
-            lit(getLocations(), false);
+            lit(this, false);
         }
         if (sound.getValue() >= 0) {
             getLocations().get(0).getWorld().playSound(
@@ -553,7 +604,7 @@ public abstract class Structure implements Serializable, Cloneable {
                 return;
             }
         }
-        lit(getLocations(), false);
+        lit(this, false);
     }
 
     /**

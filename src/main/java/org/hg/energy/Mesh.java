@@ -83,7 +83,7 @@ public class Mesh implements Serializable {
             if (enabled) {
                 structure.update();
             } else {
-                lit(structure.getLocations(), false);
+                lit(structure, false);
             }
         }
     }
