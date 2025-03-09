@@ -61,6 +61,7 @@ public class SettingsStructure implements InventoryHolder, Window {
                          );
         inventory.setItem(calculate(1, 7), ЗадатьШансПоломки.getItem(String.valueOf(structure.getChanceBreak())));
         inventory.setItem(calculate(2, 1), ВызватьРаботуСтруктуры.getItem(""));
+        inventory.setItem(calculate(2, 2), ЗадатьКонсользуюКоманду.getItem(structure.getGood_job()));
         inventory.setItem(calculate(2, 3), ЗадатьКулдаун.getItem(""));
         if (structure.isEnabled()) {
             inventory.setItem(calculate(2, 7), ВыключитьСтруктуру.getItem(""));

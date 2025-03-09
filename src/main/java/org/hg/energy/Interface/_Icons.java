@@ -1014,6 +1014,38 @@ public enum _Icons {
                 }
                 return null;
             }
+    ),
+    ЗадатьКонсользуюКоманду(
+            Material.REPEATING_COMMAND_BLOCK,
+            LIGHT_PURPLE + "Задать серверную команду",
+            WHITE + "Задать команду, которая\n" +
+                    WHITE + "будет вызываться при\n" +
+                    WHITE + "успешной работе структуры.\n" +
+                    GRAY + "Писать без первого /\n" +
+                    WHITE + "ПКМ что бы удалить команду\n" +
+                    RED + "Текущая команда:\n" +
+                    GOLD + "{}",
+            shareData -> {
+                if (shareData.getStructure() != null && shareData.getPlayer() != null) {
+                    if (shareData.getPlayer().hasPermission("energy.settings.console")) {
+                        if (ClickType.RIGHT.equals(shareData.getClickType())) {
+                            shareData.getStructure().setGood_job("");
+                            return shareData.getHolder().getInventory();
+                        } else {
+                            new TextBox(
+                                    shareData,
+                                    string -> {
+                                        shareData.getStructure().setGood_job(string);
+                                        return true;
+                                    }
+                            ).apply();
+                        }
+                    } else {
+                        shareData.getPlayer().sendMessage(RED + "У вас нет прав на использование данного функционала!");
+                    }
+                }
+                return null;
+            }
     );
 
     private final ItemStack item;

@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.command.CommandException;
+import org.bukkit.entity.Player;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.hg.energy.FunctionsTemperature;
@@ -39,6 +41,7 @@ public abstract class Structure implements Serializable, Cloneable {
     private SimpleEntry<Sound, Float> sound_success = new SimpleEntry<>(Sound.BLOCK_IRON_DOOR_OPEN, -1f);
     private SimpleEntry<Sound, Float> sound_error = new SimpleEntry<>(Sound.BLOCK_IRON_DOOR_OPEN, -1f);
     private calculate temperature = new calculate(0, Double::sum);
+    private String good_job = "";
 
     /**
      * Представляет собой структуру
@@ -78,7 +81,9 @@ public abstract class Structure implements Serializable, Cloneable {
         stream.writeDouble(chance_break);
         stream.writeBoolean(can_player_edit);
         stream.writeChar('0');
-        stream.writeInt(2); //Версия базы данных
+        stream.writeInt(3); //Версия базы данных
+        // v3
+        stream.writeUTF(getGood_job());
         // v2
         stream.writeUTF(
                 Arrays.stream(FunctionsTemperature.values())
@@ -130,6 +135,8 @@ public abstract class Structure implements Serializable, Cloneable {
                 case '0':
                     int version = stream.readInt();
                     switch (version) {
+                        case 3:
+                            good_job = stream.readUTF();
                         case 2:
                             BinaryOperator<Double> operator = Double::sum;
                             String op = stream.readUTF();
@@ -179,6 +186,25 @@ public abstract class Structure implements Serializable, Cloneable {
     private void readObject(java.io.ObjectInputStream stream)
     throws IOException, ClassNotFoundException {
         this.defaultSerialize(stream);
+    }
+
+
+    /**
+     * Получить серверную команду, которую вызывает структура при успешной сработке
+     */
+    public @NotNull String getGood_job() {
+        if (good_job == null) {
+            return "";
+        } else {
+            return good_job;
+        }
+    }
+
+    /**
+     * Задать серверную команду, которую вызывает структура при успешной сработке
+     */
+    public void setGood_job(String good_job) {
+        this.good_job = good_job;
     }
 
 
@@ -576,6 +602,18 @@ public abstract class Structure implements Serializable, Cloneable {
         if (useChanceBreak() && work()) {
             sound = getSound_success();
             lit(this, true);
+            if (!Objects.equals(getGood_job(), "") && getGood_job() != null) {
+                try {
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), getGood_job());
+                } catch (CommandException e) {
+                    for (Player player : Bukkit.getOnlinePlayers().stream()
+                            .filter(p -> getLocations().stream()
+                                    .anyMatch(loc -> p.getLocation().distance(loc) < 10))
+                            .toList()) {
+                        player.sendMessage(ChatColor.RED + "Ошибка при выполнении команды! \n" + getName());
+                    }
+                }
+            }
         } else {
             sound = getSound_error();
             lit(this, false);
