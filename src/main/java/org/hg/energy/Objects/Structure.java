@@ -119,12 +119,23 @@ public abstract class Structure implements Serializable, Cloneable {
         int size = stream.readInt();
         locations = new HashMap<>();
         for (int i = 0; i < size; i++) {
-            locations.put(
-                    deserilazeLocation(new Gson().fromJson(
-                            stream.readUTF(),
-                            new TypeToken<Map<String, Object>>() {}.getType()
-                                                          )).getBlock(), (Material) stream.readObject()
-                         );
+            // Десериализация данных локации
+
+            Location location = deserilazeLocation(new Gson().fromJson(
+                    stream.readUTF(),
+                    new TypeToken<Map<String, Object>>() {}.getType()
+                                                                      ));
+
+            // Проверка наличия мира в локации
+
+            // Чтение материала и сохранение в мапу
+            if (stream.readObject() instanceof Material material) {
+                if (location.getWorld() == null) {
+                    Bukkit.getLogger().severe("Ошибка: мир не найден для локации " + location.toString());
+                } else {
+                    locations.put(location.getBlock(), material);
+                }
+            }
         }
         mesh = (Mesh) stream.readObject();
         enabled = stream.readBoolean();
