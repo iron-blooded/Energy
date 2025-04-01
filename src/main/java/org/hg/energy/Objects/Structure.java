@@ -24,6 +24,7 @@ import static org.hg.energy.Objects._LitBlocks.lit;
 public abstract class Structure implements Serializable, Cloneable {
     @Serial
     private static final long serialVersionUID = 1L;
+    private Random random;
     private UUID uuid;
     private String name;
     private int cooldown_required;
@@ -56,6 +57,7 @@ public abstract class Structure implements Serializable, Cloneable {
         this.cooldown_required = 0;
         this.cooldown = 0;
         this.chance = 100;
+        this.random = new Random();
     }
 
     /**
@@ -109,39 +111,51 @@ public abstract class Structure implements Serializable, Cloneable {
      */
     public void defaultSerialize(java.io.ObjectInputStream stream)
     throws IOException, ClassNotFoundException {
-        uuid = (UUID) stream.readObject();
-        name = stream.readUTF();
-        cooldown_required = stream.readInt();
-        cooldown = stream.readInt();
-        chance = stream.readDouble();
-        volume = stream.readDouble();
-        priority = stream.readInt();
-        int size = stream.readInt();
-        locations = new HashMap<>();
-        for (int i = 0; i < size; i++) {
-            // Десериализация данных локации
-
-            Location location = deserilazeLocation(new Gson().fromJson(
-                    stream.readUTF(),
-                    new TypeToken<Map<String, Object>>() {}.getType()
-                                                                      ));
-
-            // Проверка наличия мира в локации
-
-            // Чтение материала и сохранение в мапу
-            if (stream.readObject() instanceof Material material) {
-                if (location.getWorld() == null) {
-                    Bukkit.getLogger().severe("Ошибка: мир не найден для локации " + location.toString());
-                } else {
-                    locations.put(location.getBlock(), material);
-                }
-            }
-        }
-        mesh = (Mesh) stream.readObject();
-        enabled = stream.readBoolean();
-        chance_break = stream.readDouble();
-        can_player_edit = stream.readBoolean();
         try {
+            this.random = new Random();
+            uuid = (UUID) stream.readObject();
+            name = stream.readUTF();
+            cooldown_required = stream.readInt();
+            cooldown = stream.readInt();
+            chance = stream.readDouble();
+            volume = stream.readDouble();
+            priority = stream.readInt();
+            int size = stream.readInt();
+            locations = new HashMap<>();
+            for (int i = 0; i < size; i++) {
+                // Десериализация данных локации
+                Location location = deserilazeLocation(new Gson().fromJson(
+                        stream.readUTF(),
+                        new TypeToken<Map<String, Object>>() {}.getType()
+                                                                          ));
+                Material material = null;
+                if (stream.readObject() instanceof Material m) {
+                    material = m;
+                } else {
+                    Bukkit.getLogger().severe("Ошибка при получения материала для локации " + location);
+                    continue;
+                }
+                if (location.getWorld() == null) {
+                    for (World world : Bukkit.getWorlds()) {
+                        Location l = location.clone();
+                        l.setWorld(world);
+                        if (material.equals(l.getBlock().getType())) {
+                            location.setWorld(world);
+                            Bukkit.getLogger().warning("Была восстановлен мир для " + location);
+                            break;
+                        }
+                    }
+                    if (location.getWorld() == null) {
+                        Bukkit.getLogger().severe("Ошибка: мир не найден для локации " + location);
+                        continue;
+                    }
+                }
+                locations.put(location.getBlock(), material);
+            }
+            mesh = (Mesh) stream.readObject();
+            enabled = stream.readBoolean();
+            chance_break = stream.readDouble();
+            can_player_edit = stream.readBoolean();
             switch (stream.readChar()) {
                 case '0':
                     int version = stream.readInt();
@@ -173,11 +187,11 @@ public abstract class Structure implements Serializable, Cloneable {
                 default:
                     return;
             }
-            while (stream.readChar() != ChatColor.COLOR_CHAR) {
-                continue;
-            }
         } catch (Exception e) {
-            e.printStackTrace();
+            Bukkit.getLogger().severe("Ошибка при десирилизации структуры\n" + e);
+        }
+        while (stream.readChar() != ChatColor.COLOR_CHAR) {
+            continue;
         }
     }
 
@@ -338,7 +352,7 @@ public abstract class Structure implements Serializable, Cloneable {
      * Если сломается - возвращается false и работа структуры должна отмениться
      */
     public boolean useChanceBreak() {
-        if (new Random().nextDouble() * 100 <= getChanceBreak()) {
+        if (random.nextDouble() * 100 <= getChanceBreak()) {
             this.setCanPlayerEdit(false);
             this.setEnabled(false);
             Location location = getLocations().get(0);
