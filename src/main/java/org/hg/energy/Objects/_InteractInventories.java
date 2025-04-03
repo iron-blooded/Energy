@@ -2,6 +2,7 @@ package org.hg.energy.Objects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
@@ -49,7 +50,8 @@ public class _InteractInventories {
                 for (int y = -radius; y <= radius; y++) {
                     for (int z = -radius; z <= radius; z++) {
                         Block block = location.clone().add(x, y, z).getBlock();
-                        if (block.getState() instanceof InventoryHolder) {
+                        if (block.getState() instanceof InventoryHolder
+                                && !block.getType().equals(Material.TRAPPED_CHEST)) {
                             inventories.add(((InventoryHolder) block.getState()).getInventory());
                         }
                     }
