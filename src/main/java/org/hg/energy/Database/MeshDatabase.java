@@ -1,5 +1,6 @@
 package org.hg.energy.Database;
 
+import org.bukkit.Bukkit;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.hg.energy.Energy;
@@ -68,7 +69,11 @@ public class MeshDatabase {
                 int size = dataInput.readInt();
                 List<Mesh> list = new ArrayList<>();
                 for (int i = 0; i < size; i++) {
-                    list.add((Mesh) dataInput.readObject());
+                    try {
+                        list.add((Mesh) dataInput.readObject());
+                    } catch (Exception e) {
+                        Bukkit.getLogger().severe("Ошибка при вынимании сети из базы данных\n" + e);
+                    }
                 }
                 return list;
             }
