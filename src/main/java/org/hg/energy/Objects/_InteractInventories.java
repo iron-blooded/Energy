@@ -9,8 +9,13 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.hg.energy.Interface._Icons;
+import org.hg.ironChest.Chest;
+import org.hg.ironChest.IronChest;
 
 import java.util.*;
+
+import static org.hg.energy.Energy.getIronChest;
+import static org.hg.ironChest.ChestOperationsNamespacedKey.getUUID;
 
 public class _InteractInventories {
     /**
@@ -52,8 +57,17 @@ public class _InteractInventories {
                         Block block = location.clone().add(x, y, z).getBlock();
                         if (block.getState() instanceof InventoryHolder
                                 && !block.getType().equals(Material.TRAPPED_CHEST)) {
+                            IronChest ironChest = getIronChest();
+                            if (ironChest != null) {
+                                Chest chest = ironChest.getChests().get(getUUID(block));
+                                if (chest != null) {
+                                    inventories.addAll(chest.getWindows());
+                                    continue;
+                                }
+                            }
                             inventories.add(((InventoryHolder) block.getState()).getInventory());
                         }
+
                     }
                 }
             }

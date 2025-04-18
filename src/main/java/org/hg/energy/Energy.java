@@ -17,6 +17,7 @@ import org.hg.energy.Listeners.ListenerClickBlock;
 import org.hg.energy.Listeners.ListenerIcons;
 import org.hg.energy.Listeners.ListenerListItems;
 import org.hg.energy.Objects.Structure;
+import org.hg.ironChest.IronChest;
 import org.hg.scorchingsun.ScorchingSun;
 
 import java.sql.SQLException;
@@ -29,6 +30,21 @@ public final class Energy extends JavaPlugin {
     public Map<Player, Structure> edit_locations_structure = new HashMap<>();
     public SetupDatabase database;
 
+    public static ScorchingSun getScorchingSun() {
+        Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("ScorchingSun");
+        if (plugin instanceof ScorchingSun) {
+            return (ScorchingSun) plugin;
+        }
+        return null;
+    }
+
+    public static IronChest getIronChest() {
+        Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("IronChest");
+        if (plugin instanceof IronChest) {
+            return (IronChest) plugin;
+        }
+        return null;
+    }
 
     @Override
     public void onEnable() {
@@ -77,12 +93,16 @@ public final class Energy extends JavaPlugin {
                                 double x = radius * Math.cos(theta) * Math.sin(phi);
                                 double y = radius * Math.cos(phi);
                                 double z = radius * Math.sin(theta) * Math.sin(phi);
-                                Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromBGR(
-                                        (int) (random.nextDouble() * 255), (int) (random.nextDouble() * 255),
-                                        (int) (random.nextDouble() * 255)
-                                                                                                         ), 1.0f);
-                                player.spawnParticle(Particle.REDSTONE, location.clone().add(x, y, z), 0
-                                        , 0, 0, 0, dustOptions);
+                                Particle.DustOptions dustOptions = new Particle.DustOptions(
+                                        Color.fromBGR(
+                                                (int) (random.nextDouble() * 255), (int) (random.nextDouble() * 255),
+                                                (int) (random.nextDouble() * 255)
+                                                     ), 1.0f
+                                );
+                                player.spawnParticle(
+                                        Particle.REDSTONE, location.clone().add(x, y, z), 0
+                                        , 0, 0, 0, dustOptions
+                                                    );
                             }
                         }
 //                        player.spawnParticle(Particle.COMPOSTER, location, 50, 0.25, 0.25, 0.25, 1);
@@ -108,13 +128,5 @@ public final class Energy extends JavaPlugin {
             list.addAll(mesh.getStructures());
         }
         return new ArrayList<>(list);
-    }
-
-    public static ScorchingSun getScorchingSun() {
-        Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("ScorchingSun");
-        if (plugin instanceof ScorchingSun) {
-            return (ScorchingSun) plugin;
-        }
-        return null;
     }
 }
