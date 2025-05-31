@@ -28,7 +28,7 @@ public abstract class Structure implements Serializable, Cloneable {
     private UUID uuid;
     private String name;
     private int cooldown_required;
-    private int cooldown;
+    private int cooldown; //отнимается снизу вверх
     private double chance;
     private double volume = 0;
     private int priority = 9494;
@@ -38,7 +38,7 @@ public abstract class Structure implements Serializable, Cloneable {
     private double chance_break = 0;
     private boolean can_player_edit = false;
     private int p_cooldown_required = 0;
-    private int p_cooldown = 0;
+    private int p_cooldown = 0; //отнимается сверху вниз
     private SimpleEntry<Sound, Float> sound_success = new SimpleEntry<>(Sound.BLOCK_IRON_DOOR_OPEN, -1f);
     private SimpleEntry<Sound, Float> sound_error = new SimpleEntry<>(Sound.BLOCK_IRON_DOOR_OPEN, -1f);
     private calculate temperature = new calculate(0, Double::sum);
@@ -59,6 +59,7 @@ public abstract class Structure implements Serializable, Cloneable {
         this.chance = 100;
         this.random = new Random();
     }
+
 
     /**
      * Стандартная для структуры серелизация
@@ -330,6 +331,13 @@ public abstract class Structure implements Serializable, Cloneable {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Задать куладун, сколько осталось до срабатывания структуры (1=1сек и т.п.)
+     */
+    public void setLeftPlayerCooldown(int p_cooldown) {
+        this.p_cooldown = Math.min(getCooldownForPlayer(), Math.max(0, p_cooldown));
     }
 
     /**
@@ -661,7 +669,7 @@ public abstract class Structure implements Serializable, Cloneable {
      */
     public void update() {
         if (isEnabled()) {
-            this.p_cooldown = Math.max(0, p_cooldown - 1);
+            this.p_cooldown = Math.min(p_cooldown_required, Math.max(0, p_cooldown - 1));
             if (useCooldown() && castChanceWork()) {
                 useWorkAndSound();
                 return;

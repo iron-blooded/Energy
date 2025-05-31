@@ -861,15 +861,20 @@ public enum _Icons {
                     GRAY + "Если значение 0 - игрок не\n" +
                     GRAY + "может сам вызвать работу\n" +
                     GREEN + "Значение: {}\n" +
-                    RED + "Осталось: {} сек.",
+                    RED + "Осталось: {} сек.\n" +
+                    GRAY + "ПКМ что бы сбросить оставшийся кулдаун до 0",
             shareData -> {
                 if (shareData.getStructure() != null) {
-                    new TextBox(
-                            shareData, string -> {
-                        shareData.getStructure().setCooldownForPlayer(Integer.parseInt(string));
-                        return true;
+                    if (ClickType.LEFT.equals(shareData.getClickType())) {
+                        new TextBox(
+                                shareData, string -> {
+                            shareData.getStructure().setCooldownForPlayer(Integer.parseInt(string));
+                            return true;
+                        }
+                        ).apply();
+                    } else if (ClickType.RIGHT.equals(shareData.getClickType())) {
+                        shareData.getStructure().setLeftPlayerCooldown(0);
                     }
-                    ).apply();
                 }
                 return null;
             }
