@@ -24,7 +24,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 public final class Energy extends JavaPlugin {
-    public List<Mesh> meshes = new ArrayList<>();
+    public List<Mesh> meshes;
     public Map<Player, TextBox> textBoxMap = new HashMap<>();
     public Map<Player, Structure> clone_structures = new HashMap<>();
     public Map<Player, Structure> edit_locations_structure = new HashMap<>();
@@ -114,7 +114,9 @@ public final class Energy extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        database.meshDatabase.save();
+        if (meshes != null) {
+            database.meshDatabase.save();
+        }
         try {
             database.connection.close();
         } catch (SQLException e) {

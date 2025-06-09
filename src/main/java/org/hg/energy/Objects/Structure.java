@@ -12,6 +12,7 @@ import org.hg.energy.FunctionsTemperature;
 import org.hg.energy.Mesh;
 import org.hg.scorchingsun.process.editTemp.calculate;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.io.*;
@@ -19,6 +20,7 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.*;
 import java.util.function.BinaryOperator;
 
+import static org.hg.energy.Energy.getScorchingSun;
 import static org.hg.energy.Objects._LitBlocks.lit;
 
 public abstract class Structure implements Serializable, Cloneable {
@@ -41,7 +43,7 @@ public abstract class Structure implements Serializable, Cloneable {
     private int p_cooldown = 0; //отнимается сверху вниз
     private SimpleEntry<Sound, Float> sound_success = new SimpleEntry<>(Sound.BLOCK_IRON_DOOR_OPEN, -1f);
     private SimpleEntry<Sound, Float> sound_error = new SimpleEntry<>(Sound.BLOCK_IRON_DOOR_OPEN, -1f);
-    private calculate temperature = new calculate(0, Double::sum);
+    private calculate temperature;
     private String good_job = "";
 
     /**
@@ -58,6 +60,9 @@ public abstract class Structure implements Serializable, Cloneable {
         this.cooldown = 0;
         this.chance = 100;
         this.random = new Random();
+        if (getScorchingSun() != null) {
+            this.temperature = new calculate(0, Double::sum);
+        }
     }
 
 
@@ -171,10 +176,12 @@ public abstract class Structure implements Serializable, Cloneable {
                                     operator = o.getOperator();
                                 }
                             }
-                            temperature = new calculate(
-                                    stream.readDouble(),
-                                    operator
-                            );
+                            if (getScorchingSun() != null) {
+                                temperature = new calculate(
+                                        stream.readDouble(),
+                                        operator
+                                );
+                            }
                         case 1:
                             sound_success = new SimpleEntry<>(Sound.valueOf(stream.readUTF()), stream.readFloat());
                             sound_error = new SimpleEntry<>(Sound.valueOf(stream.readUTF()), stream.readFloat());
@@ -249,24 +256,31 @@ public abstract class Structure implements Serializable, Cloneable {
      * Задать значение температуры для данной структуры
      */
     public void setTemperatureValue(@NotNull Double num) {
-        this.temperature.setNumber(num);
+        if (getScorchingSun() != null) {
+            this.temperature.setNumber(num);
+        }
     }
 
     /**
      * Задать способ, которым будет рассчитываться температура
      */
     public void setTemperatureOperator(@NotNull BinaryOperator<Double> operator) {
-        this.temperature.setMath(operator);
+        if (getScorchingSun() != null) {
+            this.temperature.setMath(operator);
+        }
     }
 
     /**
      * Получить температуру, которую излучает структура
      */
-    public calculate getTemperature() {
-        if (temperature == null || temperature.getMath() == null) {
-            return new calculate(0, Double::sum);
+    public @Nullable calculate getTemperature() {
+        if (getScorchingSun() != null) {
+            if (temperature == null || temperature.getMath() == null) {
+                return new calculate(0, Double::sum);
+            }
+            return temperature;
         }
-        return temperature;
+        return null;
     }
 
     /**

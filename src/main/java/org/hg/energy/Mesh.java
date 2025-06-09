@@ -1,6 +1,5 @@
 package org.hg.energy;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.hg.energy.Objects.Structure;
 
@@ -68,11 +67,7 @@ public class Mesh implements Serializable {
         int size = stream.readInt();
         structures = new TreeSet<>(Comparator.comparingInt(Structure::getPriority).thenComparing(Structure::getUuid));
         for (int i = 0; i < size; i++) {
-            try {
-                structures.add((Structure) stream.readObject());
-            } catch (Exception e) {
-                Bukkit.getLogger().severe("Ошибка при десирилизации структуры\n" + e);
-            }
+            structures.add((Structure) stream.readObject());
         }
         for (Structure structure : structures) {
             structure.connectToMesh(this);
