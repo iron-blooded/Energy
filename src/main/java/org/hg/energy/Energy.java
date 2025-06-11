@@ -24,11 +24,11 @@ import java.sql.SQLException;
 import java.util.*;
 
 public final class Energy extends JavaPlugin {
-    public List<Mesh> meshes;
     public Map<Player, TextBox> textBoxMap = new HashMap<>();
     public Map<Player, Structure> clone_structures = new HashMap<>();
     public Map<Player, Structure> edit_locations_structure = new HashMap<>();
     public SetupDatabase database;
+    private List<Mesh> meshes;
 
     public static ScorchingSun getScorchingSun() {
         Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("ScorchingSun");
@@ -49,7 +49,7 @@ public final class Energy extends JavaPlugin {
     @Override
     public void onEnable() {
         database = new SetupDatabase(this);
-        this.meshes = database.meshDatabase.getListMesh();
+        this.meshes = database.meshDatabase.getAllMeshes();
         Bukkit.getServer().getPluginManager().registerEvents(new ListenerIcons(this), this);
         Bukkit.getServer().getPluginManager().registerEvents(new ListenerClickBlock(this), this);
         Bukkit.getServer().getPluginManager().registerEvents(new ListenerChat(this), this);
@@ -70,7 +70,9 @@ public final class Energy extends JavaPlugin {
                     mesh.updateStructures();
                 }
                 if (count[0] > 60) {
-                    database.meshDatabase.save();
+                    for (Mesh mesh : getMeshes()) {
+                        database.meshDatabase.setMesh(mesh);
+                    }
                     count[0] = 0;
                 }
                 count[0]++;
@@ -115,13 +117,29 @@ public final class Energy extends JavaPlugin {
     @Override
     public void onDisable() {
         if (meshes != null) {
-            database.meshDatabase.save();
+            for (Mesh mesh : getMeshes()) {
+                database.meshDatabase.setMesh(mesh);
+            }
         }
         try {
             database.connection.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public List<Mesh> getMeshes() {
+        return meshes;
+    }
+
+    public void addMesh(Mesh mesh) {
+        database.meshDatabase.setMesh(mesh);
+        meshes.add(mesh);
+    }
+
+    public void deleteMesh(Mesh mesh) {
+        database.meshDatabase.deleteMesh(mesh.getUuid());
+        meshes.remove(mesh);
     }
 
     public List<Structure> getStructures() {

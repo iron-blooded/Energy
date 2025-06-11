@@ -321,7 +321,7 @@ public enum _Icons {
                     RED + "подключенных элементов!",
             shareData -> {
                 if (shareData.getMesh() != null) {
-                    shareData.getPlugin().meshes.remove(shareData.getMesh());
+                    shareData.getPlugin().deleteMesh((shareData.getMesh()));
                     return new ListMeshes(
                             new _ShareData(null, null, null, shareData.getPlugin())
                     ).getInventory();
@@ -758,7 +758,7 @@ public enum _Icons {
                         mesh.addStructure(shareData.getStructure());
                     }
                 }
-                shareData.getPlugin().meshes.add(mesh);
+                shareData.getPlugin().addMesh(mesh);
                 return new SettingsMesh(new _ShareData(mesh, null, null, shareData.getPlugin())).getInventory();
             }
     ),

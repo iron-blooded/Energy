@@ -3,6 +3,7 @@ package org.hg.energy.Database;
 import org.hg.energy.Energy;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -26,6 +27,10 @@ public class SetupDatabase {
             e.printStackTrace();
             return;
         }
-        this.meshDatabase = new MeshDatabase(plugin, connection);
+        try {
+            this.meshDatabase = new MeshDatabase(plugin, connection);
+        } catch (SQLException | IOException |ClassNotFoundException e){
+            throw new RuntimeException(e);
+        }
     }
 }

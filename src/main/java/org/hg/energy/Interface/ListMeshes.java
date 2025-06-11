@@ -45,7 +45,7 @@ public class ListMeshes implements Window, InventoryHolder, Pagination {
 
     @Override
     public @NotNull Inventory getInventory() {
-        List<Mesh> meshList = data.getPlugin().meshes;
+        List<Mesh> meshList = data.getPlugin().getMeshes();
         int max_elements = 9 * 6 - 9;
         if (this.page < 0 || this.page > meshList.size() / max_elements) {
             this.page = 0;

@@ -47,7 +47,7 @@ public class ListenerIcons implements Listener {
                                 .setClickType(event.getClick());
                 UUID uuid = getUUID(itemStack);
                 if (uuid != null) {
-                    plugin.meshes.stream()
+                    plugin.getMeshes().stream()
                             .filter(mesh -> mesh.getUuid().equals(uuid))
                             .findFirst()
                             .ifPresent(data::setMesh);
