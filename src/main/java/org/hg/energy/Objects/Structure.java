@@ -45,6 +45,7 @@ public abstract class Structure implements Serializable, Cloneable {
     private SimpleEntry<Sound, Float> sound_error = new SimpleEntry<>(Sound.BLOCK_IRON_DOOR_OPEN, -1f);
     private calculate temperature;
     private String good_job = "";
+    private MultiMaterial multiMaterial = MultiMaterial.All;
 
     /**
      * Представляет собой структуру
@@ -89,18 +90,21 @@ public abstract class Structure implements Serializable, Cloneable {
         stream.writeDouble(chance_break);
         stream.writeBoolean(can_player_edit);
         stream.writeChar('0');
-        stream.writeInt(3); //Версия базы данных
+        stream.writeInt(4); //Версия базы данных
+        //4
+        stream.writeUTF(getMultiMaterial().name());
         // v3
         stream.writeUTF(getGood_job());
         // v2
         stream.writeUTF(
                 Arrays.stream(FunctionsTemperature.values())
-                        .filter(functionsTemperature -> functionsTemperature.getOperator().equals(getTemperature().getMath()))
+                        .filter(functionsTemperature -> functionsTemperature.getOperator().equals(
+                                getTemperature() == null ? null : getTemperature().getMath()))
                         .findFirst()
                         .map(FunctionsTemperature::name)
                         .orElse("")
                        );
-        stream.writeDouble(getTemperature().getNumber());
+        stream.writeDouble(getTemperature() == null ? 0 : getTemperature().getNumber());
         // v1
         stream.writeUTF(getSound_success().getKey().name());
         stream.writeFloat(getSound_success().getValue());
@@ -166,6 +170,12 @@ public abstract class Structure implements Serializable, Cloneable {
                 case '0':
                     int version = stream.readInt();
                     switch (version) {
+                        case 4:
+                            try {
+                                setMultiMaterial(MultiMaterial.valueOf(stream.readUTF()));
+                            } catch (IllegalArgumentException | IOException e) {
+                                setMultiMaterial(MultiMaterial.All);
+                            }
                         case 3:
                             good_job = stream.readUTF();
                         case 2:
@@ -722,6 +732,23 @@ public abstract class Structure implements Serializable, Cloneable {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
+
+    /**
+     * Узнать, по какой логике фабрикатор потребляет предметы
+     */
+
+    public MultiMaterial getMultiMaterial() {
+        return multiMaterial == null ? MultiMaterial.All : multiMaterial;
+    }
+
+    /**
+     * Устанавливает, по какой логике фабрикатор потребляет предметы
+     */
+
+    public void setMultiMaterial(MultiMaterial multiMaterial) {
+        this.multiMaterial = multiMaterial;
+    }
+
 
     @Override
     protected Object clone() throws CloneNotSupportedException {

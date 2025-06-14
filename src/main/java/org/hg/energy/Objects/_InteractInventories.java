@@ -78,14 +78,15 @@ public class _InteractInventories {
     /**
      * Потратить ресурсы для производства
      *
-     * @param inventories список инвентарей, в которых нужно потратить ресурсы
-     * @param materials   список материалов
-     * @param locations   список локаций, на которых расположена структура
+     * @param inventories   список инвентарей, в которых нужно потратить ресурсы
+     * @param materials     список материалов
+     * @param locations     список локаций, на которых расположена структура
+     * @param multiMaterial тип потребления ресурсов
      * @return то, хватило ли ресурсов для производства. Если не хватило (false) - ресурсы не потратятся, но и
      * произвестись ничего не должно
      */
     public static boolean consumeResources(List<Inventory> inventories, List<ItemStack> materials,
-                                           List<Location> locations) {
+                                           List<Location> locations, MultiMaterial multiMaterial) {
         // Создаем таблицу для хранения подходящих ItemStack, для их последующего удаления
         Map<ItemStack, Integer> foundItems = new HashMap<>();
         // Инициализируем таблицу запрашиваемых материалов
@@ -97,6 +98,7 @@ public class _InteractInventories {
             requestsMaterials.merge(material, amount, Integer::sum);
         }
         // Проверяем все хранилища и собираем подходящие ItemStack
+        mloop:
         for (Inventory inventory : inventories) {
             for (ItemStack itemStack : inventory.getContents()) {
                 if (itemStack != null) {
@@ -105,15 +107,32 @@ public class _InteractInventories {
                             int minus = Math.min(requestsMaterials.get(material), itemStack.getAmount());
                             requestsMaterials.put(material, requestsMaterials.get(material) - minus);
                             foundItems.put(itemStack, minus); //Сколько нужно будет вычесть
+
+                            if (MultiMaterial.OneThing.equals(multiMaterial)
+                                    && Collections.min(requestsMaterials.values()) == 0) {
+                                break mloop;
+                            }
                             break;
                         }
                     }
                 }
             }
         }
-        if (!requestsMaterials.isEmpty()
-                && Collections.max(requestsMaterials.values()) > 0) { //Есть ли требуемые материалы в полной мере
-            return false;
+        switch (multiMaterial) { // проверка на наличие материалов
+            case All:
+                if (!requestsMaterials.isEmpty()
+                        && Collections.max(requestsMaterials.values()) > 0) {
+                    //Есть ли требуемые материалы в полной мере
+                    return false;
+                }
+                break;
+            case OneThing:
+                if (!requestsMaterials.isEmpty()
+                        && Collections.min(requestsMaterials.values()) > 0) {
+                    // есть ли хотя бы один требуемый материал
+                    return false;
+                }
+                break;
         }
         for (ItemStack item : foundItems.keySet()) {
             item.setAmount(item.getAmount() - foundItems.get(item));

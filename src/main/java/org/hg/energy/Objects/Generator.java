@@ -127,7 +127,7 @@ public class Generator extends Structure {
     public boolean work() {
         List<Inventory> inventories = getNearInventories(
                 this.getDistanceMaterial(), super.getLocations(), super.getCooldownForPlayer() != 0);
-        if (consumeResources(inventories, this.getMaterials(), super.getLocations())) {
+        if (consumeResources(inventories, this.getMaterials(), super.getLocations(), super.getMultiMaterial())) {
             super.getMesh().addEnergy(getAmountEnergyProduced());
             return true;
         }

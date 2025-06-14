@@ -100,39 +100,45 @@ public class SettingsStructure implements InventoryHolder, Window {
             if (converter.getOutputMesh() != null) {
                 outputMesh = converter.getOutputMesh();
             }
-            inventory.setItem(calculate(3 + 3, 1), ЗадатьРасход.getItem(String.valueOf(converter.getAmount())));
+            inventory.setItem(calculate(6, 1), ЗадатьРасход.getItem(String.valueOf(converter.getAmount())));
             inventory.setItem(
-                    calculate(3 + 3, 2), ВыходнаяСеть.getItem(
+                    calculate(6, 2), ВыходнаяСеть.getItem(
                             outputMesh.getDisplayName(),
                             outputMesh.getEnergyName()
-                                                             )
+                                                         )
                              );
             inventory.setItem(
-                    calculate(3 + 3, 3),
+                    calculate(6, 3),
                     КоофициентКонвертации.getItem(String.valueOf(converter.getCoefficient()))
                              );
         } else if (structure instanceof Generator generator) {
             inventory.setItem(
-                    calculate(3 + 3, 1),
+                    calculate(6, 1),
                     ДистаницяМатериал.getItem(String.valueOf(generator.getDistanceMaterial()))
                              );
-            inventory.setItem(calculate(3 + 3, 2), СписокПотребляемыхРесурсов.getItem(""));
+            inventory.setItem(calculate(6, 2), СписокПотребляемыхРесурсов.getItem(""));
+            inventory.setItem(calculate(6, 3),
+                              ЛогикаПотребления.getItem(String.valueOf(generator.getMultiMaterial().getName())));
             inventory.setItem(
-                    calculate(3 + 3, 3),
+                    calculate(6, 4),
                     КоличествоЭнергииНаВыходе.getItem(String.valueOf(generator.getAmountEnergyProduced()))
                              );
         } else if (structure instanceof Fabrication fabricator) {
             inventory.setItem(
-                    calculate(3 + 3, 1),
+                    calculate(6, 1),
                     ДистаницяМатериал.getItem(String.valueOf(fabricator.getDistanceMaterial()))
                              );
-            inventory.setItem(calculate(3 + 3, 2), СписокПотребляемыхРесурсов.getItem(""));
-            inventory.setItem(calculate(3 + 3, 3), СписокПроизводимыхПредметов.getItem(""));
-            inventory.setItem(calculate(3 + 3, 4), ЦенаПроизводства.getItem(String.valueOf(fabricator.getPrice())));
+            inventory.setItem(calculate(6, 2), СписокПотребляемыхРесурсов.getItem(""));
+            inventory.setItem(calculate(6, 3),
+                              ЛогикаПотребления.getItem(String.valueOf(fabricator.getMultiMaterial().getName())));
+
+            inventory.setItem(calculate(6, 4), СписокПроизводимыхПредметов.getItem(""));
             inventory.setItem(
-                    calculate(3 + 3, 5),
+                    calculate(6, 5),
                     ЛогикаПроизводства.getItem(String.valueOf(fabricator.getMultiProduct().getName()))
                              );
+            inventory.setItem(calculate(6, 6), ЦенаПроизводства.getItem(String.valueOf(fabricator.getPrice())));
+
         }
         inventory.setItem(
                 calculate(3, 5), ЗадатьЗвукУспешности.getItem(

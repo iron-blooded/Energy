@@ -230,7 +230,6 @@ public enum _Icons {
                 }
                 return null;
             }
-            //TODO: выбор игроком блоков, которым соответствует структура
     ),
     ПрисоеденитьСетькКСтруктуре(
             Material.STRING,
@@ -505,7 +504,7 @@ public enum _Icons {
             }
     ),
     ЛогикаПроизводства(
-            Material.KNOWLEDGE_BOOK,
+            Material.CAMPFIRE,
             LIGHT_PURPLE + "Задать логику производства",
             GRAY + "" + ITALIC + "Устанавливает, по какой логике\n" +
                     GRAY + ITALIC + "фабрикатор должен производить предметы\n" +
@@ -522,6 +521,24 @@ public enum _Icons {
                     return new SettingsStructure(shareData).getInventory();
                 }
                 return null;
+            }
+    ),
+    ЛогикаПотребления(
+            Material.SOUL_CAMPFIRE,
+            LIGHT_PURPLE + "Задать логику потребления",
+            GRAY + "" + ITALIC + "Устанавливает, по какой логике\n" +
+                    GRAY + ITALIC + "структура будет потреблять предметы\n" +
+                    WHITE + "Задано: {}",
+            shareData -> {
+                Structure structure = shareData.getStructure();
+                List<MultiMaterial> list = List.of(MultiMaterial.values());
+                int pos = list.indexOf(structure.getMultiMaterial());
+                pos++;
+                if (pos > list.size() - 1) {
+                    pos = 0;
+                }
+                structure.setMultiMaterial(list.get(pos));
+                return new SettingsStructure(shareData).getInventory();
             }
     ),
     ИмяСети(
