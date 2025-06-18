@@ -20,7 +20,7 @@ public class TextBox {
         this.player = data.getPlayer();
     }
 
-    public void apply() {
+    public void open() {
         player.closeInventory();
         player.sendMessage(GOLD + "" + ChatColor.BOLD + "Введите в чат новое значение");
         TextComponent textComponent = new TextComponent(WHITE + "Для отмены напишите слово " + BOLD + "cancel");

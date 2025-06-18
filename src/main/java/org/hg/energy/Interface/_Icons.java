@@ -117,7 +117,7 @@ public enum _Icons {
                         }
                         return false;
                     }
-                    ).apply();
+                    ).open();
                 }
                 return null;
             }
@@ -152,7 +152,7 @@ public enum _Icons {
                         }
                         return false;
                     }
-                    ).apply();
+                    ).open();
                 }
                 return null;
             }
@@ -174,7 +174,7 @@ public enum _Icons {
                         }
                         return false;
                     }
-                    ).apply();
+                    ).open();
                 }
                 return null;
             }
@@ -196,7 +196,7 @@ public enum _Icons {
                         }
                         return false;
                     }
-                    ).apply();
+                    ).open();
                 }
                 return null;
             }
@@ -217,7 +217,7 @@ public enum _Icons {
                         }
                         return false;
                     }
-                    ).apply();
+                    ).open();
                 }
                 return null;
             }
@@ -308,7 +308,7 @@ public enum _Icons {
                         }
                         return false;
                     }
-                    ).apply();
+                    ).open();
                 }
                 return null;
             }
@@ -370,7 +370,7 @@ public enum _Icons {
                         }
                         return false;
                     }
-                    ).apply();
+                    ).open();
                 }
                 return null;
             }
@@ -405,7 +405,7 @@ public enum _Icons {
                         }
                         return false;
                     }
-                    ).apply();
+                    ).open();
                 }
                 return null;
             }
@@ -428,7 +428,7 @@ public enum _Icons {
                         }
                         return false;
                     }
-                    ).apply();
+                    ).open();
                 } else if (shareData.getStructure() instanceof Fabrication fabrication) {
                     new TextBox(
                             shareData, string -> {
@@ -439,7 +439,7 @@ public enum _Icons {
                         }
                         return false;
                     }
-                    ).apply();
+                    ).open();
                 }
                 return null;
             }
@@ -459,7 +459,7 @@ public enum _Icons {
                         }
                         return false;
                     }
-                    ).apply();
+                    ).open();
                 }
                 return null;
             }
@@ -522,7 +522,7 @@ public enum _Icons {
                         }
                         return false;
                     }
-                    ).apply();
+                    ).open();
                 }
                 return null;
             }
@@ -580,7 +580,7 @@ public enum _Icons {
                         }
                         return false;
                     }
-                    ).apply();
+                    ).open();
                 }
                 return null;
             }
@@ -602,7 +602,7 @@ public enum _Icons {
                         }
                         return false;
                     }
-                    ).apply();
+                    ).open();
                 }
                 return null;
             }
@@ -677,7 +677,7 @@ public enum _Icons {
                         }
                         return false;
                     }
-                    ).apply();
+                    ).open();
                 }
                 return null;
             }
@@ -709,7 +709,7 @@ public enum _Icons {
                         }
                         return false;
                     }
-                    ).apply();
+                    ).open();
                 }
                 return null;
             }
@@ -842,7 +842,7 @@ public enum _Icons {
                         holder.setNumber(holder.getInsertedItem(shareData.getClickItem()), Double.parseDouble(string));
                         return true;
                     }
-                    ).apply();
+                    ).open();
                 }
                 return null;
             }
@@ -888,7 +888,7 @@ public enum _Icons {
                         shareData.getStructure().setChanceBreak(Double.parseDouble(string));
                         return true;
                     }
-                    ).apply();
+                    ).open();
                 }
                 return null;
             }
@@ -912,7 +912,7 @@ public enum _Icons {
                             shareData.getStructure().setCooldownForPlayer(Integer.parseInt(string));
                             return true;
                         }
-                        ).apply();
+                        ).open();
                     } else if (ClickType.RIGHT.equals(shareData.getClickType())) {
                         shareData.getStructure().setLeftPlayerCooldown(0);
                     }
@@ -973,7 +973,7 @@ public enum _Icons {
                         shareData.getStructure().setSound_success(sound_success);
                         return true;
                     }
-                    ).apply();
+                    ).open();
                 }
                 return null;
             }
@@ -1010,7 +1010,7 @@ public enum _Icons {
                         shareData.getStructure().setSound_error(sound_error);
                         return true;
                     }
-                    ).apply();
+                    ).open();
                 }
                 return null;
             }
@@ -1051,7 +1051,7 @@ public enum _Icons {
                                     shareData.getStructure().setTemperatureValue(temperature);
                                     return true;
                                 }
-                        ).apply();
+                        ).open();
                     } else if (ClickType.RIGHT.equals(shareData.getClickType())) {
                         List<BinaryOperator<Double>> list =
                                 Arrays.stream(FunctionsTemperature.values()).map(FunctionsTemperature::getOperator).toList();
@@ -1090,7 +1090,7 @@ public enum _Icons {
                                         shareData.getStructure().setGood_job(string);
                                         return true;
                                     }
-                            ).apply();
+                            ).open();
                         }
                     } else {
                         shareData.getPlayer().sendMessage(RED + "У вас нет прав на использование данного функционала!");
