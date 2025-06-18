@@ -82,6 +82,8 @@ public class SettingsStructure implements InventoryHolder, Window {
                                                     )
                          );
         if (structure.getCooldownForPlayer() != 0) {
+            inventory.setItem(calculate(3, 2),
+                              ШансРаботыСтруктурыДляИгрока.getItem(String.valueOf(structure.getChanceUseForPlayer())));
             inventory.setItem(
                     calculate(4, 1),
                     ВызыватьРаботуСтруктурыИгроку.getItem(String.valueOf(structure.getStayCooldownForPlayer()))
@@ -117,8 +119,10 @@ public class SettingsStructure implements InventoryHolder, Window {
                     ДистаницяМатериал.getItem(String.valueOf(generator.getDistanceMaterial()))
                              );
             inventory.setItem(calculate(6, 2), СписокПотребляемыхРесурсов.getItem(""));
-            inventory.setItem(calculate(6, 3),
-                              ЛогикаПотребления.getItem(String.valueOf(generator.getMultiMaterial().getName())));
+            inventory.setItem(
+                    calculate(6, 3),
+                    ЛогикаПотребления.getItem(String.valueOf(generator.getMultiMaterial().getName()))
+                             );
             inventory.setItem(
                     calculate(6, 4),
                     КоличествоЭнергииНаВыходе.getItem(String.valueOf(generator.getAmountEnergyProduced()))
@@ -129,8 +133,10 @@ public class SettingsStructure implements InventoryHolder, Window {
                     ДистаницяМатериал.getItem(String.valueOf(fabricator.getDistanceMaterial()))
                              );
             inventory.setItem(calculate(6, 2), СписокПотребляемыхРесурсов.getItem(""));
-            inventory.setItem(calculate(6, 3),
-                              ЛогикаПотребления.getItem(String.valueOf(fabricator.getMultiMaterial().getName())));
+            inventory.setItem(
+                    calculate(6, 3),
+                    ЛогикаПотребления.getItem(String.valueOf(fabricator.getMultiMaterial().getName()))
+                             );
 
             inventory.setItem(calculate(6, 4), СписокПроизводимыхПредметов.getItem(""));
             inventory.setItem(

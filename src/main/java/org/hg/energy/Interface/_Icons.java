@@ -23,6 +23,7 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
 import static org.bukkit.ChatColor.*;
+import static org.hg.energy.Objects._LitBlocks.lit;
 
 public enum _Icons {
     empty(Material.AIR, "", ""),
@@ -156,6 +157,29 @@ public enum _Icons {
                 return null;
             }
     ),
+    ШансРаботыСтруктурыДляИгрока(
+            Material.PLAYER_HEAD,
+            WHITE + "Задать шанс, с которым структура выполнит работу\n"+
+                    RED +  "при активации игроком",
+            GRAY + "" + ITALIC + "(Если работа у структуры вообще есть)\n" +
+                    GREEN + "Текущий шанс: {}%",
+            shareData -> {
+                if (shareData.getStructure() != null) {
+                    new TextBox(
+                            shareData, string -> {
+                        try {
+                            shareData.getStructure().setChanceUseForPlayer(Double.parseDouble(string));
+                            return true;
+                        } catch (Exception ignored) {
+                        }
+                        return false;
+                    }
+                    ).apply();
+                }
+                return null;
+            }
+    ),
+
     КулдаунРаботыСтруктуры(
             Material.CLOCK,
             DARK_AQUA + "Задать кулдаун структуры",
@@ -903,8 +927,14 @@ public enum _Icons {
                     GOLD + "Осталось времени: {} сек.",
             shareData -> {
                 if (shareData.getStructure() != null) {
-                    if (shareData.getStructure().useCooldownForPlayer()) {
-                        shareData.getStructure().useWorkAndSound();
+                    Structure structure = shareData.getStructure();
+                    if (structure.useCooldownForPlayer()) {
+                        if (structure.getChanceUseForPlayer() > Math.random() * 100) {
+                            structure.useWorkAndSound();
+                        } else {
+                            lit(structure, false);
+                            structure.useSound(structure.getSound_error());
+                        }
                     }
                     return shareData.getHolder().getInventory();
                 }

@@ -31,7 +31,7 @@ public abstract class Structure implements Serializable, Cloneable {
     private String name;
     private int cooldown_required;
     private int cooldown; //отнимается снизу вверх
-    private double chance;
+    private double chance_automate;
     private double volume = 0;
     private int priority = 9494;
     private Map<Block, Material> locations = new HashMap<>();
@@ -46,6 +46,7 @@ public abstract class Structure implements Serializable, Cloneable {
     private calculate temperature;
     private String good_job = "";
     private MultiMaterial multiMaterial = MultiMaterial.All;
+    private double chance_use_player = 100;
 
     /**
      * Представляет собой структуру
@@ -59,7 +60,7 @@ public abstract class Structure implements Serializable, Cloneable {
         this.uuid = UUID.randomUUID();
         this.cooldown_required = 0;
         this.cooldown = 0;
-        this.chance = 100;
+        this.chance_automate = 100;
         this.random = new Random();
         if (getScorchingSun() != null) {
             this.temperature = new calculate(0, Double::sum);
@@ -76,7 +77,7 @@ public abstract class Structure implements Serializable, Cloneable {
         stream.writeUTF(name);
         stream.writeInt(cooldown_required);
         stream.writeInt(cooldown);
-        stream.writeDouble(chance);
+        stream.writeDouble(chance_automate);
         stream.writeDouble(volume);
         stream.writeInt(priority);
 
@@ -90,7 +91,9 @@ public abstract class Structure implements Serializable, Cloneable {
         stream.writeDouble(chance_break);
         stream.writeBoolean(can_player_edit);
         stream.writeChar('0');
-        stream.writeInt(4); //Версия базы данных
+        stream.writeInt(5); //Версия базы данных
+        //5
+        stream.writeDouble(getChanceUseForPlayer());
         //4
         stream.writeUTF(getMultiMaterial().name());
         // v3
@@ -127,7 +130,7 @@ public abstract class Structure implements Serializable, Cloneable {
             name = stream.readUTF();
             cooldown_required = stream.readInt();
             cooldown = stream.readInt();
-            chance = stream.readDouble();
+            chance_automate = stream.readDouble();
             volume = stream.readDouble();
             priority = stream.readInt();
             int size = stream.readInt();
@@ -166,10 +169,13 @@ public abstract class Structure implements Serializable, Cloneable {
             enabled = stream.readBoolean();
             chance_break = stream.readDouble();
             can_player_edit = stream.readBoolean();
+            setChanceUseForPlayer(100);
             switch (stream.readChar()) {
                 case '0':
                     int version = stream.readInt();
                     switch (version) {
+                        case 5:
+                            setChanceUseForPlayer(stream.readDouble());
                         case 4:
                             try {
                                 setMultiMaterial(MultiMaterial.valueOf(stream.readUTF()));
@@ -206,7 +212,8 @@ public abstract class Structure implements Serializable, Cloneable {
                     return;
             }
         } catch (Exception e) {
-            Bukkit.getLogger().severe("Ошибка при десирилизации структуры\n" + e);
+            Bukkit.getLogger().severe("Ошибка при десирилизации структуры " + uuid.toString() + "\n" + e);
+            throw new RuntimeException(e);
         }
         while (stream.readChar() != ChatColor.COLOR_CHAR) {
             continue;
@@ -442,6 +449,20 @@ public abstract class Structure implements Serializable, Cloneable {
     }
 
     /**
+     * Получить шанс, с которым структура будет срабатывать при взаимодействии игроком. От 0% до 100%
+     */
+    public double getChanceUseForPlayer() {
+        return chance_use_player;
+    }
+
+    /**
+     * Задать шанс, с которым структура будет срабатывать при взаимодействии игроком. От 0% до 100%
+     */
+    public void setChanceUseForPlayer(double chance_use_player) {
+        this.chance_use_player = Math.max(Math.min(chance_use_player, 100), 0);
+    }
+
+    /**
      * Возвращает шанс, с которым структура будет успешно выполнять свои действия
      * <br>
      * Работает, только если разработчик учел это свойство
@@ -449,7 +470,7 @@ public abstract class Structure implements Serializable, Cloneable {
      * @return число от 0 до 100%
      */
     public double getChanceWork() {
-        return chance;
+        return chance_automate;
     }
 
     /**
@@ -458,7 +479,7 @@ public abstract class Structure implements Serializable, Cloneable {
      * @param chance число от 0 до 100%
      */
     public void setChanceWork(double chance) {
-        this.chance = Math.max(Math.min(chance, 100), 0);
+        this.chance_automate = Math.max(Math.min(chance, 100), 0);
     }
 
     /**
@@ -675,6 +696,13 @@ public abstract class Structure implements Serializable, Cloneable {
             sound = getSound_error();
             lit(this, false);
         }
+        useSound(sound);
+    }
+
+    /**
+     * Использовать звук на местоположении структуры
+     */
+    public void useSound(SimpleEntry<Sound, Float> sound) {
         if (sound.getValue() >= 0) {
             getLocations().get(0).getWorld().playSound(
                     getLocations().get(0),
