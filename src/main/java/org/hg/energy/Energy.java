@@ -24,11 +24,16 @@ import java.sql.SQLException;
 import java.util.*;
 
 public final class Energy extends JavaPlugin {
+    static Energy instance;
     public Map<Player, TextBox> textBoxMap = new HashMap<>();
     public Map<Player, Structure> clone_structures = new HashMap<>();
     public Map<Player, Structure> edit_locations_structure = new HashMap<>();
     public SetupDatabase database;
     private List<Mesh> meshes;
+
+    public static Energy getInstance() {
+        return instance;
+    }
 
     public static ScorchingSun getScorchingSun() {
         Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("ScorchingSun");
@@ -44,6 +49,11 @@ public final class Energy extends JavaPlugin {
             return (IronChest) plugin;
         }
         return null;
+    }
+
+    @Override
+    public void onLoad() {
+        Energy.instance = this;
     }
 
     @Override
