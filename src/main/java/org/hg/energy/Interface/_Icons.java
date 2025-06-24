@@ -1,5 +1,7 @@
 package org.hg.energy.Interface;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
@@ -12,6 +14,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.hg.energy.FunctionsTemperature;
@@ -159,8 +162,8 @@ public enum _Icons {
     ),
     ШансРаботыСтруктурыДляИгрока(
             Material.PLAYER_HEAD,
-            WHITE + "Задать шанс, с которым структура выполнит работу\n"+
-                    RED +  "при активации игроком",
+            WHITE + "Задать шанс, с которым структура выполнит работу\n" +
+                    RED + "при активации игроком",
             GRAY + "" + ITALIC + "(Если работа у структуры вообще есть)\n" +
                     GREEN + "Текущий шанс: {}%",
             shareData -> {
@@ -1062,6 +1065,55 @@ public enum _Icons {
                         }
                         shareData.getStructure().setTemperatureOperator(list.get(pos));
                         return shareData.getHolder().getInventory();
+                    }
+                }
+                return null;
+            }
+    ),
+    Книга(
+            Material.WRITABLE_BOOK,
+            WHITE + "Заметка",
+            DARK_PURPLE + "ЛКМ что бы прочитать заметку\n" +
+                    RED + "ПКМ что бы взять заметку для редактирования\n" +
+                    WHITE + "Нажмите книгой с измененной заметкой сюда для обновления\n"
+                    + "\n"
+                    + WHITE+"{}",
+            shareData -> {
+                if (shareData.getStructure() != null) {
+                    Structure structure = shareData.getStructure();
+                    if (!shareData.getCursorItem().getType().isAir()
+                            && shareData.getCursorItem().getType().name().contains("_BOOK")) {
+                        // Если в курсоре книга с описанием
+                        ItemStack book = shareData.getCursorItem();
+                        BookMeta bookMeta = (BookMeta) book.getItemMeta();
+                        List<Component> listPages = new ArrayList<>();
+                        for (int i = 0; i < bookMeta.getPageCount(); i++) {
+                            listPages.add(bookMeta.page(i + 1));
+                        }
+                        structure.setDescription(listPages);
+                        shareData.getPlayer().setItemOnCursor(new ItemStack(Material.AIR));
+                    } else if (shareData.getCursorItem().getType().isAir()) {
+                        // Если курсор пуст
+                        List<Component> listPages = structure.getDescription();
+                        ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
+                        BookMeta bookMeta = (BookMeta) book.getItemMeta();
+                        bookMeta.displayName(Component.text("Заметка о " + structure.getName(), NamedTextColor.GREEN));
+                        bookMeta.setTitle("Заметка");
+                        bookMeta.setAuthor(structure.getUuid().toString());
+                        bookMeta.setGeneration(BookMeta.Generation.ORIGINAL);
+                        bookMeta.pages(listPages);
+                        book.setItemMeta(bookMeta);
+                        switch (shareData.getClickType()) {
+                            case LEFT:
+                                shareData.getPlayer().openBook(book);
+                                break;
+                            case RIGHT:
+                                book.setType(Material.WRITABLE_BOOK);
+                                book.setItemMeta(bookMeta);
+                                shareData.getPlayer().setItemOnCursor(book);
+                                break;
+                            default:
+                        }
                     }
                 }
                 return null;

@@ -1,5 +1,7 @@
 package org.hg.energy.Interface;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.Inventory;
@@ -63,6 +65,12 @@ public class SettingsStructure implements InventoryHolder, Window {
         inventory.setItem(calculate(2, 1), ВызватьРаботуСтруктуры.getItem(""));
         inventory.setItem(calculate(2, 2), ЗадатьКонсользуюКоманду.getItem(structure.getGood_job()));
         inventory.setItem(calculate(2, 3), ЗадатьКулдаун.getItem(""));
+        Component desc = structure.getDescription().stream().findFirst().orElse(Component.empty());
+        inventory.setItem(
+                calculate(2, 5), Книга.getItem(
+                        LegacyComponentSerializer.legacySection().serialize(desc)
+                                              )
+                         );
         if (structure.isEnabled()) {
             inventory.setItem(calculate(2, 7), ВыключитьСтруктуру.getItem(""));
         } else {
@@ -82,8 +90,10 @@ public class SettingsStructure implements InventoryHolder, Window {
                                                     )
                          );
         if (structure.getCooldownForPlayer() != 0) {
-            inventory.setItem(calculate(3, 2),
-                              ШансРаботыСтруктурыДляИгрока.getItem(String.valueOf(structure.getChanceUseForPlayer())));
+            inventory.setItem(
+                    calculate(3, 2),
+                    ШансРаботыСтруктурыДляИгрока.getItem(String.valueOf(structure.getChanceUseForPlayer()))
+                             );
             inventory.setItem(
                     calculate(4, 1),
                     ВызыватьРаботуСтруктурыИгроку.getItem(String.valueOf(structure.getStayCooldownForPlayer()))

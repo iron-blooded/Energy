@@ -2,6 +2,8 @@ package org.hg.energy.Objects;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandException;
@@ -26,6 +28,7 @@ import static org.hg.energy.Objects._LitBlocks.lit;
 public abstract class Structure implements Serializable, Cloneable {
     @Serial
     private static final long serialVersionUID = 1L;
+    List<Component> description = new ArrayList<>();
     private Random random;
     private UUID uuid;
     private String name;
@@ -91,7 +94,12 @@ public abstract class Structure implements Serializable, Cloneable {
         stream.writeDouble(chance_break);
         stream.writeBoolean(can_player_edit);
         stream.writeChar('0');
-        stream.writeInt(5); //Версия базы данных
+        stream.writeInt(6); //Версия базы данных
+        //6
+        stream.writeInt(getDescription().size());
+        for (Component component : getDescription()) {
+            stream.writeUTF(GsonComponentSerializer.gson().serialize(component));
+        }
         //5
         stream.writeDouble(getChanceUseForPlayer());
         //4
@@ -174,6 +182,12 @@ public abstract class Structure implements Serializable, Cloneable {
                 case '0':
                     int version = stream.readInt();
                     switch (version) {
+                        case 6:
+                            size = stream.readInt();
+                            description = new ArrayList<>();
+                            for (int i = 0; i < size; i++) {
+                                description.add(GsonComponentSerializer.gson().deserialize(stream.readUTF()));
+                            }
                         case 5:
                             setChanceUseForPlayer(stream.readDouble());
                         case 4:
@@ -760,6 +774,27 @@ public abstract class Structure implements Serializable, Cloneable {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
+
+    /**
+     * Получить описание структуры
+     */
+    public List<Component> getDescription() {
+        if (description != null) {
+            return description;
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Задать описание структуры
+     */
+    public void setDescription(List<Component> description) {
+        if (description != null) {
+            this.description = description;
+        }
+    }
+
 
     /**
      * Узнать, по какой логике фабрикатор потребляет предметы
